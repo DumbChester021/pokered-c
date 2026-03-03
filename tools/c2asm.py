@@ -125,13 +125,15 @@ def parse_c_array(c_filepath, defines):
         directives[m.group(1)] = m.group(2)
 
     # Find the array body between { ... };
-    # Match from the first { after '[] =' to the closing '};'
-    array_match = re.search(r'\[\]\s*=\s*\{(.+?)\};', content, re.DOTALL)
-    if not array_match:
+    # Use the LAST match for '[] = { ... };' — in files with helper arrays
+    # (e.g. base_stats.c has tmhm arrays before the main data array),
+    # the main data array is always the last one.
+    all_array_matches = list(re.finditer(r'\[\]\s*=\s*\{(.+?)\};', content, re.DOTALL))
+    if not all_array_matches:
         print(f"Error: no array found in {c_filepath}", file=sys.stderr)
         sys.exit(1)
 
-    array_body = array_match.group(1)
+    array_body = all_array_matches[-1].group(1)
 
     # Parse each { ... } entry
     entry_re = re.compile(r'\{([^}]+)\}')
@@ -171,6 +173,187 @@ TYPE_EFFECTIVENESS_NAMES = {
      5: "NOT_VERY_EFFECTIVE",
      0: "NO_EFFECT",
 }
+
+
+# ── Generate base stats (multi-file output) ─────────────────────────
+
+def parse_base_stats_entry(entry, defines):
+    """Parse a single base stats entry into a structured dict."""
+    # Expected fields (in order from C struct):
+    # dex_id, hp, atk, def, spd, spc, type1, type2, catch_rate, base_exp,
+    # name, name_cap, move1, move2, move3, move4, growth_rate, tmhm_var, padding
+    d = {}
+    d['dex'] = entry[0][0]       # symbolic name like DEX_BULBASAUR
+    d['hp'] = entry[1][1]
+    d['atk'] = entry[2][1]
+    d['def'] = entry[3][1]
+    d['spd'] = entry[4][1]
+    d['spc'] = entry[5][1]
+    d['type1'] = entry[6][0]     # symbolic name
+    d['type2'] = entry[7][0]
+    d['catch_rate'] = entry[8][1]
+    d['base_exp'] = entry[9][1]
+    d['name'] = entry[10][1]     # lowercase string
+    d['name_cap'] = entry[11][1] # capitalized string
+    d['move1'] = entry[12][0]
+    d['move2'] = entry[13][0]
+    d['move3'] = entry[14][0]
+    d['move4'] = entry[15][0]
+    d['growth_rate'] = entry[16][0]
+    # tmhm_var is the variable name (e.g. "bulbasaur_tmhm")
+    d['tmhm_var'] = entry[17][0]
+    # padding
+    d['padding'] = entry[18][1]
+    return d
+
+
+def parse_tmhm_arrays(c_filepath):
+    """Parse the static tmhm arrays from the C source file."""
+    with open(c_filepath) as f:
+        content = f.read()
+
+    arrays = {}
+    # Match: static const char *name_tmhm[] = { "MOVE1", ..., NULL };
+    # or multi-line versions
+    pattern = r'static\s+const\s+char\s+\*\s*(\w+_tmhm)\[\]\s*=\s*\{([^;]+?)\};'
+    for m in re.finditer(pattern, content, re.DOTALL):
+        var_name = m.group(1)
+        body = m.group(2)
+        # Extract quoted strings
+        moves = re.findall(r'"(\w+)"', body)
+        arrays[var_name] = moves
+
+    return arrays
+
+
+def format_tmhm_line(moves):
+    """Format tmhm moves matching the original ASM layout.
+
+    Layout: 5 items per line, each padded to 14 chars (name + comma + spaces).
+    Items are concatenated directly (padding provides the spacing).
+    Continuation lines start with tab + 5 spaces.
+    """
+    if not moves:
+        return '\ttmhm\n'
+
+    lines = []
+    for i in range(0, len(moves), 5):
+        chunk = moves[i:i+5]
+        is_last_chunk = (i + 5 >= len(moves))
+        parts = []
+        for j, move in enumerate(chunk):
+            is_last_item_overall = is_last_chunk and (j == len(chunk) - 1)
+            if is_last_item_overall:
+                # Very last item: no comma, no padding
+                parts.append(move)
+            else:
+                # Pad "NAME," to 14 chars
+                padded = f"{move + ',':<14s}"
+                parts.append(padded)
+        line_content = ''.join(parts)
+        if i == 0:
+            prefix = '\ttmhm '
+        else:
+            prefix = '\t     '
+        if not is_last_chunk:
+            line_content += '\\'
+        lines.append(prefix + line_content)
+
+    return '\n'.join(lines) + '\n'
+
+
+def generate_base_stats_file(d, tmhm_arrays):
+    """Generate a single pokemon base stat .asm file content."""
+    lines = []
+    name = d['name']
+    name_cap = d['name_cap']
+
+    # Dex ID
+    lines.append(f'\tdb {d["dex"]} ; pokedex id')
+    lines.append('')
+
+    # Base stats — right-aligned to 3 chars
+    lines.append(f'\tdb {d["hp"]:>3}, {d["atk"]:>3}, {d["def"]:>3}, {d["spd"]:>3}, {d["spc"]:>3}')
+    lines.append('\t;   hp  atk  def  spd  spc')
+    lines.append('')
+
+    # Types
+    lines.append(f'\tdb {d["type1"]}, {d["type2"]} ; type')
+    # Catch rate
+    lines.append(f'\tdb {d["catch_rate"]} ; catch rate')
+    # Base exp
+    lines.append(f'\tdb {d["base_exp"]} ; base exp')
+    lines.append('')
+
+    # INCBIN sprite dimensions + pic pointers (ASM passthrough)
+    # Special case: Mr. Mime uses "mr.mime" for the pic filename
+    pic_name = 'mr.mime' if name == 'mrmime' else name
+    lines.append(f'\tINCBIN "gfx/pokemon/front/{pic_name}.pic", 0, 1 ; sprite dimensions')
+    lines.append(f'\tdw {name_cap}PicFront, {name_cap}PicBack')
+    lines.append('')
+
+    # Level 1 learnset
+    lines.append(f'\tdb {d["move1"]}, {d["move2"]}, {d["move3"]}, {d["move4"]} ; level 1 learnset')
+    # Growth rate
+    lines.append(f'\tdb {d["growth_rate"]} ; growth rate')
+    lines.append('')
+
+    # TM/HM learnset
+    lines.append('\t; tm/hm learnset')
+    tmhm_var = d['tmhm_var']
+    tmhm_moves = tmhm_arrays.get(tmhm_var, [])
+    tmhm_text = format_tmhm_line(tmhm_moves)
+    lines.append(tmhm_text.rstrip('\n'))
+    lines.append('\t; end')
+    lines.append('')
+
+    # Padding
+    if d['padding'] == 0xFF:
+        lines.append('\tdb %11111111 ; padding')
+    else:
+        lines.append('\tdb 0 ; padding')
+
+    return '\n'.join(lines) + '\n'
+
+
+def generate_base_stats(directives, entries, defines, c_filepath, outdir):
+    """Generate 151 individual base stat .asm files + dispatcher."""
+    # Parse tmhm arrays from the C source
+    tmhm_arrays = parse_tmhm_arrays(c_filepath)
+
+    # Parse all entries
+    all_data = []
+    for entry in entries:
+        d = parse_base_stats_entry(entry, defines)
+        all_data.append(d)
+
+    # Output directory for individual files
+    stats_dir = os.path.join(outdir, 'base_stats')
+    os.makedirs(stats_dir, exist_ok=True)
+
+    # Generate individual files
+    for d in all_data:
+        asm_content = generate_base_stats_file(d, tmhm_arrays)
+        out_path = os.path.join(stats_dir, f"{d['name']}.asm")
+        with open(out_path, 'w') as f:
+            f.write(asm_content)
+
+    # Generate dispatcher (base_stats.asm)
+    # Mew is the last entry and is excluded from the dispatcher
+    dispatcher_lines = []
+    dispatcher_lines.append('BaseStats::')
+    dispatcher_lines.append('\ttable_width BASE_DATA_SIZE')
+    for d in all_data:
+        if d['name'] == 'mew':
+            continue  # Mew is loaded separately
+        dispatcher_lines.append(f'INCLUDE "data/pokemon/base_stats/{d["name"]}.asm"')
+    dispatcher_lines.append('\tassert_table_length NUM_POKEMON - 1 ; discount Mew')
+
+    disp_path = os.path.join(outdir, 'base_stats.asm')
+    with open(disp_path, 'w') as f:
+        f.write('\n'.join(dispatcher_lines) + '\n')
+
+    return len(all_data)
 
 
 # ── Generate RGBDS assembly output ──────────────────────────────────
@@ -363,15 +546,20 @@ def generate_asm(directives, entries, defines):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: c2asm.py <source.c> [--diff <original.asm>]", file=sys.stderr)
+        print("Usage: c2asm.py <source.c> [--diff <original.asm>] [--outdir <dir>]", file=sys.stderr)
         sys.exit(1)
 
     c_file = sys.argv[1]
     diff_file = None
+    out_dir = None
     if '--diff' in sys.argv:
         diff_idx = sys.argv.index('--diff')
         if diff_idx + 1 < len(sys.argv):
             diff_file = sys.argv[diff_idx + 1]
+    if '--outdir' in sys.argv:
+        outdir_idx = sys.argv.index('--outdir')
+        if outdir_idx + 1 < len(sys.argv):
+            out_dir = sys.argv[outdir_idx + 1]
 
     # Resolve #include'd defines
     defines = resolve_includes(c_file)
@@ -379,7 +567,17 @@ def main():
     # Parse the array
     directives, entries = parse_c_array(c_file, defines)
 
-    # Generate ASM
+    # Check for base_stats mode (multi-file output)
+    mode = directives.get('asm_mode', None)
+    if mode == 'base_stats':
+        if not out_dir:
+            print("Error: base_stats mode requires --outdir <dir>", file=sys.stderr)
+            sys.exit(1)
+        count = generate_base_stats(directives, entries, defines, c_file, out_dir)
+        print(f"Generated {count} base stat files + dispatcher in {out_dir}/")
+        return
+
+    # Generate ASM (single-file modes)
     asm_output = generate_asm(directives, entries, defines)
 
     if diff_file:

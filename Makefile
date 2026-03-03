@@ -128,7 +128,10 @@ data/growth_rates.asm: src/data/growth_rates.c tools/c2asm.py
 data/items/prices.asm: src/data/item_prices.c src/include/items.h tools/c2asm.py
 	$(C2ASM) $< > $@
 
-generate: data/types/type_matchups.asm data/moves/moves.asm data/growth_rates.asm data/items/prices.asm
+data/pokemon/base_stats.asm: src/data/base_stats.c src/include/pokemon.h src/include/types.h src/include/moves.h tools/c2asm.py
+	$(C2ASM) $< --outdir data/pokemon
+
+generate: data/types/type_matchups.asm data/moves/moves.asm data/growth_rates.asm data/items/prices.asm data/pokemon/base_stats.asm
 	@echo "Generated ASM data files up to date."
 
 

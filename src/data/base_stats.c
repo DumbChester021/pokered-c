@@ -1,0 +1,1765 @@
+/*
+ * base_stats.c — Pokémon base stat data for all 151 Pokémon
+ * Source of truth for data/pokemon/base_stats/*.asm
+ *
+ * Run: python3 tools/c2asm.py src/data/base_stats.c --outdir data/pokemon
+ *
+ * Each entry generates an individual .asm file plus the dispatcher
+ * data/pokemon/base_stats.asm.
+ */
+
+#include "../include/pokemon.h"
+#include "../include/types.h"
+#include "../include/moves.h"
+
+/* @asm_mode base_stats */
+
+static const char *bulbasaur_tmhm[] = {
+    "SWORDS_DANCE", "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "RAGE", "MEGA_DRAIN", "SOLARBEAM", "MIMIC", "DOUBLE_TEAM",
+    "REFLECT", "BIDE", "REST", "SUBSTITUTE", "CUT",
+    NULL
+};
+static const char *ivysaur_tmhm[] = {
+    "SWORDS_DANCE", "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "RAGE", "MEGA_DRAIN", "SOLARBEAM", "MIMIC", "DOUBLE_TEAM",
+    "REFLECT", "BIDE", "REST", "SUBSTITUTE", "CUT",
+    NULL
+};
+static const char *venusaur_tmhm[] = {
+    "SWORDS_DANCE", "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "HYPER_BEAM", "RAGE", "MEGA_DRAIN", "SOLARBEAM", "MIMIC",
+    "DOUBLE_TEAM", "REFLECT", "BIDE", "REST", "SUBSTITUTE",
+    "CUT", NULL
+};
+static const char *charmander_tmhm[] = {
+    "MEGA_PUNCH", "SWORDS_DANCE", "MEGA_KICK", "TOXIC", "BODY_SLAM",
+    "TAKE_DOWN", "DOUBLE_EDGE", "SUBMISSION", "COUNTER", "SEISMIC_TOSS",
+    "RAGE", "DRAGON_RAGE", "DIG", "MIMIC", "DOUBLE_TEAM",
+    "REFLECT", "BIDE", "FIRE_BLAST", "SWIFT", "SKULL_BASH",
+    "REST", "SUBSTITUTE", "CUT", "STRENGTH", NULL
+};
+static const char *charmeleon_tmhm[] = {
+    "MEGA_PUNCH", "SWORDS_DANCE", "MEGA_KICK", "TOXIC", "BODY_SLAM",
+    "TAKE_DOWN", "DOUBLE_EDGE", "SUBMISSION", "COUNTER", "SEISMIC_TOSS",
+    "RAGE", "DRAGON_RAGE", "DIG", "MIMIC", "DOUBLE_TEAM",
+    "REFLECT", "BIDE", "FIRE_BLAST", "SWIFT", "SKULL_BASH",
+    "REST", "SUBSTITUTE", "CUT", "STRENGTH", NULL
+};
+static const char *charizard_tmhm[] = {
+    "MEGA_PUNCH", "SWORDS_DANCE", "MEGA_KICK", "TOXIC", "BODY_SLAM",
+    "TAKE_DOWN", "DOUBLE_EDGE", "HYPER_BEAM", "SUBMISSION", "COUNTER",
+    "SEISMIC_TOSS", "RAGE", "DRAGON_RAGE", "EARTHQUAKE", "FISSURE",
+    "DIG", "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE",
+    "FIRE_BLAST", "SWIFT", "SKULL_BASH", "REST", "SUBSTITUTE",
+    "CUT", "STRENGTH", NULL
+};
+static const char *squirtle_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD",
+    "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE", "DIG",
+    "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE", "SKULL_BASH",
+    "REST", "SUBSTITUTE", "SURF", "STRENGTH", NULL
+};
+static const char *wartortle_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD",
+    "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE", "DIG",
+    "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE", "SKULL_BASH",
+    "REST", "SUBSTITUTE", "SURF", "STRENGTH", NULL
+};
+static const char *blastoise_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD",
+    "HYPER_BEAM", "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE",
+    "EARTHQUAKE", "FISSURE", "DIG", "MIMIC", "DOUBLE_TEAM",
+    "REFLECT", "BIDE", "SKULL_BASH", "REST", "SUBSTITUTE",
+    "SURF", "STRENGTH", NULL
+};
+static const char *caterpie_tmhm[] = { NULL };
+static const char *metapod_tmhm[] = { NULL };
+static const char *butterfree_tmhm[] = {
+    "RAZOR_WIND", "WHIRLWIND", "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE",
+    "HYPER_BEAM", "RAGE", "MEGA_DRAIN", "SOLARBEAM", "PSYCHIC_M",
+    "TELEPORT", "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE",
+    "SWIFT", "REST", "PSYWAVE", "SUBSTITUTE", NULL
+};
+static const char *weedle_tmhm[] = { NULL };
+static const char *kakuna_tmhm[] = { NULL };
+static const char *beedrill_tmhm[] = {
+    "SWORDS_DANCE", "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE", "HYPER_BEAM",
+    "RAGE", "MEGA_DRAIN", "MIMIC", "DOUBLE_TEAM", "REFLECT",
+    "BIDE", "SWIFT", "SKULL_BASH", "REST", "SUBSTITUTE",
+    "CUT", NULL
+};
+static const char *pidgey_tmhm[] = {
+    "RAZOR_WIND", "WHIRLWIND", "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE",
+    "RAGE", "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE",
+    "SWIFT", "SKY_ATTACK", "REST", "SUBSTITUTE", "FLY",
+    NULL
+};
+static const char *pidgeotto_tmhm[] = {
+    "RAZOR_WIND", "WHIRLWIND", "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE",
+    "RAGE", "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE",
+    "SWIFT", "SKY_ATTACK", "REST", "SUBSTITUTE", "FLY",
+    NULL
+};
+static const char *pidgeot_tmhm[] = {
+    "RAZOR_WIND", "WHIRLWIND", "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE",
+    "HYPER_BEAM", "RAGE", "MIMIC", "DOUBLE_TEAM", "REFLECT",
+    "BIDE", "SWIFT", "SKY_ATTACK", "REST", "SUBSTITUTE",
+    "FLY", NULL
+};
+static const char *rattata_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM",
+    "WATER_GUN", "BLIZZARD", "RAGE", "THUNDERBOLT", "THUNDER",
+    "DIG", "MIMIC", "DOUBLE_TEAM", "BIDE", "SWIFT",
+    "SKULL_BASH", "REST", "SUBSTITUTE", NULL
+};
+static const char *raticate_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM",
+    "WATER_GUN", "ICE_BEAM", "BLIZZARD", "HYPER_BEAM", "RAGE",
+    "THUNDERBOLT", "THUNDER", "DIG", "MIMIC", "DOUBLE_TEAM",
+    "BIDE", "SWIFT", "SKULL_BASH", "REST", "SUBSTITUTE",
+    NULL
+};
+static const char *spearow_tmhm[] = {
+    "RAZOR_WIND", "WHIRLWIND", "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE",
+    "RAGE", "MIMIC", "DOUBLE_TEAM", "BIDE", "SWIFT",
+    "SKY_ATTACK", "REST", "SUBSTITUTE", "FLY", NULL
+};
+static const char *fearow_tmhm[] = {
+    "RAZOR_WIND", "WHIRLWIND", "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE",
+    "HYPER_BEAM", "RAGE", "MIMIC", "DOUBLE_TEAM", "BIDE",
+    "SWIFT", "SKY_ATTACK", "REST", "SUBSTITUTE", "FLY",
+    NULL
+};
+static const char *ekans_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "RAGE",
+    "MEGA_DRAIN", "EARTHQUAKE", "FISSURE", "DIG", "MIMIC",
+    "DOUBLE_TEAM", "BIDE", "SKULL_BASH", "REST", "ROCK_SLIDE",
+    "SUBSTITUTE", "STRENGTH", NULL
+};
+static const char *arbok_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "HYPER_BEAM",
+    "RAGE", "MEGA_DRAIN", "EARTHQUAKE", "FISSURE", "DIG",
+    "MIMIC", "DOUBLE_TEAM", "BIDE", "SKULL_BASH", "REST",
+    "ROCK_SLIDE", "SUBSTITUTE", "STRENGTH", NULL
+};
+static const char *pikachu_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "PAY_DAY", "SUBMISSION", "SEISMIC_TOSS", "RAGE",
+    "THUNDERBOLT", "THUNDER", "MIMIC", "DOUBLE_TEAM", "REFLECT",
+    "BIDE", "SWIFT", "SKULL_BASH", "REST", "THUNDER_WAVE",
+    "SUBSTITUTE", "FLASH", NULL
+};
+static const char *raichu_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "HYPER_BEAM", "PAY_DAY", "SUBMISSION", "SEISMIC_TOSS",
+    "RAGE", "THUNDERBOLT", "THUNDER", "MIMIC", "DOUBLE_TEAM",
+    "REFLECT", "BIDE", "SWIFT", "SKULL_BASH", "REST",
+    "THUNDER_WAVE", "SUBSTITUTE", "FLASH", NULL
+};
+static const char *sandshrew_tmhm[] = {
+    "SWORDS_DANCE", "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "SUBMISSION", "SEISMIC_TOSS", "RAGE", "EARTHQUAKE", "FISSURE",
+    "DIG", "MIMIC", "DOUBLE_TEAM", "BIDE", "SWIFT",
+    "SKULL_BASH", "REST", "ROCK_SLIDE", "SUBSTITUTE", "CUT",
+    "STRENGTH", NULL
+};
+static const char *sandslash_tmhm[] = {
+    "SWORDS_DANCE", "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "HYPER_BEAM", "SUBMISSION", "SEISMIC_TOSS", "RAGE", "EARTHQUAKE",
+    "FISSURE", "DIG", "MIMIC", "DOUBLE_TEAM", "BIDE",
+    "SWIFT", "SKULL_BASH", "REST", "ROCK_SLIDE", "SUBSTITUTE",
+    "CUT", "STRENGTH", NULL
+};
+static const char *nidoranf_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "BLIZZARD",
+    "RAGE", "THUNDERBOLT", "THUNDER", "MIMIC", "DOUBLE_TEAM",
+    "REFLECT", "BIDE", "SKULL_BASH", "REST", "SUBSTITUTE",
+    NULL
+};
+static const char *nidorina_tmhm[] = {
+    "TOXIC", "HORN_DRILL", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD", "RAGE",
+    "THUNDERBOLT", "THUNDER", "MIMIC", "DOUBLE_TEAM", "REFLECT",
+    "BIDE", "SKULL_BASH", "REST", "SUBSTITUTE", NULL
+};
+static const char *nidoqueen_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "HORN_DRILL", "BODY_SLAM",
+    "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM",
+    "BLIZZARD", "HYPER_BEAM", "PAY_DAY", "SUBMISSION", "COUNTER",
+    "SEISMIC_TOSS", "RAGE", "THUNDERBOLT", "THUNDER", "EARTHQUAKE",
+    "FISSURE", "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE",
+    "FIRE_BLAST", "SKULL_BASH", "REST", "ROCK_SLIDE", "SUBSTITUTE",
+    "SURF", "STRENGTH", NULL
+};
+static const char *nidoranm_tmhm[] = {
+    "TOXIC", "HORN_DRILL", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "BLIZZARD", "RAGE", "THUNDERBOLT", "THUNDER", "MIMIC",
+    "DOUBLE_TEAM", "REFLECT", "BIDE", "SKULL_BASH", "REST",
+    "SUBSTITUTE", NULL
+};
+static const char *nidorino_tmhm[] = {
+    "TOXIC", "HORN_DRILL", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD", "RAGE",
+    "THUNDERBOLT", "THUNDER", "MIMIC", "DOUBLE_TEAM", "REFLECT",
+    "BIDE", "SKULL_BASH", "REST", "SUBSTITUTE", NULL
+};
+static const char *nidoking_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "HORN_DRILL", "BODY_SLAM",
+    "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM",
+    "BLIZZARD", "HYPER_BEAM", "PAY_DAY", "SUBMISSION", "COUNTER",
+    "SEISMIC_TOSS", "RAGE", "THUNDERBOLT", "THUNDER", "EARTHQUAKE",
+    "FISSURE", "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE",
+    "FIRE_BLAST", "SKULL_BASH", "REST", "ROCK_SLIDE", "SUBSTITUTE",
+    "SURF", "STRENGTH", NULL
+};
+static const char *clefairy_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD",
+    "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE", "SOLARBEAM",
+    "THUNDERBOLT", "THUNDER", "PSYCHIC_M", "TELEPORT", "MIMIC",
+    "DOUBLE_TEAM", "REFLECT", "BIDE", "METRONOME", "FIRE_BLAST",
+    "SKULL_BASH", "REST", "THUNDER_WAVE", "PSYWAVE", "TRI_ATTACK",
+    "SUBSTITUTE", "STRENGTH", "FLASH", NULL
+};
+static const char *clefable_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD",
+    "HYPER_BEAM", "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE",
+    "SOLARBEAM", "THUNDERBOLT", "THUNDER", "PSYCHIC_M", "TELEPORT",
+    "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE", "METRONOME",
+    "FIRE_BLAST", "SKULL_BASH", "REST", "THUNDER_WAVE", "PSYWAVE",
+    "TRI_ATTACK", "SUBSTITUTE", "STRENGTH", "FLASH", NULL
+};
+static const char *vulpix_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "RAGE",
+    "DIG", "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE",
+    "FIRE_BLAST", "SWIFT", "SKULL_BASH", "REST", "SUBSTITUTE",
+    NULL
+};
+static const char *ninetales_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "HYPER_BEAM",
+    "RAGE", "DIG", "MIMIC", "DOUBLE_TEAM", "REFLECT",
+    "BIDE", "FIRE_BLAST", "SWIFT", "SKULL_BASH", "REST",
+    "SUBSTITUTE", NULL
+};
+static const char *jigglypuff_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD",
+    "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE", "SOLARBEAM",
+    "THUNDERBOLT", "THUNDER", "PSYCHIC_M", "TELEPORT", "MIMIC",
+    "DOUBLE_TEAM", "REFLECT", "BIDE", "FIRE_BLAST", "SKULL_BASH",
+    "REST", "THUNDER_WAVE", "PSYWAVE", "TRI_ATTACK", "SUBSTITUTE",
+    "STRENGTH", "FLASH", NULL
+};
+static const char *wigglytuff_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD",
+    "HYPER_BEAM", "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE",
+    "SOLARBEAM", "THUNDERBOLT", "THUNDER", "PSYCHIC_M", "TELEPORT",
+    "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE", "FIRE_BLAST",
+    "SKULL_BASH", "REST", "THUNDER_WAVE", "PSYWAVE", "TRI_ATTACK",
+    "SUBSTITUTE", "STRENGTH", "FLASH", NULL
+};
+static const char *zubat_tmhm[] = {
+    "RAZOR_WIND", "WHIRLWIND", "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE",
+    "RAGE", "MEGA_DRAIN", "MIMIC", "DOUBLE_TEAM", "BIDE",
+    "SWIFT", "REST", "SUBSTITUTE", NULL
+};
+static const char *golbat_tmhm[] = {
+    "RAZOR_WIND", "WHIRLWIND", "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE",
+    "HYPER_BEAM", "RAGE", "MEGA_DRAIN", "MIMIC", "DOUBLE_TEAM",
+    "BIDE", "SWIFT", "REST", "SUBSTITUTE", NULL
+};
+static const char *oddish_tmhm[] = {
+    "SWORDS_DANCE", "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE", "RAGE",
+    "MEGA_DRAIN", "SOLARBEAM", "MIMIC", "DOUBLE_TEAM", "REFLECT",
+    "BIDE", "REST", "SUBSTITUTE", "CUT", NULL
+};
+static const char *gloom_tmhm[] = {
+    "SWORDS_DANCE", "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE", "RAGE",
+    "MEGA_DRAIN", "SOLARBEAM", "MIMIC", "DOUBLE_TEAM", "REFLECT",
+    "BIDE", "REST", "SUBSTITUTE", "CUT", NULL
+};
+static const char *vileplume_tmhm[] = {
+    "SWORDS_DANCE", "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "HYPER_BEAM", "RAGE", "MEGA_DRAIN", "SOLARBEAM", "MIMIC",
+    "DOUBLE_TEAM", "REFLECT", "BIDE", "REST", "SUBSTITUTE",
+    "CUT", NULL
+};
+static const char *paras_tmhm[] = {
+    "SWORDS_DANCE", "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "RAGE", "MEGA_DRAIN", "SOLARBEAM", "DIG", "MIMIC",
+    "DOUBLE_TEAM", "REFLECT", "BIDE", "SKULL_BASH", "REST",
+    "SUBSTITUTE", "CUT", NULL
+};
+static const char *parasect_tmhm[] = {
+    "SWORDS_DANCE", "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "HYPER_BEAM", "RAGE", "MEGA_DRAIN", "SOLARBEAM", "DIG",
+    "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE", "SKULL_BASH",
+    "REST", "SUBSTITUTE", "CUT", NULL
+};
+static const char *venonat_tmhm[] = {
+    "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE", "RAGE", "MEGA_DRAIN",
+    "SOLARBEAM", "PSYCHIC_M", "MIMIC", "DOUBLE_TEAM", "REFLECT",
+    "BIDE", "REST", "PSYWAVE", "SUBSTITUTE", NULL
+};
+static const char *venomoth_tmhm[] = {
+    "RAZOR_WIND", "WHIRLWIND", "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE",
+    "HYPER_BEAM", "RAGE", "MEGA_DRAIN", "SOLARBEAM", "PSYCHIC_M",
+    "TELEPORT", "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE",
+    "SWIFT", "REST", "PSYWAVE", "SUBSTITUTE", NULL
+};
+static const char *diglett_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "RAGE",
+    "EARTHQUAKE", "FISSURE", "DIG", "MIMIC", "DOUBLE_TEAM",
+    "BIDE", "REST", "ROCK_SLIDE", "SUBSTITUTE", NULL
+};
+static const char *dugtrio_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "HYPER_BEAM",
+    "RAGE", "EARTHQUAKE", "FISSURE", "DIG", "MIMIC",
+    "DOUBLE_TEAM", "BIDE", "REST", "ROCK_SLIDE", "SUBSTITUTE",
+    NULL
+};
+static const char *meowth_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM",
+    "WATER_GUN", "PAY_DAY", "RAGE", "THUNDERBOLT", "THUNDER",
+    "MIMIC", "DOUBLE_TEAM", "BIDE", "SWIFT", "SKULL_BASH",
+    "REST", "SUBSTITUTE", NULL
+};
+static const char *persian_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM",
+    "WATER_GUN", "HYPER_BEAM", "PAY_DAY", "RAGE", "THUNDERBOLT",
+    "THUNDER", "MIMIC", "DOUBLE_TEAM", "BIDE", "SWIFT",
+    "SKULL_BASH", "REST", "SUBSTITUTE", NULL
+};
+static const char *psyduck_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD",
+    "PAY_DAY", "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE",
+    "DIG", "MIMIC", "DOUBLE_TEAM", "BIDE", "SWIFT",
+    "SKULL_BASH", "REST", "SUBSTITUTE", "SURF", "STRENGTH",
+    NULL
+};
+static const char *golduck_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD",
+    "HYPER_BEAM", "PAY_DAY", "SUBMISSION", "COUNTER", "SEISMIC_TOSS",
+    "RAGE", "DIG", "MIMIC", "DOUBLE_TEAM", "BIDE",
+    "SWIFT", "SKULL_BASH", "REST", "SUBSTITUTE", "SURF",
+    "STRENGTH", NULL
+};
+static const char *mankey_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "PAY_DAY", "SUBMISSION", "COUNTER", "SEISMIC_TOSS",
+    "RAGE", "THUNDERBOLT", "THUNDER", "DIG", "MIMIC",
+    "DOUBLE_TEAM", "BIDE", "METRONOME", "SWIFT", "SKULL_BASH",
+    "REST", "ROCK_SLIDE", "SUBSTITUTE", "STRENGTH", NULL
+};
+static const char *primeape_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "HYPER_BEAM", "PAY_DAY", "SUBMISSION", "COUNTER",
+    "SEISMIC_TOSS", "RAGE", "THUNDERBOLT", "THUNDER", "DIG",
+    "MIMIC", "DOUBLE_TEAM", "BIDE", "METRONOME", "SWIFT",
+    "SKULL_BASH", "REST", "ROCK_SLIDE", "SUBSTITUTE", "STRENGTH",
+    NULL
+};
+static const char *growlithe_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "RAGE",
+    "DRAGON_RAGE", "DIG", "MIMIC", "DOUBLE_TEAM", "REFLECT",
+    "BIDE", "FIRE_BLAST", "SWIFT", "SKULL_BASH", "REST",
+    "SUBSTITUTE", NULL
+};
+static const char *arcanine_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "HYPER_BEAM",
+    "RAGE", "DRAGON_RAGE", "DIG", "TELEPORT", "MIMIC",
+    "DOUBLE_TEAM", "REFLECT", "BIDE", "FIRE_BLAST", "SWIFT",
+    "SKULL_BASH", "REST", "SUBSTITUTE", NULL
+};
+static const char *poliwag_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM",
+    "WATER_GUN", "ICE_BEAM", "BLIZZARD", "RAGE", "PSYCHIC_M",
+    "MIMIC", "DOUBLE_TEAM", "BIDE", "SKULL_BASH", "REST",
+    "PSYWAVE", "SUBSTITUTE", "SURF", NULL
+};
+static const char *poliwhirl_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD",
+    "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE", "EARTHQUAKE",
+    "FISSURE", "PSYCHIC_M", "MIMIC", "DOUBLE_TEAM", "BIDE",
+    "METRONOME", "SKULL_BASH", "REST", "PSYWAVE", "SUBSTITUTE",
+    "SURF", "STRENGTH", NULL
+};
+static const char *poliwrath_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD",
+    "HYPER_BEAM", "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE",
+    "EARTHQUAKE", "FISSURE", "PSYCHIC_M", "MIMIC", "DOUBLE_TEAM",
+    "BIDE", "METRONOME", "SKULL_BASH", "REST", "PSYWAVE",
+    "SUBSTITUTE", "SURF", "STRENGTH", NULL
+};
+static const char *abra_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE",
+    "PSYCHIC_M", "TELEPORT", "MIMIC", "DOUBLE_TEAM", "REFLECT",
+    "BIDE", "METRONOME", "SKULL_BASH", "REST", "THUNDER_WAVE",
+    "PSYWAVE", "TRI_ATTACK", "SUBSTITUTE", "FLASH", NULL
+};
+static const char *kadabra_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE",
+    "DIG", "PSYCHIC_M", "TELEPORT", "MIMIC", "DOUBLE_TEAM",
+    "REFLECT", "BIDE", "METRONOME", "SKULL_BASH", "REST",
+    "THUNDER_WAVE", "PSYWAVE", "TRI_ATTACK", "SUBSTITUTE", "FLASH",
+    NULL
+};
+static const char *alakazam_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "HYPER_BEAM", "SUBMISSION", "COUNTER", "SEISMIC_TOSS",
+    "RAGE", "DIG", "PSYCHIC_M", "TELEPORT", "MIMIC",
+    "DOUBLE_TEAM", "REFLECT", "BIDE", "METRONOME", "SKULL_BASH",
+    "REST", "THUNDER_WAVE", "PSYWAVE", "TRI_ATTACK", "SUBSTITUTE",
+    "FLASH", NULL
+};
+static const char *machop_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE",
+    "EARTHQUAKE", "FISSURE", "DIG", "MIMIC", "DOUBLE_TEAM",
+    "BIDE", "METRONOME", "FIRE_BLAST", "SKULL_BASH", "REST",
+    "ROCK_SLIDE", "SUBSTITUTE", "STRENGTH", NULL
+};
+static const char *machoke_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE",
+    "EARTHQUAKE", "FISSURE", "DIG", "MIMIC", "DOUBLE_TEAM",
+    "BIDE", "METRONOME", "FIRE_BLAST", "SKULL_BASH", "REST",
+    "ROCK_SLIDE", "SUBSTITUTE", "STRENGTH", NULL
+};
+static const char *machamp_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "HYPER_BEAM", "SUBMISSION", "COUNTER", "SEISMIC_TOSS",
+    "RAGE", "EARTHQUAKE", "FISSURE", "DIG", "MIMIC",
+    "DOUBLE_TEAM", "BIDE", "METRONOME", "FIRE_BLAST", "SKULL_BASH",
+    "REST", "ROCK_SLIDE", "SUBSTITUTE", "STRENGTH", NULL
+};
+static const char *bellsprout_tmhm[] = {
+    "SWORDS_DANCE", "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE", "RAGE",
+    "MEGA_DRAIN", "SOLARBEAM", "MIMIC", "DOUBLE_TEAM", "REFLECT",
+    "BIDE", "REST", "SUBSTITUTE", "CUT", NULL
+};
+static const char *weepinbell_tmhm[] = {
+    "SWORDS_DANCE", "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE", "RAGE",
+    "MEGA_DRAIN", "SOLARBEAM", "MIMIC", "DOUBLE_TEAM", "REFLECT",
+    "BIDE", "REST", "SUBSTITUTE", "CUT", NULL
+};
+static const char *victreebel_tmhm[] = {
+    "SWORDS_DANCE", "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "HYPER_BEAM", "RAGE", "MEGA_DRAIN", "SOLARBEAM", "MIMIC",
+    "DOUBLE_TEAM", "REFLECT", "BIDE", "REST", "SUBSTITUTE",
+    "CUT", NULL
+};
+static const char *tentacool_tmhm[] = {
+    "SWORDS_DANCE", "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM",
+    "WATER_GUN", "ICE_BEAM", "BLIZZARD", "RAGE", "MEGA_DRAIN",
+    "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE", "SKULL_BASH",
+    "REST", "SUBSTITUTE", "CUT", "SURF", NULL
+};
+static const char *tentacruel_tmhm[] = {
+    "SWORDS_DANCE", "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM",
+    "WATER_GUN", "ICE_BEAM", "BLIZZARD", "HYPER_BEAM", "RAGE",
+    "MEGA_DRAIN", "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE",
+    "SKULL_BASH", "REST", "SUBSTITUTE", "CUT", "SURF",
+    NULL
+};
+static const char *geodude_tmhm[] = {
+    "MEGA_PUNCH", "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE", "EARTHQUAKE",
+    "FISSURE", "DIG", "MIMIC", "DOUBLE_TEAM", "BIDE",
+    "METRONOME", "SELFDESTRUCT", "FIRE_BLAST", "REST", "EXPLOSION",
+    "ROCK_SLIDE", "SUBSTITUTE", "STRENGTH", NULL
+};
+static const char *graveler_tmhm[] = {
+    "MEGA_PUNCH", "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE", "EARTHQUAKE",
+    "FISSURE", "DIG", "MIMIC", "DOUBLE_TEAM", "BIDE",
+    "METRONOME", "SELFDESTRUCT", "FIRE_BLAST", "REST", "EXPLOSION",
+    "ROCK_SLIDE", "SUBSTITUTE", "STRENGTH", NULL
+};
+static const char *golem_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "HYPER_BEAM", "SUBMISSION", "COUNTER", "SEISMIC_TOSS",
+    "RAGE", "EARTHQUAKE", "FISSURE", "DIG", "MIMIC",
+    "DOUBLE_TEAM", "BIDE", "METRONOME", "SELFDESTRUCT", "FIRE_BLAST",
+    "REST", "EXPLOSION", "ROCK_SLIDE", "SUBSTITUTE", "STRENGTH",
+    NULL
+};
+static const char *ponyta_tmhm[] = {
+    "TOXIC", "HORN_DRILL", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "RAGE", "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE",
+    "FIRE_BLAST", "SWIFT", "SKULL_BASH", "REST", "SUBSTITUTE",
+    NULL
+};
+static const char *rapidash_tmhm[] = {
+    "TOXIC", "HORN_DRILL", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "HYPER_BEAM", "RAGE", "MIMIC", "DOUBLE_TEAM", "REFLECT",
+    "BIDE", "FIRE_BLAST", "SWIFT", "SKULL_BASH", "REST",
+    "SUBSTITUTE", NULL
+};
+static const char *slowpoke_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM",
+    "WATER_GUN", "ICE_BEAM", "BLIZZARD", "PAY_DAY", "RAGE",
+    "EARTHQUAKE", "FISSURE", "DIG", "PSYCHIC_M", "TELEPORT",
+    "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE", "FIRE_BLAST",
+    "SWIFT", "SKULL_BASH", "REST", "THUNDER_WAVE", "PSYWAVE",
+    "TRI_ATTACK", "SUBSTITUTE", "SURF", "STRENGTH", "FLASH",
+    NULL
+};
+static const char *slowbro_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD",
+    "HYPER_BEAM", "PAY_DAY", "SUBMISSION", "COUNTER", "SEISMIC_TOSS",
+    "RAGE", "EARTHQUAKE", "FISSURE", "DIG", "PSYCHIC_M",
+    "TELEPORT", "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE",
+    "FIRE_BLAST", "SWIFT", "SKULL_BASH", "REST", "THUNDER_WAVE",
+    "PSYWAVE", "TRI_ATTACK", "SUBSTITUTE", "SURF", "STRENGTH",
+    "FLASH", NULL
+};
+static const char *magnemite_tmhm[] = {
+    "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE", "RAGE", "THUNDERBOLT",
+    "THUNDER", "TELEPORT", "MIMIC", "DOUBLE_TEAM", "REFLECT",
+    "BIDE", "SWIFT", "REST", "THUNDER_WAVE", "SUBSTITUTE",
+    "FLASH", NULL
+};
+static const char *magneton_tmhm[] = {
+    "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE", "HYPER_BEAM", "RAGE",
+    "THUNDERBOLT", "THUNDER", "TELEPORT", "MIMIC", "DOUBLE_TEAM",
+    "REFLECT", "BIDE", "SWIFT", "REST", "THUNDER_WAVE",
+    "SUBSTITUTE", "FLASH", NULL
+};
+static const char *farfetchd_tmhm[] = {
+    "RAZOR_WIND", "SWORDS_DANCE", "WHIRLWIND", "TOXIC", "BODY_SLAM",
+    "TAKE_DOWN", "DOUBLE_EDGE", "RAGE", "MIMIC", "DOUBLE_TEAM",
+    "REFLECT", "BIDE", "SWIFT", "SKULL_BASH", "REST",
+    "SUBSTITUTE", "CUT", "FLY", NULL
+};
+static const char *doduo_tmhm[] = {
+    "WHIRLWIND", "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "RAGE", "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE",
+    "SKULL_BASH", "SKY_ATTACK", "REST", "TRI_ATTACK", "SUBSTITUTE",
+    "FLY", NULL
+};
+static const char *dodrio_tmhm[] = {
+    "WHIRLWIND", "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "HYPER_BEAM", "RAGE", "MIMIC", "DOUBLE_TEAM", "REFLECT",
+    "BIDE", "SKULL_BASH", "SKY_ATTACK", "REST", "TRI_ATTACK",
+    "SUBSTITUTE", "FLY", NULL
+};
+static const char *seel_tmhm[] = {
+    "TOXIC", "HORN_DRILL", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD", "PAY_DAY",
+    "RAGE", "MIMIC", "DOUBLE_TEAM", "BIDE", "SKULL_BASH",
+    "REST", "SUBSTITUTE", "SURF", "STRENGTH", NULL
+};
+static const char *dewgong_tmhm[] = {
+    "TOXIC", "HORN_DRILL", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD", "HYPER_BEAM",
+    "PAY_DAY", "RAGE", "MIMIC", "DOUBLE_TEAM", "BIDE",
+    "SKULL_BASH", "REST", "SUBSTITUTE", "SURF", "STRENGTH",
+    NULL
+};
+static const char *grimer_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "RAGE", "MEGA_DRAIN", "THUNDERBOLT",
+    "THUNDER", "MIMIC", "DOUBLE_TEAM", "BIDE", "SELFDESTRUCT",
+    "FIRE_BLAST", "REST", "EXPLOSION", "SUBSTITUTE", NULL
+};
+static const char *muk_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "HYPER_BEAM", "RAGE", "MEGA_DRAIN",
+    "THUNDERBOLT", "THUNDER", "MIMIC", "DOUBLE_TEAM", "BIDE",
+    "SELFDESTRUCT", "FIRE_BLAST", "REST", "EXPLOSION", "SUBSTITUTE",
+    NULL
+};
+static const char *shellder_tmhm[] = {
+    "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN",
+    "ICE_BEAM", "BLIZZARD", "RAGE", "TELEPORT", "MIMIC",
+    "DOUBLE_TEAM", "REFLECT", "BIDE", "SELFDESTRUCT", "SWIFT",
+    "REST", "EXPLOSION", "TRI_ATTACK", "SUBSTITUTE", "SURF",
+    NULL
+};
+static const char *cloyster_tmhm[] = {
+    "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN",
+    "ICE_BEAM", "BLIZZARD", "HYPER_BEAM", "RAGE", "TELEPORT",
+    "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE", "SELFDESTRUCT",
+    "SWIFT", "REST", "EXPLOSION", "TRI_ATTACK", "SUBSTITUTE",
+    "SURF", NULL
+};
+static const char *gastly_tmhm[] = {
+    "TOXIC", "RAGE", "MEGA_DRAIN", "THUNDERBOLT", "THUNDER",
+    "PSYCHIC_M", "MIMIC", "DOUBLE_TEAM", "BIDE", "SELFDESTRUCT",
+    "DREAM_EATER", "REST", "PSYWAVE", "EXPLOSION", "SUBSTITUTE",
+    NULL
+};
+static const char *haunter_tmhm[] = {
+    "TOXIC", "RAGE", "MEGA_DRAIN", "THUNDERBOLT", "THUNDER",
+    "PSYCHIC_M", "MIMIC", "DOUBLE_TEAM", "BIDE", "SELFDESTRUCT",
+    "DREAM_EATER", "REST", "PSYWAVE", "EXPLOSION", "SUBSTITUTE",
+    NULL
+};
+static const char *gengar_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "HYPER_BEAM", "SUBMISSION", "COUNTER", "SEISMIC_TOSS",
+    "RAGE", "MEGA_DRAIN", "THUNDERBOLT", "THUNDER", "PSYCHIC_M",
+    "MIMIC", "DOUBLE_TEAM", "BIDE", "METRONOME", "SELFDESTRUCT",
+    "SKULL_BASH", "DREAM_EATER", "REST", "PSYWAVE", "EXPLOSION",
+    "SUBSTITUTE", "STRENGTH", NULL
+};
+static const char *onix_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "RAGE",
+    "EARTHQUAKE", "FISSURE", "DIG", "MIMIC", "DOUBLE_TEAM",
+    "BIDE", "SELFDESTRUCT", "SKULL_BASH", "REST", "EXPLOSION",
+    "ROCK_SLIDE", "SUBSTITUTE", "STRENGTH", NULL
+};
+static const char *drowzee_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE",
+    "PSYCHIC_M", "TELEPORT", "MIMIC", "DOUBLE_TEAM", "REFLECT",
+    "BIDE", "METRONOME", "SKULL_BASH", "DREAM_EATER", "REST",
+    "THUNDER_WAVE", "PSYWAVE", "TRI_ATTACK", "SUBSTITUTE", "FLASH",
+    NULL
+};
+static const char *hypno_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "HYPER_BEAM", "SUBMISSION", "COUNTER", "SEISMIC_TOSS",
+    "RAGE", "PSYCHIC_M", "TELEPORT", "MIMIC", "DOUBLE_TEAM",
+    "REFLECT", "BIDE", "METRONOME", "SKULL_BASH", "DREAM_EATER",
+    "REST", "THUNDER_WAVE", "PSYWAVE", "TRI_ATTACK", "SUBSTITUTE",
+    "FLASH", NULL
+};
+static const char *krabby_tmhm[] = {
+    "SWORDS_DANCE", "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD", "RAGE",
+    "MIMIC", "DOUBLE_TEAM", "BIDE", "REST", "SUBSTITUTE",
+    "CUT", "SURF", "STRENGTH", NULL
+};
+static const char *kingler_tmhm[] = {
+    "SWORDS_DANCE", "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD", "HYPER_BEAM",
+    "RAGE", "MIMIC", "DOUBLE_TEAM", "BIDE", "REST",
+    "SUBSTITUTE", "CUT", "SURF", "STRENGTH", NULL
+};
+static const char *voltorb_tmhm[] = {
+    "TOXIC", "TAKE_DOWN", "RAGE", "THUNDERBOLT", "THUNDER",
+    "TELEPORT", "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE",
+    "SELFDESTRUCT", "SWIFT", "REST", "THUNDER_WAVE", "EXPLOSION",
+    "SUBSTITUTE", "FLASH", NULL
+};
+static const char *electrode_tmhm[] = {
+    "TOXIC", "TAKE_DOWN", "HYPER_BEAM", "RAGE", "THUNDERBOLT",
+    "THUNDER", "TELEPORT", "MIMIC", "DOUBLE_TEAM", "REFLECT",
+    "BIDE", "SELFDESTRUCT", "SWIFT", "SKULL_BASH", "REST",
+    "THUNDER_WAVE", "EXPLOSION", "SUBSTITUTE", "FLASH", NULL
+};
+static const char *exeggcute_tmhm[] = {
+    "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE", "RAGE", "PSYCHIC_M",
+    "TELEPORT", "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE",
+    "SELFDESTRUCT", "EGG_BOMB", "REST", "PSYWAVE", "EXPLOSION",
+    "SUBSTITUTE", NULL
+};
+static const char *exeggutor_tmhm[] = {
+    "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE", "HYPER_BEAM", "RAGE",
+    "MEGA_DRAIN", "SOLARBEAM", "PSYCHIC_M", "TELEPORT", "MIMIC",
+    "DOUBLE_TEAM", "REFLECT", "BIDE", "SELFDESTRUCT", "EGG_BOMB",
+    "REST", "PSYWAVE", "EXPLOSION", "SUBSTITUTE", "STRENGTH",
+    NULL
+};
+static const char *cubone_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD",
+    "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE", "EARTHQUAKE",
+    "FISSURE", "DIG", "MIMIC", "DOUBLE_TEAM", "BIDE",
+    "FIRE_BLAST", "SKULL_BASH", "REST", "SUBSTITUTE", "STRENGTH",
+    NULL
+};
+static const char *marowak_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD",
+    "HYPER_BEAM", "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE",
+    "EARTHQUAKE", "FISSURE", "DIG", "MIMIC", "DOUBLE_TEAM",
+    "BIDE", "FIRE_BLAST", "SKULL_BASH", "REST", "SUBSTITUTE",
+    "STRENGTH", NULL
+};
+static const char *hitmonlee_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE",
+    "MIMIC", "DOUBLE_TEAM", "BIDE", "METRONOME", "SWIFT",
+    "SKULL_BASH", "REST", "SUBSTITUTE", "STRENGTH", NULL
+};
+static const char *hitmonchan_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE",
+    "MIMIC", "DOUBLE_TEAM", "BIDE", "METRONOME", "SWIFT",
+    "SKULL_BASH", "REST", "SUBSTITUTE", "STRENGTH", NULL
+};
+static const char *lickitung_tmhm[] = {
+    "MEGA_PUNCH", "SWORDS_DANCE", "MEGA_KICK", "TOXIC", "BODY_SLAM",
+    "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM",
+    "BLIZZARD", "HYPER_BEAM", "SUBMISSION", "COUNTER", "SEISMIC_TOSS",
+    "RAGE", "THUNDERBOLT", "THUNDER", "EARTHQUAKE", "FISSURE",
+    "MIMIC", "DOUBLE_TEAM", "BIDE", "FIRE_BLAST", "SKULL_BASH",
+    "REST", "SUBSTITUTE", "CUT", "SURF", "STRENGTH",
+    NULL
+};
+static const char *koffing_tmhm[] = {
+    "TOXIC", "RAGE", "THUNDERBOLT", "THUNDER", "MIMIC",
+    "DOUBLE_TEAM", "BIDE", "SELFDESTRUCT", "FIRE_BLAST", "REST",
+    "EXPLOSION", "SUBSTITUTE", NULL
+};
+static const char *weezing_tmhm[] = {
+    "TOXIC", "HYPER_BEAM", "RAGE", "THUNDERBOLT", "THUNDER",
+    "MIMIC", "DOUBLE_TEAM", "BIDE", "SELFDESTRUCT", "FIRE_BLAST",
+    "REST", "EXPLOSION", "SUBSTITUTE", NULL
+};
+static const char *rhyhorn_tmhm[] = {
+    "TOXIC", "HORN_DRILL", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "RAGE", "THUNDERBOLT", "THUNDER", "EARTHQUAKE", "FISSURE",
+    "DIG", "MIMIC", "DOUBLE_TEAM", "BIDE", "FIRE_BLAST",
+    "SKULL_BASH", "REST", "ROCK_SLIDE", "SUBSTITUTE", "STRENGTH",
+    NULL
+};
+static const char *rhydon_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "HORN_DRILL", "BODY_SLAM",
+    "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM",
+    "BLIZZARD", "HYPER_BEAM", "PAY_DAY", "SUBMISSION", "COUNTER",
+    "SEISMIC_TOSS", "RAGE", "THUNDERBOLT", "THUNDER", "EARTHQUAKE",
+    "FISSURE", "DIG", "MIMIC", "DOUBLE_TEAM", "BIDE",
+    "FIRE_BLAST", "SKULL_BASH", "REST", "ROCK_SLIDE", "SUBSTITUTE",
+    "SURF", "STRENGTH", NULL
+};
+static const char *chansey_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD",
+    "HYPER_BEAM", "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE",
+    "SOLARBEAM", "THUNDERBOLT", "THUNDER", "PSYCHIC_M", "TELEPORT",
+    "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE", "METRONOME",
+    "EGG_BOMB", "FIRE_BLAST", "SKULL_BASH", "SOFTBOILED", "REST",
+    "THUNDER_WAVE", "PSYWAVE", "TRI_ATTACK", "SUBSTITUTE", "STRENGTH",
+    "FLASH", NULL
+};
+static const char *tangela_tmhm[] = {
+    "SWORDS_DANCE", "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "HYPER_BEAM", "RAGE", "MEGA_DRAIN", "SOLARBEAM", "MIMIC",
+    "DOUBLE_TEAM", "BIDE", "SKULL_BASH", "REST", "SUBSTITUTE",
+    "CUT", NULL
+};
+static const char *kangaskhan_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD",
+    "HYPER_BEAM", "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE",
+    "THUNDERBOLT", "THUNDER", "EARTHQUAKE", "FISSURE", "MIMIC",
+    "DOUBLE_TEAM", "BIDE", "FIRE_BLAST", "SKULL_BASH", "REST",
+    "ROCK_SLIDE", "SUBSTITUTE", "SURF", "STRENGTH", NULL
+};
+static const char *horsea_tmhm[] = {
+    "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN",
+    "ICE_BEAM", "BLIZZARD", "RAGE", "MIMIC", "DOUBLE_TEAM",
+    "BIDE", "SWIFT", "SKULL_BASH", "REST", "SUBSTITUTE",
+    "SURF", NULL
+};
+static const char *seadra_tmhm[] = {
+    "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN",
+    "ICE_BEAM", "BLIZZARD", "HYPER_BEAM", "RAGE", "MIMIC",
+    "DOUBLE_TEAM", "BIDE", "SWIFT", "SKULL_BASH", "REST",
+    "SUBSTITUTE", "SURF", NULL
+};
+static const char *goldeen_tmhm[] = {
+    "TOXIC", "HORN_DRILL", "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM",
+    "WATER_GUN", "ICE_BEAM", "BLIZZARD", "RAGE", "MIMIC",
+    "DOUBLE_TEAM", "BIDE", "SWIFT", "SKULL_BASH", "REST",
+    "SUBSTITUTE", "SURF", NULL
+};
+static const char *seaking_tmhm[] = {
+    "TOXIC", "HORN_DRILL", "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM",
+    "WATER_GUN", "ICE_BEAM", "BLIZZARD", "HYPER_BEAM", "RAGE",
+    "MIMIC", "DOUBLE_TEAM", "BIDE", "SWIFT", "SKULL_BASH",
+    "REST", "SUBSTITUTE", "SURF", NULL
+};
+static const char *staryu_tmhm[] = {
+    "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN",
+    "ICE_BEAM", "BLIZZARD", "RAGE", "THUNDERBOLT", "THUNDER",
+    "PSYCHIC_M", "TELEPORT", "MIMIC", "DOUBLE_TEAM", "REFLECT",
+    "BIDE", "SWIFT", "SKULL_BASH", "REST", "THUNDER_WAVE",
+    "PSYWAVE", "TRI_ATTACK", "SUBSTITUTE", "SURF", "FLASH",
+    NULL
+};
+static const char *starmie_tmhm[] = {
+    "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN",
+    "ICE_BEAM", "BLIZZARD", "HYPER_BEAM", "RAGE", "THUNDERBOLT",
+    "THUNDER", "PSYCHIC_M", "TELEPORT", "MIMIC", "DOUBLE_TEAM",
+    "REFLECT", "BIDE", "SWIFT", "SKULL_BASH", "REST",
+    "THUNDER_WAVE", "PSYWAVE", "TRI_ATTACK", "SUBSTITUTE", "SURF",
+    "FLASH", NULL
+};
+static const char *mrmime_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "HYPER_BEAM", "SUBMISSION", "COUNTER", "SEISMIC_TOSS",
+    "RAGE", "SOLARBEAM", "THUNDERBOLT", "THUNDER", "PSYCHIC_M",
+    "TELEPORT", "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE",
+    "METRONOME", "SKULL_BASH", "REST", "THUNDER_WAVE", "PSYWAVE",
+    "SUBSTITUTE", "FLASH", NULL
+};
+static const char *scyther_tmhm[] = {
+    "SWORDS_DANCE", "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE", "HYPER_BEAM",
+    "RAGE", "MIMIC", "DOUBLE_TEAM", "BIDE", "SWIFT",
+    "SKULL_BASH", "REST", "SUBSTITUTE", "CUT", NULL
+};
+static const char *jynx_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD",
+    "HYPER_BEAM", "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE",
+    "PSYCHIC_M", "TELEPORT", "MIMIC", "DOUBLE_TEAM", "REFLECT",
+    "BIDE", "METRONOME", "SKULL_BASH", "REST", "PSYWAVE",
+    "SUBSTITUTE", NULL
+};
+static const char *electabuzz_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "HYPER_BEAM", "SUBMISSION", "COUNTER", "SEISMIC_TOSS",
+    "RAGE", "THUNDERBOLT", "THUNDER", "PSYCHIC_M", "TELEPORT",
+    "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE", "METRONOME",
+    "SWIFT", "SKULL_BASH", "REST", "THUNDER_WAVE", "PSYWAVE",
+    "SUBSTITUTE", "STRENGTH", "FLASH", NULL
+};
+static const char *magmar_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "HYPER_BEAM", "SUBMISSION", "COUNTER", "SEISMIC_TOSS",
+    "RAGE", "PSYCHIC_M", "TELEPORT", "MIMIC", "DOUBLE_TEAM",
+    "BIDE", "METRONOME", "FIRE_BLAST", "SKULL_BASH", "REST",
+    "PSYWAVE", "SUBSTITUTE", "STRENGTH", NULL
+};
+static const char *pinsir_tmhm[] = {
+    "SWORDS_DANCE", "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "HYPER_BEAM", "SUBMISSION", "SEISMIC_TOSS", "RAGE", "MIMIC",
+    "DOUBLE_TEAM", "BIDE", "REST", "SUBSTITUTE", "CUT",
+    "STRENGTH", NULL
+};
+static const char *tauros_tmhm[] = {
+    "TOXIC", "HORN_DRILL", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "ICE_BEAM", "BLIZZARD", "HYPER_BEAM", "RAGE", "THUNDERBOLT",
+    "THUNDER", "EARTHQUAKE", "FISSURE", "MIMIC", "DOUBLE_TEAM",
+    "BIDE", "FIRE_BLAST", "SKULL_BASH", "REST", "SUBSTITUTE",
+    "STRENGTH", NULL
+};
+static const char *magikarp_tmhm[] = { NULL };
+static const char *gyarados_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM",
+    "WATER_GUN", "ICE_BEAM", "BLIZZARD", "HYPER_BEAM", "RAGE",
+    "DRAGON_RAGE", "THUNDERBOLT", "THUNDER", "MIMIC", "DOUBLE_TEAM",
+    "REFLECT", "BIDE", "FIRE_BLAST", "SKULL_BASH", "REST",
+    "SUBSTITUTE", "SURF", "STRENGTH", NULL
+};
+static const char *lapras_tmhm[] = {
+    "TOXIC", "HORN_DRILL", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD", "HYPER_BEAM",
+    "RAGE", "SOLARBEAM", "DRAGON_RAGE", "THUNDERBOLT", "THUNDER",
+    "PSYCHIC_M", "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE",
+    "SKULL_BASH", "REST", "PSYWAVE", "SUBSTITUTE", "SURF",
+    "STRENGTH", NULL
+};
+static const char *ditto_tmhm[] = { NULL };
+static const char *eevee_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "RAGE",
+    "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE", "SWIFT",
+    "SKULL_BASH", "REST", "SUBSTITUTE", NULL
+};
+static const char *vaporeon_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM",
+    "WATER_GUN", "ICE_BEAM", "BLIZZARD", "HYPER_BEAM", "RAGE",
+    "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE", "SWIFT",
+    "SKULL_BASH", "REST", "SUBSTITUTE", "SURF", NULL
+};
+static const char *jolteon_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "HYPER_BEAM",
+    "RAGE", "THUNDERBOLT", "THUNDER", "MIMIC", "DOUBLE_TEAM",
+    "REFLECT", "BIDE", "SWIFT", "SKULL_BASH", "REST",
+    "THUNDER_WAVE", "SUBSTITUTE", "FLASH", NULL
+};
+static const char *flareon_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "HYPER_BEAM",
+    "RAGE", "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE",
+    "FIRE_BLAST", "SWIFT", "SKULL_BASH", "REST", "SUBSTITUTE",
+    NULL
+};
+static const char *porygon_tmhm[] = {
+    "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE", "ICE_BEAM", "BLIZZARD",
+    "HYPER_BEAM", "RAGE", "THUNDERBOLT", "THUNDER", "PSYCHIC_M",
+    "TELEPORT", "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE",
+    "SWIFT", "SKULL_BASH", "REST", "THUNDER_WAVE", "PSYWAVE",
+    "TRI_ATTACK", "SUBSTITUTE", "FLASH", NULL
+};
+static const char *omanyte_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM",
+    "WATER_GUN", "ICE_BEAM", "BLIZZARD", "RAGE", "MIMIC",
+    "DOUBLE_TEAM", "REFLECT", "BIDE", "REST", "SUBSTITUTE",
+    "SURF", NULL
+};
+static const char *omastar_tmhm[] = {
+    "TOXIC", "HORN_DRILL", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD", "HYPER_BEAM",
+    "SUBMISSION", "SEISMIC_TOSS", "RAGE", "MIMIC", "DOUBLE_TEAM",
+    "REFLECT", "BIDE", "SKULL_BASH", "REST", "SUBSTITUTE",
+    "SURF", NULL
+};
+static const char *kabuto_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM",
+    "WATER_GUN", "ICE_BEAM", "BLIZZARD", "RAGE", "MIMIC",
+    "DOUBLE_TEAM", "REFLECT", "BIDE", "REST", "SUBSTITUTE",
+    "SURF", NULL
+};
+static const char *kabutops_tmhm[] = {
+    "RAZOR_WIND", "SWORDS_DANCE", "MEGA_KICK", "TOXIC", "BODY_SLAM",
+    "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM",
+    "BLIZZARD", "HYPER_BEAM", "SUBMISSION", "SEISMIC_TOSS", "RAGE",
+    "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE", "SKULL_BASH",
+    "REST", "SUBSTITUTE", "SURF", NULL
+};
+static const char *aerodactyl_tmhm[] = {
+    "RAZOR_WIND", "WHIRLWIND", "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE",
+    "HYPER_BEAM", "RAGE", "DRAGON_RAGE", "MIMIC", "DOUBLE_TEAM",
+    "REFLECT", "BIDE", "FIRE_BLAST", "SWIFT", "SKY_ATTACK",
+    "REST", "SUBSTITUTE", "FLY", NULL
+};
+static const char *snorlax_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD",
+    "HYPER_BEAM", "PAY_DAY", "SUBMISSION", "COUNTER", "SEISMIC_TOSS",
+    "RAGE", "SOLARBEAM", "THUNDERBOLT", "THUNDER", "EARTHQUAKE",
+    "FISSURE", "PSYCHIC_M", "MIMIC", "DOUBLE_TEAM", "REFLECT",
+    "BIDE", "METRONOME", "SELFDESTRUCT", "FIRE_BLAST", "SKULL_BASH",
+    "REST", "PSYWAVE", "ROCK_SLIDE", "SUBSTITUTE", "SURF",
+    "STRENGTH", NULL
+};
+static const char *articuno_tmhm[] = {
+    "RAZOR_WIND", "WHIRLWIND", "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE",
+    "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD", "HYPER_BEAM",
+    "RAGE", "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE",
+    "SWIFT", "SKY_ATTACK", "REST", "SUBSTITUTE", "FLY",
+    NULL
+};
+static const char *zapdos_tmhm[] = {
+    "RAZOR_WIND", "WHIRLWIND", "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE",
+    "HYPER_BEAM", "RAGE", "THUNDERBOLT", "THUNDER", "MIMIC",
+    "DOUBLE_TEAM", "REFLECT", "BIDE", "SWIFT", "SKY_ATTACK",
+    "REST", "THUNDER_WAVE", "SUBSTITUTE", "FLY", "FLASH",
+    NULL
+};
+static const char *moltres_tmhm[] = {
+    "RAZOR_WIND", "WHIRLWIND", "TOXIC", "TAKE_DOWN", "DOUBLE_EDGE",
+    "HYPER_BEAM", "RAGE", "MIMIC", "DOUBLE_TEAM", "REFLECT",
+    "BIDE", "FIRE_BLAST", "SWIFT", "SKY_ATTACK", "REST",
+    "SUBSTITUTE", "FLY", NULL
+};
+static const char *dratini_tmhm[] = {
+    "TOXIC", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE", "BUBBLEBEAM",
+    "WATER_GUN", "ICE_BEAM", "BLIZZARD", "RAGE", "DRAGON_RAGE",
+    "THUNDERBOLT", "THUNDER", "MIMIC", "DOUBLE_TEAM", "REFLECT",
+    "BIDE", "FIRE_BLAST", "SWIFT", "SKULL_BASH", "REST",
+    "THUNDER_WAVE", "SUBSTITUTE", "SURF", NULL
+};
+static const char *dragonair_tmhm[] = {
+    "TOXIC", "HORN_DRILL", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD", "RAGE",
+    "DRAGON_RAGE", "THUNDERBOLT", "THUNDER", "MIMIC", "DOUBLE_TEAM",
+    "REFLECT", "BIDE", "FIRE_BLAST", "SWIFT", "SKULL_BASH",
+    "REST", "THUNDER_WAVE", "SUBSTITUTE", "SURF", NULL
+};
+static const char *dragonite_tmhm[] = {
+    "RAZOR_WIND", "TOXIC", "HORN_DRILL", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD",
+    "HYPER_BEAM", "RAGE", "DRAGON_RAGE", "THUNDERBOLT", "THUNDER",
+    "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE", "FIRE_BLAST",
+    "SWIFT", "SKULL_BASH", "REST", "THUNDER_WAVE", "SUBSTITUTE",
+    "SURF", "STRENGTH", NULL
+};
+static const char *mewtwo_tmhm[] = {
+    "MEGA_PUNCH", "MEGA_KICK", "TOXIC", "BODY_SLAM", "TAKE_DOWN",
+    "DOUBLE_EDGE", "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD",
+    "HYPER_BEAM", "PAY_DAY", "SUBMISSION", "COUNTER", "SEISMIC_TOSS",
+    "RAGE", "SOLARBEAM", "THUNDERBOLT", "THUNDER", "PSYCHIC_M",
+    "TELEPORT", "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE",
+    "METRONOME", "SELFDESTRUCT", "FIRE_BLAST", "SKULL_BASH", "REST",
+    "THUNDER_WAVE", "PSYWAVE", "TRI_ATTACK", "SUBSTITUTE", "STRENGTH",
+    "FLASH", NULL
+};
+static const char *mew_tmhm[] = {
+    "MEGA_PUNCH", "RAZOR_WIND", "SWORDS_DANCE", "WHIRLWIND", "MEGA_KICK",
+    "TOXIC", "HORN_DRILL", "BODY_SLAM", "TAKE_DOWN", "DOUBLE_EDGE",
+    "BUBBLEBEAM", "WATER_GUN", "ICE_BEAM", "BLIZZARD", "HYPER_BEAM",
+    "PAY_DAY", "SUBMISSION", "COUNTER", "SEISMIC_TOSS", "RAGE",
+    "MEGA_DRAIN", "SOLARBEAM", "DRAGON_RAGE", "THUNDERBOLT", "THUNDER",
+    "EARTHQUAKE", "FISSURE", "DIG", "PSYCHIC_M", "TELEPORT",
+    "MIMIC", "DOUBLE_TEAM", "REFLECT", "BIDE", "METRONOME",
+    "SELFDESTRUCT", "EGG_BOMB", "FIRE_BLAST", "SWIFT", "SKULL_BASH",
+    "SOFTBOILED", "DREAM_EATER", "SKY_ATTACK", "REST", "THUNDER_WAVE",
+    "PSYWAVE", "EXPLOSION", "ROCK_SLIDE", "TRI_ATTACK", "SUBSTITUTE",
+    "CUT", "FLY", "SURF", "STRENGTH", "FLASH",
+    "UNUSED", NULL
+};
+
+const BaseStats base_stats[] = {
+    { DEX_BULBASAUR,  45,  49,  49,  45,  65,
+      GRASS, POISON, 45, 64,
+      "bulbasaur", "Bulbasaur",
+      TACKLE, GROWL, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, bulbasaur_tmhm, 0 },
+    { DEX_IVYSAUR,  60,  62,  63,  60,  80,
+      GRASS, POISON, 45, 141,
+      "ivysaur", "Ivysaur",
+      TACKLE, GROWL, LEECH_SEED, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, ivysaur_tmhm, 0 },
+    { DEX_VENUSAUR,  80,  82,  83,  80, 100,
+      GRASS, POISON, 45, 208,
+      "venusaur", "Venusaur",
+      TACKLE, GROWL, LEECH_SEED, VINE_WHIP,
+      GROWTH_MEDIUM_SLOW, venusaur_tmhm, 0 },
+    { DEX_CHARMANDER,  39,  52,  43,  65,  50,
+      FIRE, FIRE, 45, 65,
+      "charmander", "Charmander",
+      SCRATCH, GROWL, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, charmander_tmhm, 0 },
+    { DEX_CHARMELEON,  58,  64,  58,  80,  65,
+      FIRE, FIRE, 45, 142,
+      "charmeleon", "Charmeleon",
+      SCRATCH, GROWL, EMBER, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, charmeleon_tmhm, 0 },
+    { DEX_CHARIZARD,  78,  84,  78, 100,  85,
+      FIRE, FLYING, 45, 209,
+      "charizard", "Charizard",
+      SCRATCH, GROWL, EMBER, LEER,
+      GROWTH_MEDIUM_SLOW, charizard_tmhm, 0 },
+    { DEX_SQUIRTLE,  44,  48,  65,  43,  50,
+      WATER, WATER, 45, 66,
+      "squirtle", "Squirtle",
+      TACKLE, TAIL_WHIP, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, squirtle_tmhm, 0 },
+    { DEX_WARTORTLE,  59,  63,  80,  58,  65,
+      WATER, WATER, 45, 143,
+      "wartortle", "Wartortle",
+      TACKLE, TAIL_WHIP, BUBBLE, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, wartortle_tmhm, 0 },
+    { DEX_BLASTOISE,  79,  83, 100,  78,  85,
+      WATER, WATER, 45, 210,
+      "blastoise", "Blastoise",
+      TACKLE, TAIL_WHIP, BUBBLE, WATER_GUN,
+      GROWTH_MEDIUM_SLOW, blastoise_tmhm, 0 },
+    { DEX_CATERPIE,  45,  30,  35,  45,  20,
+      BUG, BUG, 255, 53,
+      "caterpie", "Caterpie",
+      TACKLE, STRING_SHOT, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, caterpie_tmhm, 0 },
+    { DEX_METAPOD,  50,  20,  55,  30,  25,
+      BUG, BUG, 120, 72,
+      "metapod", "Metapod",
+      HARDEN, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, metapod_tmhm, 0 },
+    { DEX_BUTTERFREE,  60,  45,  50,  70,  80,
+      BUG, FLYING, 45, 160,
+      "butterfree", "Butterfree",
+      CONFUSION, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, butterfree_tmhm, 0 },
+    { DEX_WEEDLE,  40,  35,  30,  50,  20,
+      BUG, POISON, 255, 52,
+      "weedle", "Weedle",
+      POISON_STING, STRING_SHOT, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, weedle_tmhm, 0 },
+    { DEX_KAKUNA,  45,  25,  50,  35,  25,
+      BUG, POISON, 120, 71,
+      "kakuna", "Kakuna",
+      HARDEN, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, kakuna_tmhm, 0 },
+    { DEX_BEEDRILL,  65,  80,  40,  75,  45,
+      BUG, POISON, 45, 159,
+      "beedrill", "Beedrill",
+      FURY_ATTACK, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, beedrill_tmhm, 0 },
+    { DEX_PIDGEY,  40,  45,  40,  56,  35,
+      NORMAL, FLYING, 255, 55,
+      "pidgey", "Pidgey",
+      GUST, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, pidgey_tmhm, 0 },
+    { DEX_PIDGEOTTO,  63,  60,  55,  71,  50,
+      NORMAL, FLYING, 120, 113,
+      "pidgeotto", "Pidgeotto",
+      GUST, SAND_ATTACK, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, pidgeotto_tmhm, 0 },
+    { DEX_PIDGEOT,  83,  80,  75,  91,  70,
+      NORMAL, FLYING, 45, 172,
+      "pidgeot", "Pidgeot",
+      GUST, SAND_ATTACK, QUICK_ATTACK, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, pidgeot_tmhm, 0 },
+    { DEX_RATTATA,  30,  56,  35,  72,  25,
+      NORMAL, NORMAL, 255, 57,
+      "rattata", "Rattata",
+      TACKLE, TAIL_WHIP, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, rattata_tmhm, 0 },
+    { DEX_RATICATE,  55,  81,  60,  97,  50,
+      NORMAL, NORMAL, 90, 116,
+      "raticate", "Raticate",
+      TACKLE, TAIL_WHIP, QUICK_ATTACK, NO_MOVE,
+      GROWTH_MEDIUM_FAST, raticate_tmhm, 0 },
+    { DEX_SPEAROW,  40,  60,  30,  70,  31,
+      NORMAL, FLYING, 255, 58,
+      "spearow", "Spearow",
+      PECK, GROWL, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, spearow_tmhm, 0 },
+    { DEX_FEAROW,  65,  90,  65, 100,  61,
+      NORMAL, FLYING, 90, 162,
+      "fearow", "Fearow",
+      PECK, GROWL, LEER, NO_MOVE,
+      GROWTH_MEDIUM_FAST, fearow_tmhm, 0 },
+    { DEX_EKANS,  35,  60,  44,  55,  40,
+      POISON, POISON, 255, 62,
+      "ekans", "Ekans",
+      WRAP, LEER, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, ekans_tmhm, 0 },
+    { DEX_ARBOK,  60,  85,  69,  80,  65,
+      POISON, POISON, 90, 147,
+      "arbok", "Arbok",
+      WRAP, LEER, POISON_STING, NO_MOVE,
+      GROWTH_MEDIUM_FAST, arbok_tmhm, 0 },
+    { DEX_PIKACHU,  35,  55,  30,  90,  50,
+      ELECTRIC, ELECTRIC, 190, 82,
+      "pikachu", "Pikachu",
+      THUNDERSHOCK, GROWL, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, pikachu_tmhm, 0 },
+    { DEX_RAICHU,  60,  90,  55, 100,  90,
+      ELECTRIC, ELECTRIC, 75, 122,
+      "raichu", "Raichu",
+      THUNDERSHOCK, GROWL, THUNDER_WAVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, raichu_tmhm, 0 },
+    { DEX_SANDSHREW,  50,  75,  85,  40,  30,
+      GROUND, GROUND, 255, 93,
+      "sandshrew", "Sandshrew",
+      SCRATCH, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, sandshrew_tmhm, 0 },
+    { DEX_SANDSLASH,  75, 100, 110,  65,  55,
+      GROUND, GROUND, 90, 163,
+      "sandslash", "Sandslash",
+      SCRATCH, SAND_ATTACK, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, sandslash_tmhm, 0 },
+    { DEX_NIDORAN_F,  55,  47,  52,  41,  40,
+      POISON, POISON, 235, 59,
+      "nidoranf", "NidoranF",
+      GROWL, TACKLE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, nidoranf_tmhm, 0 },
+    { DEX_NIDORINA,  70,  62,  67,  56,  55,
+      POISON, POISON, 120, 117,
+      "nidorina", "Nidorina",
+      GROWL, TACKLE, SCRATCH, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, nidorina_tmhm, 0 },
+    { DEX_NIDOQUEEN,  90,  82,  87,  76,  75,
+      POISON, GROUND, 45, 194,
+      "nidoqueen", "Nidoqueen",
+      TACKLE, SCRATCH, TAIL_WHIP, BODY_SLAM,
+      GROWTH_MEDIUM_SLOW, nidoqueen_tmhm, 0 },
+    { DEX_NIDORAN_M,  46,  57,  40,  50,  40,
+      POISON, POISON, 235, 60,
+      "nidoranm", "NidoranM",
+      LEER, TACKLE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, nidoranm_tmhm, 0 },
+    { DEX_NIDORINO,  61,  72,  57,  65,  55,
+      POISON, POISON, 120, 118,
+      "nidorino", "Nidorino",
+      LEER, TACKLE, HORN_ATTACK, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, nidorino_tmhm, 0 },
+    { DEX_NIDOKING,  81,  92,  77,  85,  75,
+      POISON, GROUND, 45, 195,
+      "nidoking", "Nidoking",
+      TACKLE, HORN_ATTACK, POISON_STING, THRASH,
+      GROWTH_MEDIUM_SLOW, nidoking_tmhm, 0 },
+    { DEX_CLEFAIRY,  70,  45,  48,  35,  60,
+      NORMAL, NORMAL, 150, 68,
+      "clefairy", "Clefairy",
+      POUND, GROWL, NO_MOVE, NO_MOVE,
+      GROWTH_FAST, clefairy_tmhm, 0 },
+    { DEX_CLEFABLE,  95,  70,  73,  60,  85,
+      NORMAL, NORMAL, 25, 129,
+      "clefable", "Clefable",
+      SING, DOUBLESLAP, MINIMIZE, METRONOME,
+      GROWTH_FAST, clefable_tmhm, 0 },
+    { DEX_VULPIX,  38,  41,  40,  65,  65,
+      FIRE, FIRE, 190, 63,
+      "vulpix", "Vulpix",
+      EMBER, TAIL_WHIP, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, vulpix_tmhm, 0 },
+    { DEX_NINETALES,  73,  76,  75, 100, 100,
+      FIRE, FIRE, 75, 178,
+      "ninetales", "Ninetales",
+      EMBER, TAIL_WHIP, QUICK_ATTACK, ROAR,
+      GROWTH_MEDIUM_FAST, ninetales_tmhm, 0 },
+    { DEX_JIGGLYPUFF, 115,  45,  20,  20,  25,
+      NORMAL, NORMAL, 170, 76,
+      "jigglypuff", "Jigglypuff",
+      SING, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_FAST, jigglypuff_tmhm, 0 },
+    { DEX_WIGGLYTUFF, 140,  70,  45,  45,  50,
+      NORMAL, NORMAL, 50, 109,
+      "wigglytuff", "Wigglytuff",
+      SING, DISABLE, DEFENSE_CURL, DOUBLESLAP,
+      GROWTH_FAST, wigglytuff_tmhm, 0 },
+    { DEX_ZUBAT,  40,  45,  35,  55,  40,
+      POISON, FLYING, 255, 54,
+      "zubat", "Zubat",
+      LEECH_LIFE, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, zubat_tmhm, 0 },
+    { DEX_GOLBAT,  75,  80,  70,  90,  75,
+      POISON, FLYING, 90, 171,
+      "golbat", "Golbat",
+      LEECH_LIFE, SCREECH, BITE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, golbat_tmhm, 0 },
+    { DEX_ODDISH,  45,  50,  55,  30,  75,
+      GRASS, POISON, 255, 78,
+      "oddish", "Oddish",
+      ABSORB, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, oddish_tmhm, 0 },
+    { DEX_GLOOM,  60,  65,  70,  40,  85,
+      GRASS, POISON, 120, 132,
+      "gloom", "Gloom",
+      ABSORB, POISONPOWDER, STUN_SPORE, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, gloom_tmhm, 0 },
+    { DEX_VILEPLUME,  75,  80,  85,  50, 100,
+      GRASS, POISON, 45, 184,
+      "vileplume", "Vileplume",
+      STUN_SPORE, SLEEP_POWDER, ACID, PETAL_DANCE,
+      GROWTH_MEDIUM_SLOW, vileplume_tmhm, 0 },
+    { DEX_PARAS,  35,  70,  55,  25,  55,
+      BUG, GRASS, 190, 70,
+      "paras", "Paras",
+      SCRATCH, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, paras_tmhm, 0 },
+    { DEX_PARASECT,  60,  95,  80,  30,  80,
+      BUG, GRASS, 75, 128,
+      "parasect", "Parasect",
+      SCRATCH, STUN_SPORE, LEECH_LIFE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, parasect_tmhm, 0 },
+    { DEX_VENONAT,  60,  55,  50,  45,  40,
+      BUG, POISON, 190, 75,
+      "venonat", "Venonat",
+      TACKLE, DISABLE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, venonat_tmhm, 0 },
+    { DEX_VENOMOTH,  70,  65,  60,  90,  90,
+      BUG, POISON, 75, 138,
+      "venomoth", "Venomoth",
+      TACKLE, DISABLE, POISONPOWDER, LEECH_LIFE,
+      GROWTH_MEDIUM_FAST, venomoth_tmhm, 0 },
+    { DEX_DIGLETT,  10,  55,  25,  95,  45,
+      GROUND, GROUND, 255, 81,
+      "diglett", "Diglett",
+      SCRATCH, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, diglett_tmhm, 0 },
+    { DEX_DUGTRIO,  35,  80,  50, 120,  70,
+      GROUND, GROUND, 50, 153,
+      "dugtrio", "Dugtrio",
+      SCRATCH, GROWL, DIG, NO_MOVE,
+      GROWTH_MEDIUM_FAST, dugtrio_tmhm, 0 },
+    { DEX_MEOWTH,  40,  45,  35,  90,  40,
+      NORMAL, NORMAL, 255, 69,
+      "meowth", "Meowth",
+      SCRATCH, GROWL, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, meowth_tmhm, 0 },
+    { DEX_PERSIAN,  65,  70,  60, 115,  65,
+      NORMAL, NORMAL, 90, 148,
+      "persian", "Persian",
+      SCRATCH, GROWL, BITE, SCREECH,
+      GROWTH_MEDIUM_FAST, persian_tmhm, 0 },
+    { DEX_PSYDUCK,  50,  52,  48,  55,  50,
+      WATER, WATER, 190, 80,
+      "psyduck", "Psyduck",
+      SCRATCH, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, psyduck_tmhm, 0 },
+    { DEX_GOLDUCK,  80,  82,  78,  85,  80,
+      WATER, WATER, 75, 174,
+      "golduck", "Golduck",
+      SCRATCH, TAIL_WHIP, DISABLE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, golduck_tmhm, 0 },
+    { DEX_MANKEY,  40,  80,  35,  70,  35,
+      FIGHTING, FIGHTING, 190, 74,
+      "mankey", "Mankey",
+      SCRATCH, LEER, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, mankey_tmhm, 0 },
+    { DEX_PRIMEAPE,  65, 105,  60,  95,  60,
+      FIGHTING, FIGHTING, 75, 149,
+      "primeape", "Primeape",
+      SCRATCH, LEER, KARATE_CHOP, FURY_SWIPES,
+      GROWTH_MEDIUM_FAST, primeape_tmhm, 0 },
+    { DEX_GROWLITHE,  55,  70,  45,  60,  50,
+      FIRE, FIRE, 190, 91,
+      "growlithe", "Growlithe",
+      BITE, ROAR, NO_MOVE, NO_MOVE,
+      GROWTH_SLOW, growlithe_tmhm, 0 },
+    { DEX_ARCANINE,  90, 110,  80,  95,  80,
+      FIRE, FIRE, 75, 213,
+      "arcanine", "Arcanine",
+      ROAR, EMBER, LEER, TAKE_DOWN,
+      GROWTH_SLOW, arcanine_tmhm, 0 },
+    { DEX_POLIWAG,  40,  50,  40,  90,  40,
+      WATER, WATER, 255, 77,
+      "poliwag", "Poliwag",
+      BUBBLE, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, poliwag_tmhm, 0 },
+    { DEX_POLIWHIRL,  65,  65,  65,  90,  50,
+      WATER, WATER, 120, 131,
+      "poliwhirl", "Poliwhirl",
+      BUBBLE, HYPNOSIS, WATER_GUN, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, poliwhirl_tmhm, 0 },
+    { DEX_POLIWRATH,  90,  85,  95,  70,  70,
+      WATER, FIGHTING, 45, 185,
+      "poliwrath", "Poliwrath",
+      HYPNOSIS, WATER_GUN, DOUBLESLAP, BODY_SLAM,
+      GROWTH_MEDIUM_SLOW, poliwrath_tmhm, 0 },
+    { DEX_ABRA,  25,  20,  15,  90, 105,
+      PSYCHIC_TYPE, PSYCHIC_TYPE, 200, 73,
+      "abra", "Abra",
+      TELEPORT, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, abra_tmhm, 0 },
+    { DEX_KADABRA,  40,  35,  30, 105, 120,
+      PSYCHIC_TYPE, PSYCHIC_TYPE, 100, 145,
+      "kadabra", "Kadabra",
+      TELEPORT, CONFUSION, DISABLE, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, kadabra_tmhm, 0 },
+    { DEX_ALAKAZAM,  55,  50,  45, 120, 135,
+      PSYCHIC_TYPE, PSYCHIC_TYPE, 50, 186,
+      "alakazam", "Alakazam",
+      TELEPORT, CONFUSION, DISABLE, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, alakazam_tmhm, 0 },
+    { DEX_MACHOP,  70,  80,  50,  35,  35,
+      FIGHTING, FIGHTING, 180, 88,
+      "machop", "Machop",
+      KARATE_CHOP, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, machop_tmhm, 0 },
+    { DEX_MACHOKE,  80, 100,  70,  45,  50,
+      FIGHTING, FIGHTING, 90, 146,
+      "machoke", "Machoke",
+      KARATE_CHOP, LOW_KICK, LEER, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, machoke_tmhm, 0 },
+    { DEX_MACHAMP,  90, 130,  80,  55,  65,
+      FIGHTING, FIGHTING, 45, 193,
+      "machamp", "Machamp",
+      KARATE_CHOP, LOW_KICK, LEER, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, machamp_tmhm, 0 },
+    { DEX_BELLSPROUT,  50,  75,  35,  40,  70,
+      GRASS, POISON, 255, 84,
+      "bellsprout", "Bellsprout",
+      VINE_WHIP, GROWTH, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, bellsprout_tmhm, 0 },
+    { DEX_WEEPINBELL,  65,  90,  50,  55,  85,
+      GRASS, POISON, 120, 151,
+      "weepinbell", "Weepinbell",
+      VINE_WHIP, GROWTH, WRAP, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, weepinbell_tmhm, 0 },
+    { DEX_VICTREEBEL,  80, 105,  65,  70, 100,
+      GRASS, POISON, 45, 191,
+      "victreebel", "Victreebel",
+      SLEEP_POWDER, STUN_SPORE, ACID, RAZOR_LEAF,
+      GROWTH_MEDIUM_SLOW, victreebel_tmhm, 0 },
+    { DEX_TENTACOOL,  40,  40,  35,  70, 100,
+      WATER, POISON, 190, 105,
+      "tentacool", "Tentacool",
+      ACID, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_SLOW, tentacool_tmhm, 0 },
+    { DEX_TENTACRUEL,  80,  70,  65, 100, 120,
+      WATER, POISON, 60, 205,
+      "tentacruel", "Tentacruel",
+      ACID, SUPERSONIC, WRAP, NO_MOVE,
+      GROWTH_SLOW, tentacruel_tmhm, 0 },
+    { DEX_GEODUDE,  40,  80, 100,  20,  30,
+      ROCK, GROUND, 255, 86,
+      "geodude", "Geodude",
+      TACKLE, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, geodude_tmhm, 0 },
+    { DEX_GRAVELER,  55,  95, 115,  35,  45,
+      ROCK, GROUND, 120, 134,
+      "graveler", "Graveler",
+      TACKLE, DEFENSE_CURL, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, graveler_tmhm, 0 },
+    { DEX_GOLEM,  80, 110, 130,  45,  55,
+      ROCK, GROUND, 45, 177,
+      "golem", "Golem",
+      TACKLE, DEFENSE_CURL, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, golem_tmhm, 0 },
+    { DEX_PONYTA,  50,  85,  55,  90,  65,
+      FIRE, FIRE, 190, 152,
+      "ponyta", "Ponyta",
+      EMBER, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, ponyta_tmhm, 0 },
+    { DEX_RAPIDASH,  65, 100,  70, 105,  80,
+      FIRE, FIRE, 60, 192,
+      "rapidash", "Rapidash",
+      EMBER, TAIL_WHIP, STOMP, GROWL,
+      GROWTH_MEDIUM_FAST, rapidash_tmhm, 0 },
+    { DEX_SLOWPOKE,  90,  65,  65,  15,  40,
+      WATER, PSYCHIC_TYPE, 190, 99,
+      "slowpoke", "Slowpoke",
+      CONFUSION, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, slowpoke_tmhm, 0 },
+    { DEX_SLOWBRO,  95,  75, 110,  30,  80,
+      WATER, PSYCHIC_TYPE, 75, 164,
+      "slowbro", "Slowbro",
+      CONFUSION, DISABLE, HEADBUTT, NO_MOVE,
+      GROWTH_MEDIUM_FAST, slowbro_tmhm, 0 },
+    { DEX_MAGNEMITE,  25,  35,  70,  45,  95,
+      ELECTRIC, ELECTRIC, 190, 89,
+      "magnemite", "Magnemite",
+      TACKLE, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, magnemite_tmhm, 0 },
+    { DEX_MAGNETON,  50,  60,  95,  70, 120,
+      ELECTRIC, ELECTRIC, 60, 161,
+      "magneton", "Magneton",
+      TACKLE, SONICBOOM, THUNDERSHOCK, NO_MOVE,
+      GROWTH_MEDIUM_FAST, magneton_tmhm, 0 },
+    { DEX_FARFETCHD,  52,  65,  55,  60,  58,
+      NORMAL, FLYING, 45, 94,
+      "farfetchd", "Farfetchd",
+      PECK, SAND_ATTACK, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, farfetchd_tmhm, 0 },
+    { DEX_DODUO,  35,  85,  45,  75,  35,
+      NORMAL, FLYING, 190, 96,
+      "doduo", "Doduo",
+      PECK, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, doduo_tmhm, 0 },
+    { DEX_DODRIO,  60, 110,  70, 100,  60,
+      NORMAL, FLYING, 45, 158,
+      "dodrio", "Dodrio",
+      PECK, GROWL, FURY_ATTACK, NO_MOVE,
+      GROWTH_MEDIUM_FAST, dodrio_tmhm, 0 },
+    { DEX_SEEL,  65,  45,  55,  45,  70,
+      WATER, WATER, 190, 100,
+      "seel", "Seel",
+      HEADBUTT, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, seel_tmhm, 0 },
+    { DEX_DEWGONG,  90,  70,  80,  70,  95,
+      WATER, ICE, 75, 176,
+      "dewgong", "Dewgong",
+      HEADBUTT, GROWL, AURORA_BEAM, NO_MOVE,
+      GROWTH_MEDIUM_FAST, dewgong_tmhm, 0 },
+    { DEX_GRIMER,  80,  80,  50,  25,  40,
+      POISON, POISON, 190, 90,
+      "grimer", "Grimer",
+      POUND, DISABLE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, grimer_tmhm, 0 },
+    { DEX_MUK, 105, 105,  75,  50,  65,
+      POISON, POISON, 75, 157,
+      "muk", "Muk",
+      POUND, DISABLE, POISON_GAS, NO_MOVE,
+      GROWTH_MEDIUM_FAST, muk_tmhm, 0 },
+    { DEX_SHELLDER,  30,  65, 100,  40,  45,
+      WATER, WATER, 190, 97,
+      "shellder", "Shellder",
+      TACKLE, WITHDRAW, NO_MOVE, NO_MOVE,
+      GROWTH_SLOW, shellder_tmhm, 0 },
+    { DEX_CLOYSTER,  50,  95, 180,  70,  85,
+      WATER, ICE, 60, 203,
+      "cloyster", "Cloyster",
+      WITHDRAW, SUPERSONIC, CLAMP, AURORA_BEAM,
+      GROWTH_SLOW, cloyster_tmhm, 0 },
+    { DEX_GASTLY,  30,  35,  30,  80, 100,
+      GHOST, POISON, 190, 95,
+      "gastly", "Gastly",
+      LICK, CONFUSE_RAY, NIGHT_SHADE, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, gastly_tmhm, 0 },
+    { DEX_HAUNTER,  45,  50,  45,  95, 115,
+      GHOST, POISON, 90, 126,
+      "haunter", "Haunter",
+      LICK, CONFUSE_RAY, NIGHT_SHADE, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, haunter_tmhm, 0 },
+    { DEX_GENGAR,  60,  65,  60, 110, 130,
+      GHOST, POISON, 45, 190,
+      "gengar", "Gengar",
+      LICK, CONFUSE_RAY, NIGHT_SHADE, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, gengar_tmhm, 0 },
+    { DEX_ONIX,  35,  45, 160,  70,  30,
+      ROCK, GROUND, 45, 108,
+      "onix", "Onix",
+      TACKLE, SCREECH, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, onix_tmhm, 0 },
+    { DEX_DROWZEE,  60,  48,  45,  42,  90,
+      PSYCHIC_TYPE, PSYCHIC_TYPE, 190, 102,
+      "drowzee", "Drowzee",
+      POUND, HYPNOSIS, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, drowzee_tmhm, 0 },
+    { DEX_HYPNO,  85,  73,  70,  67, 115,
+      PSYCHIC_TYPE, PSYCHIC_TYPE, 75, 165,
+      "hypno", "Hypno",
+      POUND, HYPNOSIS, DISABLE, CONFUSION,
+      GROWTH_MEDIUM_FAST, hypno_tmhm, 0 },
+    { DEX_KRABBY,  30, 105,  90,  50,  25,
+      WATER, WATER, 225, 115,
+      "krabby", "Krabby",
+      BUBBLE, LEER, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, krabby_tmhm, 0 },
+    { DEX_KINGLER,  55, 130, 115,  75,  50,
+      WATER, WATER, 60, 206,
+      "kingler", "Kingler",
+      BUBBLE, LEER, VICEGRIP, NO_MOVE,
+      GROWTH_MEDIUM_FAST, kingler_tmhm, 0 },
+    { DEX_VOLTORB,  40,  30,  50, 100,  55,
+      ELECTRIC, ELECTRIC, 190, 103,
+      "voltorb", "Voltorb",
+      TACKLE, SCREECH, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, voltorb_tmhm, 0 },
+    { DEX_ELECTRODE,  60,  50,  70, 140,  80,
+      ELECTRIC, ELECTRIC, 60, 150,
+      "electrode", "Electrode",
+      TACKLE, SCREECH, SONICBOOM, NO_MOVE,
+      GROWTH_MEDIUM_FAST, electrode_tmhm, 0 },
+    { DEX_EXEGGCUTE,  60,  40,  80,  40,  60,
+      GRASS, PSYCHIC_TYPE, 90, 98,
+      "exeggcute", "Exeggcute",
+      BARRAGE, HYPNOSIS, NO_MOVE, NO_MOVE,
+      GROWTH_SLOW, exeggcute_tmhm, 0 },
+    { DEX_EXEGGUTOR,  95,  95,  85,  55, 125,
+      GRASS, PSYCHIC_TYPE, 45, 212,
+      "exeggutor", "Exeggutor",
+      BARRAGE, HYPNOSIS, NO_MOVE, NO_MOVE,
+      GROWTH_SLOW, exeggutor_tmhm, 0 },
+    { DEX_CUBONE,  50,  50,  95,  35,  40,
+      GROUND, GROUND, 190, 87,
+      "cubone", "Cubone",
+      BONE_CLUB, GROWL, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, cubone_tmhm, 0 },
+    { DEX_MAROWAK,  60,  80, 110,  45,  50,
+      GROUND, GROUND, 75, 124,
+      "marowak", "Marowak",
+      BONE_CLUB, GROWL, LEER, FOCUS_ENERGY,
+      GROWTH_MEDIUM_FAST, marowak_tmhm, 0 },
+    { DEX_HITMONLEE,  50, 120,  53,  87,  35,
+      FIGHTING, FIGHTING, 45, 139,
+      "hitmonlee", "Hitmonlee",
+      DOUBLE_KICK, MEDITATE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, hitmonlee_tmhm, 0 },
+    { DEX_HITMONCHAN,  50, 105,  79,  76,  35,
+      FIGHTING, FIGHTING, 45, 140,
+      "hitmonchan", "Hitmonchan",
+      COMET_PUNCH, AGILITY, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, hitmonchan_tmhm, 0 },
+    { DEX_LICKITUNG,  90,  55,  75,  30,  60,
+      NORMAL, NORMAL, 45, 127,
+      "lickitung", "Lickitung",
+      WRAP, SUPERSONIC, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, lickitung_tmhm, 0 },
+    { DEX_KOFFING,  40,  65,  95,  35,  60,
+      POISON, POISON, 190, 114,
+      "koffing", "Koffing",
+      TACKLE, SMOG, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, koffing_tmhm, 0 },
+    { DEX_WEEZING,  65,  90, 120,  60,  85,
+      POISON, POISON, 60, 173,
+      "weezing", "Weezing",
+      TACKLE, SMOG, SLUDGE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, weezing_tmhm, 0 },
+    { DEX_RHYHORN,  80,  85,  95,  25,  30,
+      GROUND, ROCK, 120, 135,
+      "rhyhorn", "Rhyhorn",
+      HORN_ATTACK, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_SLOW, rhyhorn_tmhm, 0 },
+    { DEX_RHYDON, 105, 130, 120,  40,  45,
+      GROUND, ROCK, 60, 204,
+      "rhydon", "Rhydon",
+      HORN_ATTACK, STOMP, TAIL_WHIP, FURY_ATTACK,
+      GROWTH_SLOW, rhydon_tmhm, 0 },
+    { DEX_CHANSEY, 250,   5,   5,  50, 105,
+      NORMAL, NORMAL, 30, 255,
+      "chansey", "Chansey",
+      POUND, DOUBLESLAP, NO_MOVE, NO_MOVE,
+      GROWTH_FAST, chansey_tmhm, 0 },
+    { DEX_TANGELA,  65,  55, 115,  60, 100,
+      GRASS, GRASS, 45, 166,
+      "tangela", "Tangela",
+      CONSTRICT, BIND, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, tangela_tmhm, 0 },
+    { DEX_KANGASKHAN, 105,  95,  80,  90,  40,
+      NORMAL, NORMAL, 45, 175,
+      "kangaskhan", "Kangaskhan",
+      COMET_PUNCH, RAGE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, kangaskhan_tmhm, 0 },
+    { DEX_HORSEA,  30,  40,  70,  60,  70,
+      WATER, WATER, 225, 83,
+      "horsea", "Horsea",
+      BUBBLE, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, horsea_tmhm, 0 },
+    { DEX_SEADRA,  55,  65,  95,  85,  95,
+      WATER, WATER, 75, 155,
+      "seadra", "Seadra",
+      BUBBLE, SMOKESCREEN, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, seadra_tmhm, 0 },
+    { DEX_GOLDEEN,  45,  67,  60,  63,  50,
+      WATER, WATER, 225, 111,
+      "goldeen", "Goldeen",
+      PECK, TAIL_WHIP, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, goldeen_tmhm, 0 },
+    { DEX_SEAKING,  80,  92,  65,  68,  80,
+      WATER, WATER, 60, 170,
+      "seaking", "Seaking",
+      PECK, TAIL_WHIP, SUPERSONIC, NO_MOVE,
+      GROWTH_MEDIUM_FAST, seaking_tmhm, 0 },
+    { DEX_STARYU,  30,  45,  55,  85,  70,
+      WATER, WATER, 225, 106,
+      "staryu", "Staryu",
+      TACKLE, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_SLOW, staryu_tmhm, 0 },
+    { DEX_STARMIE,  60,  75,  85, 115, 100,
+      WATER, PSYCHIC_TYPE, 60, 207,
+      "starmie", "Starmie",
+      TACKLE, WATER_GUN, HARDEN, NO_MOVE,
+      GROWTH_SLOW, starmie_tmhm, 0 },
+    { DEX_MR_MIME,  40,  45,  65,  90, 100,
+      PSYCHIC_TYPE, PSYCHIC_TYPE, 45, 136,
+      "mrmime", "MrMime",
+      CONFUSION, BARRIER, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, mrmime_tmhm, 0 },
+    { DEX_SCYTHER,  70, 110,  80, 105,  55,
+      BUG, FLYING, 45, 187,
+      "scyther", "Scyther",
+      QUICK_ATTACK, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, scyther_tmhm, 0 },
+    { DEX_JYNX,  65,  50,  35,  95,  95,
+      ICE, PSYCHIC_TYPE, 45, 137,
+      "jynx", "Jynx",
+      POUND, LOVELY_KISS, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, jynx_tmhm, 0 },
+    { DEX_ELECTABUZZ,  65,  83,  57, 105,  85,
+      ELECTRIC, ELECTRIC, 45, 156,
+      "electabuzz", "Electabuzz",
+      QUICK_ATTACK, LEER, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, electabuzz_tmhm, 0 },
+    { DEX_MAGMAR,  65,  95,  57,  93,  85,
+      FIRE, FIRE, 45, 167,
+      "magmar", "Magmar",
+      EMBER, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, magmar_tmhm, 0 },
+    { DEX_PINSIR,  65, 125, 100,  85,  55,
+      BUG, BUG, 45, 200,
+      "pinsir", "Pinsir",
+      VICEGRIP, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_SLOW, pinsir_tmhm, 0 },
+    { DEX_TAUROS,  75, 100,  95, 110,  70,
+      NORMAL, NORMAL, 45, 211,
+      "tauros", "Tauros",
+      TACKLE, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_SLOW, tauros_tmhm, 0 },
+    { DEX_MAGIKARP,  20,  10,  55,  80,  20,
+      WATER, WATER, 255, 20,
+      "magikarp", "Magikarp",
+      SPLASH, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_SLOW, magikarp_tmhm, 0 },
+    { DEX_GYARADOS,  95, 125,  79,  81, 100,
+      WATER, FLYING, 45, 214,
+      "gyarados", "Gyarados",
+      BITE, DRAGON_RAGE, LEER, HYDRO_PUMP,
+      GROWTH_SLOW, gyarados_tmhm, 0 },
+    { DEX_LAPRAS, 130,  85,  80,  60,  95,
+      WATER, ICE, 45, 219,
+      "lapras", "Lapras",
+      WATER_GUN, GROWL, NO_MOVE, NO_MOVE,
+      GROWTH_SLOW, lapras_tmhm, 0 },
+    { DEX_DITTO,  48,  48,  48,  48,  48,
+      NORMAL, NORMAL, 35, 61,
+      "ditto", "Ditto",
+      TRANSFORM, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, ditto_tmhm, 0 },
+    { DEX_EEVEE,  55,  55,  50,  55,  65,
+      NORMAL, NORMAL, 45, 92,
+      "eevee", "Eevee",
+      TACKLE, SAND_ATTACK, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, eevee_tmhm, 0 },
+    { DEX_VAPOREON, 130,  65,  60,  65, 110,
+      WATER, WATER, 45, 196,
+      "vaporeon", "Vaporeon",
+      TACKLE, SAND_ATTACK, QUICK_ATTACK, WATER_GUN,
+      GROWTH_MEDIUM_FAST, vaporeon_tmhm, 0 },
+    { DEX_JOLTEON,  65,  65,  60, 130, 110,
+      ELECTRIC, ELECTRIC, 45, 197,
+      "jolteon", "Jolteon",
+      TACKLE, SAND_ATTACK, QUICK_ATTACK, THUNDERSHOCK,
+      GROWTH_MEDIUM_FAST, jolteon_tmhm, 0 },
+    { DEX_FLAREON,  65, 130,  60,  65, 110,
+      FIRE, FIRE, 45, 198,
+      "flareon", "Flareon",
+      TACKLE, SAND_ATTACK, QUICK_ATTACK, EMBER,
+      GROWTH_MEDIUM_FAST, flareon_tmhm, 0 },
+    { DEX_PORYGON,  65,  60,  70,  40,  75,
+      NORMAL, NORMAL, 45, 130,
+      "porygon", "Porygon",
+      TACKLE, SHARPEN, CONVERSION, NO_MOVE,
+      GROWTH_MEDIUM_FAST, porygon_tmhm, 0 },
+    { DEX_OMANYTE,  35,  40, 100,  35,  90,
+      ROCK, WATER, 45, 120,
+      "omanyte", "Omanyte",
+      WATER_GUN, WITHDRAW, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, omanyte_tmhm, 0 },
+    { DEX_OMASTAR,  70,  60, 125,  55, 115,
+      ROCK, WATER, 45, 199,
+      "omastar", "Omastar",
+      WATER_GUN, WITHDRAW, HORN_ATTACK, NO_MOVE,
+      GROWTH_MEDIUM_FAST, omastar_tmhm, 0 },
+    { DEX_KABUTO,  30,  80,  90,  55,  45,
+      ROCK, WATER, 45, 119,
+      "kabuto", "Kabuto",
+      SCRATCH, HARDEN, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_FAST, kabuto_tmhm, 0 },
+    { DEX_KABUTOPS,  60, 115, 105,  80,  70,
+      ROCK, WATER, 45, 201,
+      "kabutops", "Kabutops",
+      SCRATCH, HARDEN, ABSORB, NO_MOVE,
+      GROWTH_MEDIUM_FAST, kabutops_tmhm, 0 },
+    { DEX_AERODACTYL,  80, 105,  65, 130,  60,
+      ROCK, FLYING, 45, 202,
+      "aerodactyl", "Aerodactyl",
+      WING_ATTACK, AGILITY, NO_MOVE, NO_MOVE,
+      GROWTH_SLOW, aerodactyl_tmhm, 0 },
+    { DEX_SNORLAX, 160, 110,  65,  30,  65,
+      NORMAL, NORMAL, 25, 154,
+      "snorlax", "Snorlax",
+      HEADBUTT, AMNESIA, REST, NO_MOVE,
+      GROWTH_SLOW, snorlax_tmhm, 0 },
+    { DEX_ARTICUNO,  90,  85, 100,  85, 125,
+      ICE, FLYING, 3, 215,
+      "articuno", "Articuno",
+      PECK, ICE_BEAM, NO_MOVE, NO_MOVE,
+      GROWTH_SLOW, articuno_tmhm, 0 },
+    { DEX_ZAPDOS,  90,  90,  85, 100, 125,
+      ELECTRIC, FLYING, 3, 216,
+      "zapdos", "Zapdos",
+      THUNDERSHOCK, DRILL_PECK, NO_MOVE, NO_MOVE,
+      GROWTH_SLOW, zapdos_tmhm, 0 },
+    { DEX_MOLTRES,  90, 100,  90,  90, 125,
+      FIRE, FLYING, 3, 217,
+      "moltres", "Moltres",
+      PECK, FIRE_SPIN, NO_MOVE, NO_MOVE,
+      GROWTH_SLOW, moltres_tmhm, 0 },
+    { DEX_DRATINI,  41,  64,  45,  50,  50,
+      DRAGON, DRAGON, 45, 67,
+      "dratini", "Dratini",
+      WRAP, LEER, NO_MOVE, NO_MOVE,
+      GROWTH_SLOW, dratini_tmhm, 0 },
+    { DEX_DRAGONAIR,  61,  84,  65,  70,  70,
+      DRAGON, DRAGON, 45, 144,
+      "dragonair", "Dragonair",
+      WRAP, LEER, THUNDER_WAVE, NO_MOVE,
+      GROWTH_SLOW, dragonair_tmhm, 0 },
+    { DEX_DRAGONITE,  91, 134,  95,  80, 100,
+      DRAGON, FLYING, 45, 218,
+      "dragonite", "Dragonite",
+      WRAP, LEER, THUNDER_WAVE, AGILITY,
+      GROWTH_SLOW, dragonite_tmhm, 0 },
+    { DEX_MEWTWO, 106, 110,  90, 130, 154,
+      PSYCHIC_TYPE, PSYCHIC_TYPE, 3, 220,
+      "mewtwo", "Mewtwo",
+      CONFUSION, DISABLE, SWIFT, PSYCHIC_M,
+      GROWTH_SLOW, mewtwo_tmhm, 0 },
+    { DEX_MEW, 100, 100, 100, 100, 100,
+      PSYCHIC_TYPE, PSYCHIC_TYPE, 45, 64,
+      "mew", "Mew",
+      POUND, NO_MOVE, NO_MOVE, NO_MOVE,
+      GROWTH_MEDIUM_SLOW, mew_tmhm, 0xFF },
+};
