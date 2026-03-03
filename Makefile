@@ -23,9 +23,7 @@ rom_obj := \
 	obj/data/item_prices.o \
 	obj/data/growth_rates.o \
 	obj/engine/math.o \
-	obj/engine/battle_core.o \
-	obj/engine/play_time.o \
-	obj/engine/flag_action.o
+	obj/engine/battle_core.o
 
 pokered_obj        := $(rom_obj:.o=_red.o)
 pokeblue_obj       := $(rom_obj:.o=_blue.o)

@@ -60,6 +60,7 @@ INCLUDE "engine/overworld/cut.asm"
 INCLUDE "engine/overworld/toggleable_objects.asm"
 INCLUDE "engine/overworld/push_boulder.asm"
 INCLUDE "engine/pokemon/add_mon.asm"
+INCLUDE "engine/flag_action.asm"
 INCLUDE "engine/events/heal_party.asm"
 INCLUDE "engine/math/bcd.asm"
 INCLUDE "engine/movie/oak_speech/init_player_data.asm"
@@ -109,7 +110,7 @@ INCLUDE "engine/menus/pc.asm"
 
 SECTION "Play Time", ROMX
 
-; INCLUDE "engine/play_time.asm"
+INCLUDE "engine/play_time.asm"
 
 
 SECTION "Doors and Ledges", ROMX
