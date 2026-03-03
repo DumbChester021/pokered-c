@@ -112,9 +112,11 @@ This is why we use a **code-generation approach** for early phases: write data i
 
 ### Phase 2 (remaining data tables)
 
-| Table | File | Difficulty | Blocker |
-|-------|------|------------|---------|
-| **Base stats** | `data/pokemon/base_stats/*.asm` | Hard | 151 individual files. Each has `INCBIN` for sprite dimensions, `dw` for pic pointers, `tmhm` bitfield macro. These can't be expressed in pure C — need ASM pass-through support in the generator. |
+| Table | File | Status |
+|-------|------|--------|
+| **Base stats** | `data/pokemon/base_stats.asm` | ✅ Migrated (using direct SDCC compilation) |
+
+> **Note on Base Stats:** Unlike the other files which use `c2asm.py`, the base stats were migrated via **direct C compilation**. SDCC compiles `src/data/base_stats.c` into raw assembly at `obj/data/base_stats.asm`, which is then processed by a `sed` pipeline in the Makefile to convert SDCC syntax (`.db #0x01`, `.dw _Sym`) into RGBDS format (`db 0x01`, `dw Sym`).`
 
 ### Phase 3: Utility Functions (future)
 
@@ -657,8 +659,8 @@ The `growth_rate` mode in `c2asm.py` handles `dn` packing and signed magnitude e
 ### ~~BCD Encoding~~ ✅ SOLVED
 The `bcd3` mode in `c2asm.py` emits `bcd3 VALUE ; COMMENT` lines directly. The `bcd3` MACRO (defined in `macros/data.asm`) handles the actual BCD encoding at assembly time.
 
-### Base Stats INCBIN
-Each base stat file contains `INCBIN "gfx/pokemon/front/name.pic", 0, 1` for sprite dimensions and `dw NamePicFront, NamePicBack` for pic pointers. These are ASM-specific constructs that can't be expressed in C. The generator would need "passthrough" support to emit literal ASM lines.
+### Base Stats INCBIN ✅ SOLVED
+The problem of inline assembler macros (`INCBIN`, `dw`) in base stats was circumvented by adding `pic_dimensions`, `pic_front`, and `pic_back` pointers directly into the C struct in `src/include/pokemon.h`. Setting these values via pointers in C allows SDCC to emit standard word declarations that map cleanly to the original ASM expectation, avoiding the need for macro passthrough.
 
 ### Toolchain Migration (Phase 4+)
 Switching from RGBDS to SDCC linker is a one-way gate. All remaining ASM must adopt SDCC syntax (`.area` instead of `SECTION`, `.globl` instead of `EXPORT`). This should only happen once enough engine code is in C to justify the transition.

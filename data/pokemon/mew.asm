@@ -12,4 +12,4 @@ MewPicFront:: INCBIN "gfx/pokemon/front/mew.pic"
 MewPicBack::  INCBIN "gfx/pokemon/back/mewb.pic"
 
 MewBaseStats::
-INCLUDE "data/pokemon/base_stats/mew.asm"
+INCLUDE "obj/data/mew_base_stats.asm"

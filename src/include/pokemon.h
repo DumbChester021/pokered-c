@@ -169,19 +169,22 @@
 #define GROWTH_FAST           4
 #define GROWTH_SLOW           5
 
-/* Base stats struct for c2asm.py base_stats mode */
+#include <stdint.h>
+
+/* Base stats struct */
 typedef struct {
-    int dex_id;
-    int hp, atk, def_, spd, spc;
-    int type1, type2;
-    int catch_rate;
-    int base_exp;
-    const char *name;      /* lowercase: "bulbasaur" */
-    const char *name_cap;  /* capitalized: "Bulbasaur" */
-    int move1, move2, move3, move4;
-    int growth_rate;
-    const char **tmhm;     /* NULL-terminated list of TM/HM move name strings */
-    int padding;           /* 0 for all except Mew (0xFF) */
+    uint8_t dex_id;
+    uint8_t hp, atk, def_, spd, spc;
+    uint8_t type1, type2;
+    uint8_t catch_rate;
+    uint8_t base_exp;
+    uint8_t pic_dimensions;
+    const void *pic_front;
+    const void *pic_back;
+    uint8_t move1, move2, move3, move4;
+    uint8_t growth_rate;
+    uint8_t tmhm[7];
+    uint8_t padding;           /* 0 for all except Mew (0xFF) */
 } BaseStats;
 
 #endif /* POKERED_POKEMON_H */

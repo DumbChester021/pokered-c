@@ -40,11 +40,10 @@ RGBFIX  ?= $(RGBDS)rgbfix
 RGBGFX  ?= $(RGBDS)rgbgfx
 RGBLINK ?= $(RGBDS)rgblink
 
-# Future C migration toolchain (uncomment when ready)
-# GBDK    ?= /opt/gbdk/
-# SDCC    ?= $(GBDK)bin/sdcc
-# SDAS    ?= $(GBDK)bin/sdasgb
-# SDCCFLAGS ?= -msm83 --no-std-crt0
+GBDK    ?= /usr/
+SDCC    ?= $(GBDK)bin/sdcc
+SDAS    ?= $(GBDK)bin/sdasgb
+SDCC_CFLAGS ?= -msm83 --fsigned-char --use-stdout --no-std-crt0 -D_SDCC
 
 RGBASMFLAGS  ?= -Weverything -Wtruncation=1
 RGBLINKFLAGS ?= -Weverything -Wtruncation=1
@@ -112,27 +111,23 @@ tools:
 usage: $(roms)
 	@$(PYTHON) tools/mapusage.py $(roms:.gbc=.map)
 
-# C → ASM code generation (see tools/c2asm.py)
-C2ASM := $(PYTHON) tools/c2asm.py
 
-# Generated ASM data files (add new entries as modules are migrated)
-data/types/type_matchups.asm: src/data/type_matchups.c src/include/types.h tools/c2asm.py
-	$(C2ASM) $< > $@
-
-data/moves/moves.asm: src/data/moves.c src/include/moves.h src/include/types.h tools/c2asm.py
-	$(C2ASM) $< > $@
-
-data/growth_rates.asm: src/data/growth_rates.c tools/c2asm.py
-	$(C2ASM) $< > $@
-
-data/items/prices.asm: src/data/item_prices.c src/include/items.h tools/c2asm.py
-	$(C2ASM) $< > $@
-
-data/pokemon/base_stats.asm: src/data/base_stats.c src/include/pokemon.h src/include/types.h src/include/moves.h tools/c2asm.py
-	$(C2ASM) $< --outdir data/pokemon
-
-generate: data/types/type_matchups.asm data/moves/moves.asm data/growth_rates.asm data/items/prices.asm data/pokemon/base_stats.asm
-	@echo "Generated ASM data files up to date."
+# Compile C source files to RGBDS assembly
+# Requires a macro wrapper because SDCC outputs sections with strings that rgbds doesn't like directly
+# We also include a generated C macros file (src/asm/macros.asm) for standard things like `move`
+obj/%.asm: src/%.c src/asm/macros.asm
+	@mkdir -p $(dir $@)
+	$(SDCC) $(SDCC_CFLAGS) -S -o $@.tmp $<
+	cat $@.tmp | \
+	sed 's/^_//g' | \
+	sed '/\.module/d' | \
+	sed '/\.optsdcc/d' | \
+	sed '/\.globl/d' | \
+	sed '/\.area/d' | \
+	sed 's/\.db #/db /g' | \
+	sed 's/\.dw #/dw /g' | \
+	sed 's/\.dw _/dw /g' > $@
+	@rm $@.tmp
 
 
 
