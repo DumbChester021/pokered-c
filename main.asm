@@ -95,7 +95,7 @@ INCLUDE "engine/battle/move_effects/recoil.asm"
 INCLUDE "engine/battle/move_effects/conversion.asm"
 INCLUDE "engine/battle/move_effects/haze.asm"
 INCLUDE "engine/battle/get_trainer_name.asm"
-; INCLUDE "engine/math/random.asm"
+INCLUDE "engine/math/random.asm"
 
 
 SECTION "Battle Engine 2", ROMX
@@ -178,7 +178,7 @@ INCLUDE "engine/movie/title2.asm"
 INCLUDE "engine/battle/link_battle_versus_text.asm"
 INCLUDE "engine/slots/slot_machine.asm"
 INCLUDE "engine/events/pewter_guys.asm"
-; INCLUDE "engine/math/multiply_divide.asm"
+INCLUDE "engine/math/multiply_divide.asm"
 INCLUDE "engine/slots/game_corner_slots.asm"
 
 

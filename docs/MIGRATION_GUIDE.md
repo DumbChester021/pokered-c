@@ -86,19 +86,19 @@ The script `tools/sdcc2rgbasm.py` acts as the vital glue. Its responsibilities i
 
 ## What Needs To Be Done
 
-### Phase 3: Utility Functions (Math & RNG) ✅
-- Implemented C versions of `Random_`, `_Multiply`, and `_Divide` in `src/engine/math.c`.
-- Restructured `sdcc2rgbasm.py` to seamlessly convert negative SP offsets, 32-bit math structs, and `(#label + n)` immediate logic correctly into RGBDS.
-- Created `src/include/hram.h` mapping hardware timer variables natively for direct interaction with legacy features.
+### Phase 3: Utility Functions (Math & RNG) — REVERTED
+- C versions of `Random_`, `_Multiply`, and `_Divide` were implemented but reverted to original ASM.
+- **Reason:** These are called from ROM bank 0 (`home/`) and from many ROMX banks. C-compiled versions land in floating ROMX sections, causing bank mismatch crashes.
+- `sdcc2rgbasm.py` and `src/include/hram.h` remain in place for future use.
 
 ---
 
 ## What Needs To Be Done
 
 ### Phase 4: Strategic Engine Additions (Current Focus)
-Following our strategic philosophy, we are targeting core game mechanics that require extensibility. We are now migrating these standalone engine subsystems to pure C:
-- **Battle Damage Calculation** (`engine/battle/core.asm`) ✅ - To support Physical/Special split and new type modifiers.
-- **Type Effectiveness** ✅ - To easily add the Fairy type and balance new match-ups.
+Following our strategic philosophy, we are targeting core game mechanics that require extensibility. **However, all engine logic migrations require solving the Bank Safety problem first (see below).**
+- **Battle Damage Calculation** — REVERTED. C version crashed due to cross-bank data access (`TypeEffects`, `Moves`).
+- **Type Effectiveness** — REVERTED. Same bank mismatch issue.
 - **Move Effects** - To write custom logic for new moves (e.g., entry hazards).
 - **Trainer AI** - To allow AI to understand new mechanics and moves.
 - **Experience & Evolutions** - To add new evolution methods (e.g., friendship, held items).
@@ -118,6 +118,27 @@ Target Features:
 - Fairy Type implementation.
 
 ---
+
+## ⚠️ Bank Safety Rules (Critical)
+
+The Game Boy's ROM is divided into 16KB banks. Only one ROMX bank can be active at a time. **This is the #1 source of crashes when migrating ASM to C.**
+
+### The Problem
+When SDCC compiles a `.c` file, the transpiler emits `SECTION "C Code ...", ROMX` — a **floating** section with no fixed bank. The linker places it wherever it fits. If C code (or ASM code) accesses a label in a different ROMX bank via a direct pointer (`ld hl, Label`), it reads garbage from whatever bank happens to be switched in.
+
+### Safe to Migrate
+- **Data tables accessed via `BANK()` + `FarCopyData`**: The caller explicitly bankswitches before reading. Examples: `BaseStats` (accessed via `GetMonHeader` which does `ld a, BANK(BaseStats)`), `Moves` (accessed via `BANK(Moves)` + `FarCopyData`).
+- **Functions called via `callfar` / `farcall`**: These macros bankswitch before calling.
+
+### NOT Safe to Migrate (Without Refactoring)
+- **Data tables accessed via direct `ld hl, Label`**: The caller assumes the data is in the same bank. Examples: `GrowthRateTable` (read directly by `CalcExperience`), `TypeEffects` (read directly by `AdjustDamageForMoveType`).
+- **Functions called via plain `call` from the same bank**: The caller assumes same-bank locality.
+- **Any code that accesses another C-compiled label in a different `.c` file**: Two separate C files compile to two separate floating ROMX sections, potentially in different banks.
+
+### Before Migrating, Always Check
+1. `grep` for ALL references to the label being migrated.
+2. For each reference, check if it uses `BANK()` / `FarCopyData` / `callfar` (safe) or direct `ld hl, Label` / `call Label` (unsafe).
+3. If ANY reference is unsafe, either: (a) leave the data/code in ASM, or (b) refactor the caller to use a bankswitch.
 
 ## What You Should NOT Do
 

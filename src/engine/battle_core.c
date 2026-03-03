@@ -222,3 +222,136 @@ void CalculateDamage(void) __naked {
     ret
     __endasm;
 }
+
+// C implementation of AdjustDamageForMoveType
+// Matches exactly engine/battle/core.asm `AdjustDamageForMoveType`
+void AdjustDamageForMoveType_C(void) {
+    uint8_t attackerType1, attackerType2;
+    uint8_t defenderType1, defenderType2;
+    
+    if (hWhoseTurn == 0) {
+        attackerType1 = wBattleMonType1;
+        attackerType2 = wBattleMonType2;
+        defenderType1 = wEnemyMonType1;
+        defenderType2 = wEnemyMonType2;
+        wMoveType = wPlayerMoveType;
+    } else {
+        attackerType1 = wEnemyMonType1;
+        attackerType2 = wEnemyMonType2;
+        defenderType1 = wBattleMonType1;
+        defenderType2 = wBattleMonType2;
+        wMoveType = wEnemyMoveType;
+    }
+
+    uint8_t moveType = wMoveType;
+    
+    // Same-Type Attack Bonus (STAB)
+    if (moveType == attackerType1 || moveType == attackerType2) {
+        // Multiplier applied by adding 50% to wDamage
+        uint16_t damage = ((uint16_t)wDamage[0] << 8) | wDamage[1];
+        uint16_t stab_bonus = damage / 2;
+        damage += stab_bonus;
+        wDamage[0] = damage >> 8;
+        wDamage[1] = damage & 0xFF;
+        
+        wDamageMultipliers |= 0x80; // SET BIT_STAB_DAMAGE (bit 7)
+    }
+
+    // Type Effectiveness evaluation
+    uint8_t i = 0;
+    while (TypeEffects[i] != 0xFF) {
+        uint8_t atkType = TypeEffects[i];
+        if (atkType == moveType) {
+            uint8_t defType = TypeEffects[i + 1];
+            if (defenderType1 == defType || defenderType2 == defType) {
+                // Apply multiplier to wDamageMultipliers
+                uint8_t mult = TypeEffects[i + 2];
+                wDamageMultipliers += mult;
+
+                // Multiply damage by `mult`
+                uint16_t damage = ((uint16_t)wDamage[0] << 8) | wDamage[1];
+                hDividend[0] = 0;
+                hDividend[1] = 0;
+                hDividend[2] = damage >> 8;
+                hDividend[3] = damage & 0xFF;
+                
+                hMultiplicand[0] = 0;
+                hMultiplicand[1] = damage >> 8;
+                hMultiplicand[2] = damage & 0xFF;
+                hMultiplier = mult;
+                _Multiply();
+                
+                // Divide product by 10 (since effectiveness is 10x scaled, e.g. 20 = 2.0x)
+                hDividend[0] = hProduct[0];
+                hDividend[1] = hProduct[1];
+                hDividend[2] = hProduct[2];
+                hDividend[3] = hProduct[3];
+                hDivisor = 10;
+                _Divide(); // result in hQuotient[0..3]
+                
+                // Store new damage
+                wDamage[0] = hQuotient[2];
+                wDamage[1] = hQuotient[3];
+                
+                // If damage became 0 due to fraction loss (immunity handling logic applies when damage=0)
+                if (hQuotient[2] == 0 && hQuotient[3] == 0) {
+                    wMoveMissed = 1;
+                }
+            }
+        }
+        i += 3;
+    }
+}
+
+// C implementation of AIGetTypeEffectiveness
+void AIGetTypeEffectiveness_C(void) {
+    uint8_t moveType = wEnemyMoveType;
+    uint8_t pType1 = wBattleMonType1;
+    uint8_t pType2 = wBattleMonType2;
+
+    wTypeEffectiveness = EFFECTIVE; // Normally 0x10 but the bug keeps it 10 in our enums maybe? The original code had `ld a, $10 ; bug: should be EFFECTIVE(10)` - Actually $10 is 16. In types.h we defined EFFECTIVE as 10. Let's precisely mimic original buggy behaviour `ld a, $10`
+    wTypeEffectiveness = 0x10;
+
+    uint8_t i = 0;
+    while (TypeEffects[i] != 0xFF) {
+        if (TypeEffects[i] == moveType) {
+            uint8_t defType = TypeEffects[i + 1];
+            if (defType == pType1 || defType == pType2) {
+                wTypeEffectiveness = TypeEffects[i + 2];
+                return;
+            }
+        }
+        i += 3;
+    }
+}
+
+// Naked ASM wrappers
+void AdjustDamageForMoveType(void) __naked {
+    __asm
+    push bc
+    push de
+    push hl
+    
+    call _AdjustDamageForMoveType_C
+    
+    pop hl
+    pop de
+    pop bc
+    ret
+    __endasm;
+}
+
+void AIGetTypeEffectiveness(void) __naked {
+    __asm
+    push bc
+    push de
+    push hl
+    
+    call _AIGetTypeEffectiveness_C
+    
+    pop hl
+    pop de
+    pop bc
+    ret
+    __endasm;
+}

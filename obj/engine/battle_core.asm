@@ -1,6 +1,6 @@
 ;--------------------------------------------------------
 ; File Created by SDCC : free open source ANSI-C Compiler
-; Version 4.2.0 13081 (Linux)
+; Version 4.2.0 13081 [Linux]
 ;--------------------------------------------------------
 	
 ;--------------------------------------------------------
@@ -113,7 +113,7 @@ CalculateDamage_C::
 ;src/engine/battlecore.c:49: hDividend[3] = 0;
 	ld	hl, hDividend + 3
 	ld	[hl], $00
-;src/engine/battlecore.c:52: uint16t lvl2 = (uint16t)level * 2;
+;src/engine/battlecore.c:52: uint16t lvl2 = [uint16t]level * 2;
 	ld hl, sp+17
 	ld	a, [hl]
 	ld hl, sp+11
@@ -150,7 +150,7 @@ CalculateDamage_C::
 	ld	hl, hDividend + 1
 	ld	[hl], $01
 .L00116:
-;src/engine/battlecore.c:56: hDividend[2] = (uint8t)lvl2;
+;src/engine/battlecore.c:56: hDividend[2] = [uint8t]lvl2;
 	ld hl, sp+8
 	ld	a, [hl]
 	ld	[hDividend + 2],a
@@ -284,7 +284,7 @@ CalculateDamage_C::
 	ld	[hl], $32
 ;src/engine/battlecore.c:163: Divide(); // Quotient in hQuotient[0..3]
 	call	_Divide
-;src/engine/battlecore.c:169: uint16t curdmg = ((uint16t)wDamage[0] << 8) | wDamage[1];
+;src/engine/battlecore.c:169: uint16t curdmg = ([uint16t]wDamage[0] << 8) | wDamage[1];
 	ld	a, [wDamage + 0]
 	ld	b, a
 	ld	c, $00
@@ -298,7 +298,7 @@ CalculateDamage_C::
 	ld	[hl], c
 	inc	hl
 	ld	[hl], a
-;src/engine/battlecore.c:170: uint32t damage = ((uint32t)hQuotient[0] << 24) |
+;src/engine/battlecore.c:170: uint32t damage = ([uint32t]hQuotient[0] << 24) |
 	ld	a, [hQuotient + 0]
 	ld	d, a
 	xor	a, a
@@ -522,8 +522,8 @@ CalculateDamage_C::
 	pop	hl
 	inc	sp
 	inc	sp
- jp hl
-;src/engine/battlecore.c:192: void CalculateDamage(void) _naked {
+	jp hl
+;src/engine/battlecore.c:192: void CalculateDamage[void] _naked {
 ;	---------------------------------
 ; Function CalculateDamage
 ; ---------------------------------
@@ -543,4 +543,359 @@ CalculateDamage::
 	and	a
 	ret
 ;src/engine/battlecore.c:224: }
+;src/engine/battlecore.c:228: void AdjustDamageForMoveTypeC[void] {
+;	---------------------------------
+; Function AdjustDamageForMoveTypeC
+; ---------------------------------
+AdjustDamageForMoveType_C::
+	add	sp, -6
+;src/engine/battlecore.c:232: if (hWhoseTurn == 0) {
+	ld	a, [hWhoseTurn]
+	or	a, a
+	jr	NZ, .L00102
+;src/engine/battlecore.c:233: attackerType1 = wBattleMonType1;
+	ld	hl, #wBattleMonType1
+	ld	c, [hl]
+;src/engine/battlecore.c:234: attackerType2 = wBattleMonType2;
+	ld	a, [wBattleMonType2]
+	ld hl, sp+5
+	ld	[hl], a
+;src/engine/battlecore.c:235: defenderType1 = wEnemyMonType1;
+	ld	a, [wEnemyMonType1]
+	ld hl, sp+0
+	ld	[hl], a
+;src/engine/battlecore.c:236: defenderType2 = wEnemyMonType2;
+	ld	a, [wEnemyMonType2]
+	ld hl, sp+1
+	ld	[hl], a
+;src/engine/battlecore.c:237: wMoveType = wPlayerMoveType;
+	ld	a, [wPlayerMoveType]
+	ld	[wMoveType],a
+	jr	.L00103
+.L00102:
+;src/engine/battlecore.c:239: attackerType1 = wEnemyMonType1;
+	ld	hl, #wEnemyMonType1
+	ld	c, [hl]
+;src/engine/battlecore.c:240: attackerType2 = wEnemyMonType2;
+	ld	a, [wEnemyMonType2]
+	ld hl, sp+5
+	ld	[hl], a
+;src/engine/battlecore.c:241: defenderType1 = wBattleMonType1;
+	ld	a, [wBattleMonType1]
+	ld hl, sp+0
+	ld	[hl], a
+;src/engine/battlecore.c:242: defenderType2 = wBattleMonType2;
+	ld	a, [wBattleMonType2]
+	ld hl, sp+1
+	ld	[hl], a
+;src/engine/battlecore.c:243: wMoveType = wEnemyMoveType;
+	ld	a, [wEnemyMoveType]
+	ld	[wMoveType],a
+.L00103:
+;src/engine/battlecore.c:246: uint8t moveType = wMoveType;
+	ld	a, [wMoveType]
+	ld hl, sp+2
+	ld	[hl], a
+;src/engine/battlecore.c:249: if (moveType == attackerType1 || moveType == attackerType2) {
+	ld	a, c
+	sub	a, [hl]
+	jr	Z, .L00104
+	ld hl, sp+5
+	ld	a, [hl]
+	ld hl, sp+2
+	sub	a, [hl]
+	jr	NZ, .L00105
+.L00104:
+;src/engine/battlecore.c:251: uint16t damage = ([uint16t]wDamage[0] << 8) | wDamage[1];
+	ld	a, [wDamage + 0]
+	ld	b, a
+	ld	c, $00
+	ld	a, [wDamage + 1 + 0]
+	ld	e, $00
+	or	a, c
+	ld	c, a
+	ld	a, e
+	or	a, b
+	ld	b, a
+;src/engine/battlecore.c:252: uint16t stabbonus = damage / 2;
+	ld	l, c
+;	spillPairReg hl
+;	spillPairReg hl
+	ld	h, b
+;	spillPairReg hl
+;	spillPairReg hl
+	srl	h
+	rr	l
+;src/engine/battlecore.c:253: damage += stabbonus;
+	add	hl, bc
+	ld	c, l
+;src/engine/battlecore.c:254: wDamage[0] = damage >> 8;
+	ld	a, h
+	ld	de, #wDamage+0
+	ld	[de], a
+;src/engine/battlecore.c:255: wDamage[1] = damage & 0xFF;
+	ld	hl, wDamage + 1
+	ld	[hl], c
+;src/engine/battlecore.c:257: wDamageMultipliers |= 0x80; // SET BITSTAB_DAMAGE (bit 7)
+	ld	hl, #wDamageMultipliers
+	ld	a, [hl]
+	or	a, $80
+	ld	[hl], a
+.L00105:
+;src/engine/battlecore.c:261: uint8t i = 0;
+	ld hl, sp+3
+	ld	[hl], $00
+;src/engine/battlecore.c:262: while (TypeEffects[i] != 0xFF) {
+.L00115:
+	ld	de, #TypeEffects
+	ld hl, sp+3
+	ld	l, [hl]
+	ld	h, $00
+	add	hl, de
+	ld	c, l
+	ld	b, h
+	ld	a, [bc]
+	cp	a, $ff
+	jp	Z,.L00118
+;src/engine/battlecore.c:263: uint8t atkType = TypeEffects[i];
+	ld	c, a
+;src/engine/battlecore.c:264: if (atkType == moveType) {
+	ld hl, sp+2
+	ld	a, [hl]
+	sub	a, c
+	jp	NZ,.L00114
+;src/engine/battlecore.c:265: uint8t defType = TypeEffects[i + 1];
+	ld hl, sp+3
+	ld	c, [hl]
+	ld	b, $00
+	ld	e, c
+	ld	d, b
+	inc	de
+	ld	hl, #TypeEffects
+	add	hl, de
+	ld	e, [hl]
+;src/engine/battlecore.c:266: if (defenderType1 == defType || defenderType2 == defType) {
+	ld hl, sp+0
+	ld	a, [hl]
+	sub	a, e
+	jr	Z, .L00110
+	ld hl, sp+1
+	ld	a, [hl]
+	sub	a, e
+	jp	NZ,.L00114
+.L00110:
+;src/engine/battlecore.c:268: uint8t mult = TypeEffects[i + 2];
+	inc	bc
+	inc	bc
+	ld	hl, #TypeEffects
+	add	hl, bc
+	ld	a, [hl]
+	ld hl, sp+4
+	ld	[hl], a
+;src/engine/battlecore.c:269: wDamageMultipliers += mult;
+	ld	a, [wDamageMultipliers]
+	ld hl, sp+4
+	add	a, [hl]
+	ld	[wDamageMultipliers],a
+;src/engine/battlecore.c:272: uint16t damage = ([uint16t]wDamage[0] << 8) | wDamage[1];
+	ld	a, [wDamage + 0]
+	ld	b, a
+	ld	c, $00
+	ld	a, [wDamage + 1 + 0]
+	ld	e, $00
+	or	a, c
+	ld	c, a
+	ld	a, e
+	or	a, b
+	ld	b, a
+;src/engine/battlecore.c:273: hDividend[0] = 0;
+	ld	hl, #hDividend
+	ld	[hl], $00
+;src/engine/battlecore.c:274: hDividend[1] = 0;
+	ld	hl, hDividend + 1
+	ld	[hl], $00
+;src/engine/battlecore.c:275: hDividend[2] = damage >> 8;
+	ld hl, sp+5
+	ld	[hl], b
+	ld	de, hDividend + 2
+	ld	a, [hl]
+	ld	[de], a
+;src/engine/battlecore.c:276: hDividend[3] = damage & 0xFF;
+	ld	hl, hDividend + 3
+	ld	[hl], c
+;src/engine/battlecore.c:278: hMultiplicand[0] = 0;
+	ld	hl, #hMultiplicand
+	ld	[hl], $00
+;src/engine/battlecore.c:279: hMultiplicand[1] = damage >> 8;
+	ld	de, hMultiplicand + 1
+	ld hl, sp+5
+	ld	a, [hl]
+	ld	[de], a
+;src/engine/battlecore.c:280: hMultiplicand[2] = damage & 0xFF;
+	ld	hl, hMultiplicand + 2
+	ld	[hl], c
+;src/engine/battlecore.c:281: hMultiplier = mult;
+	ld hl, sp+4
+	ld	a, [hl]
+	ld	[hMultiplier],a
+;src/engine/battlecore.c:282: Multiply();
+	call	_Multiply
+;src/engine/battlecore.c:285: hDividend[0] = hProduct[0];
+	ld	a, [hProduct + 0]
+	ld	[hDividend],a
+;src/engine/battlecore.c:286: hDividend[1] = hProduct[1];
+	ld	a, [hProduct + 1 + 0]
+	ld	[hDividend + 1],a
+;src/engine/battlecore.c:287: hDividend[2] = hProduct[2];
+	ld	a, [hProduct + 2 + 0]
+	ld	[hDividend + 2],a
+;src/engine/battlecore.c:288: hDividend[3] = hProduct[3];
+	ld	a, [hProduct + 3 + 0]
+	ld	[hDividend + 3],a
+;src/engine/battlecore.c:289: hDivisor = 10;
+	ld	hl, #hDivisor
+	ld	[hl], $0a
+;src/engine/battlecore.c:290: Divide(); // result in hQuotient[0..3]
+	call	_Divide
+;src/engine/battlecore.c:293: wDamage[0] = hQuotient[2];
+	ld	a, [hQuotient + 2 + 0]
+	ld	[wDamage],a
+;src/engine/battlecore.c:294: wDamage[1] = hQuotient[3];
+	ld	a, [hQuotient + 3 + 0]
+	ld	[wDamage + 1],a
+;src/engine/battlecore.c:297: if (hQuotient[2] == 0 && hQuotient[3] == 0) {
+	ld	a, [hQuotient + 2 + 0]
+	or	a, a
+	jr	NZ, .L00114
+	ld	a, [hQuotient + 3 + 0]
+	or	a, a
+	jr	NZ, .L00114
+;src/engine/battlecore.c:298: wMoveMissed = 1;
+	ld	hl, #wMoveMissed
+	ld	[hl], $01
+.L00114:
+;src/engine/battlecore.c:302: i += 3;
+	ld hl, sp+3
+	ld	a, [hl]
+	add	a, $03
+	ld	[hl], a
+	jp	.L00115
+.L00118:
+;src/engine/battlecore.c:304: }
+	add	sp, 6
+	ret
+;src/engine/battlecore.c:307: void AIGetTypeEffectivenessC[void] {
+;	---------------------------------
+; Function AIGetTypeEffectivenessC
+; ---------------------------------
+AIGetTypeEffectiveness_C::
+	add	sp, -4
+;src/engine/battlecore.c:308: uint8t moveType = wEnemyMoveType;
+	ld	a, [wEnemyMoveType]
+	ld hl, sp+0
+	ld	[hl], a
+;src/engine/battlecore.c:309: uint8t pType1 = wBattleMonType1;
+	ld	a, [wBattleMonType1]
+	ld hl, sp+1
+	ld	[hl], a
+;src/engine/battlecore.c:310: uint8t pType2 = wBattleMonType2;
+	ld	a, [wBattleMonType2]
+	ld hl, sp+2
+	ld	[hl], a
+;src/engine/battlecore.c:312: wTypeEffectiveness = EFFECTIVE; // Normally 0x10 but the bug keeps it 10 in our enums maybe? The original code had `ld a, $10 ; bug: should be EFFECTIVE[10]` - Actually $10 is 16. In types.h we defined EFFECTIVE as 10. Let's precisely mimic original buggy behaviour `ld a, $10`
+	ld	hl, #wTypeEffectiveness
+	ld	[hl], $0a
+;src/engine/battlecore.c:313: wTypeEffectiveness = 0x10;
+	ld	[hl], $10
+;src/engine/battlecore.c:315: uint8t i = 0;
+	ld hl, sp+3
+	ld	[hl], $00
+;src/engine/battlecore.c:316: while (TypeEffects[i] != 0xFF) {
+.L00106:
+	ld	de, #TypeEffects
+	ld hl, sp+3
+	ld	l, [hl]
+	ld	h, $00
+	add	hl, de
+	ld	c, l
+	ld	b, h
+	ld	a, [bc]
+	ld	e, a
+	inc	a
+	jr	Z, .L00109
+;src/engine/battlecore.c:317: if (TypeEffects[i] == moveType) {
+	ld hl, sp+0
+	ld	a, [hl]
+	sub	a, e
+	jr	NZ, .L00105
+;src/engine/battlecore.c:318: uint8t defType = TypeEffects[i + 1];
+	ld hl, sp+3
+	ld	c, [hl]
+	ld	b, $00
+	ld	e, c
+	ld	d, b
+	inc	de
+	ld	hl, #TypeEffects
+	add	hl, de
+	ld	e, [hl]
+;src/engine/battlecore.c:319: if (defType == pType1 || defType == pType2) {
+	ld hl, sp+1
+	ld	a, [hl]
+	sub	a, e
+	jr	Z, .L00101
+	ld hl, sp+2
+	ld	a, [hl]
+	sub	a, e
+	jr	NZ, .L00105
+.L00101:
+;src/engine/battlecore.c:320: wTypeEffectiveness = TypeEffects[i + 2];
+	inc	bc
+	inc	bc
+	ld	hl, #TypeEffects
+	add	hl, bc
+	ld	a, [hl]
+	ld	[wTypeEffectiveness],a
+;src/engine/battlecore.c:321: return;
+	jr	.L00109
+.L00105:
+;src/engine/battlecore.c:324: i += 3;
+	ld hl, sp+3
+	ld	a, [hl]
+	add	a, $03
+	ld	[hl], a
+	jr	.L00106
+.L00109:
+;src/engine/battlecore.c:326: }
+	add	sp, 4
+	ret
+;src/engine/battlecore.c:329: void AdjustDamageForMoveType[void] _naked {
+;	---------------------------------
+; Function AdjustDamageForMoveType
+; ---------------------------------
+AdjustDamageForMoveType::
+;src/engine/battlecore.c:341: _endasm;
+	push	bc
+	push	de
+	push	hl
+	call	AdjustDamageForMoveType_C
+	pop	hl
+	pop	de
+	pop	bc
+	ret
+;src/engine/battlecore.c:342: }
+;src/engine/battlecore.c:344: void AIGetTypeEffectiveness[void] _naked {
+;	---------------------------------
+; Function AIGetTypeEffectiveness
+; ---------------------------------
+AIGetTypeEffectiveness::
+;src/engine/battlecore.c:356: _endasm;
+	push	bc
+	push	de
+	push	hl
+	call	AIGetTypeEffectiveness_C
+	pop	hl
+	pop	de
+	pop	bc
+	ret
+;src/engine/battlecore.c:357: }
 SECTION "C Code obj/engine/battle_core.asm.tmp 11", ROMX
