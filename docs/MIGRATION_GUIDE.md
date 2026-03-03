@@ -84,8 +84,17 @@ The script `tools/sdcc2rgbasm.py` acts as the vital glue. Its responsibilities i
 
 ## What Needs To Be Done
 
-### Phase 3: Engine Expansions (Current Focus)
-With the toolchain unblocked from strict SHA constraints, we can now build major features natively in C in `src/engine/`.
+### Phase 3: Utility Functions (Math & RNG) ✅
+- Implemented C versions of `Random_`, `_Multiply`, and `_Divide` in `src/engine/math.c`.
+- Restructured `sdcc2rgbasm.py` to seamlessly convert negative SP offsets, 32-bit math structs, and `(#label + n)` immediate logic correctly into RGBDS.
+- Created `src/include/hram.h` mapping hardware timer variables natively for direct interaction with legacy features.
+
+---
+
+## What Needs To Be Done
+
+### Phase 4: Engine Expansions (Current Focus)
+With the toolchain unblocked and utility math/hardware access functioning natively, we can now build major features natively in C in `src/engine/`.
 Target Features:
 - Physical / Special split mechanic.
 - New moves / logic adjustments.

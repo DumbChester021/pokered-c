@@ -86,6 +86,48 @@ def process_file(input_path):
         # RGBDS: jr .L00101
         line = re.sub(r'([0-9]+)\$', r'.L\1', line)
         
+        # SDCC ldhl sp, #NN
+        # SDCC often uses `ldhl sp, #NN` to set HL to `SP + NN`.
+        # RGBDS syntax relies heavily on `add hl, bc` or `ld hl, sp+NN`.
+        # But wait, looking at the error:
+        # error: syntax error, unexpected hl at obj/engine/math.asm: `ld hl, sp+8` and then `ld a, (hl+)`
+        # Actually `ld a, (hl+)` is valid in rgbds as `ld a, [hli]`. Wait!
+        # Ah! The RGBDS array dereference syntax is brackets `[hl]` not `(hl)`!
+        # `ld a, (hl)` is ASZ80 SDCC syntax. RGBDS expects `ld a, [hl]`.
+        # Let's fix parentheses to brackets for all memory addresses.
+        line = re.sub(r'ldhl\s+sp,\s*#([0-9]+)', r'ld hl, sp+\1', line)
+        line = re.sub(r'ldhl\s+sp,\s*\$([0-9a-fA-F]+)', r'ld hl, sp+$\1', line)
+        
+        # SDCC uses (hl) (bc) (de) etc. RGBDS expects [hl] [bc] [de]
+        # Also handles (hl+), (hl-), etc -> [hli], [hld]
+        line = re.sub(r'\(([hH][lL]\+)\)', r'[hli]', line)
+        line = re.sub(r'\(([hH][lL]\-)\)', r'[hld]', line)
+        # Handle simple register pointers: (hl) -> [hl]
+        line = re.sub(r'\(([A-Za-z0-9_]+)\)', r'[\1]', line)
+        
+        # SDCC immediate memory references: (#label) -> [label] and (#label + offset)
+        # It also does `(#(label + N))` or `(#(label + N) + offset)`
+        # The easiest approach is to iteratively strip `#` from inside pointer lookups.
+        line = re.sub(r'\(\#([A-Za-z0-9_]+)\)', r'[\1]', line)
+        
+        # For `(#(label + 1))` -> `[label + 1]`
+        line = re.sub(r'\(\#\(([A-Za-z0-9_]+\s*\+\s*[0-9]+)\)\)', r'[\1]', line)
+        
+        # For `(#(label + 1) + 0)` -> `[label + 1 + 0]`
+        line = re.sub(r'\(\#\(([A-Za-z0-9_]+\s*\+\s*[0-9]+)\)\s*\+\s*([0-9]+)\)', r'[\1 + \2]', line)
+
+        # For `(#label + 0)` -> `[label + 0]`
+        line = re.sub(r'\(\#([A-Za-z0-9_]+)\s*\+\s*([0-9]+)\)', r'[\1 + \2]', line)
+
+        # For `#(label + 1)` outside of memory dereference, e.g. `ld hl, #(hMultiplyBuffer + 1)`
+        line = re.sub(r'\#\(([A-Za-z0-9_]+\s*\+\s*[0-9]+)\)', r'\1', line)
+
+        # SDCC negative numbers: #-3 -> -3
+        line = re.sub(r'\#\-([0-9]+)', r'-\1', line)
+        
+        # SDCC basic positive numbers: #3 -> 3
+        line = re.sub(r'\#([0-9]+)', r'\1', line)
+        
         # SDCC function calls: call _func
         # RGBDS: call func
         line = re.sub(r'(_)([a-zA-Z_][a-zA-Z0-9_]*)', r'\2', line)
