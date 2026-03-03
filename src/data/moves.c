@@ -27,7 +27,7 @@
 
 
 
-const MoveData moves[] = {
+const MoveData Moves[] = {
     /*                     animation       effect                       pow  type          acc  pp */
     { POUND,        NO_ADDITIONAL_EFFECT,        40, NORMAL,       100, 35 },
     { KARATE_CHOP,  NO_ADDITIONAL_EFFECT,        50, NORMAL,       100, 25 },

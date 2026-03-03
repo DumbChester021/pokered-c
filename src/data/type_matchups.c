@@ -21,7 +21,7 @@ typedef struct {
     unsigned char effectiveness;
 } TypeMatchup;
 
-const TypeMatchup type_matchups[] = {
+const TypeMatchup TypeEffects[] = {
     /* attacker,     defender,     effectiveness */
     { WATER,        FIRE,         SUPER_EFFECTIVE },
     { FIRE,         GRASS,        SUPER_EFFECTIVE },

@@ -44,23 +44,20 @@ def process_file(input_path):
             current_area = area_name
             continue
             
-        # Label declarations
         # SDCC: _function:: or _function:
         # RGBDS: function::
         label_match = re.match(r'^_([a-zA-Z0-9_]+)(:|\:\:)', line)
         if label_match:
             name = label_match.group(1)
-            colons = label_match.group(2)
             
             # Map specific struct names to match game's expected labels
             if name == "base_stats":
                 name = "BaseStats"
-                colons = "::"
             elif name == "mew_base_stats":
                 name = "MewBaseStats"
-                colons = "::"
-                
-            out_lines.append(f'{name}{colons}\n')
+
+            # Always export mapped symbols globally for the linker
+            out_lines.append(f'{name}::\n')
             continue
             
         # Local labels

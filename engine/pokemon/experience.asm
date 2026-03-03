@@ -146,4 +146,4 @@ CalcDSquared:
 	ldh [hMultiplier], a
 	jp Multiply
 
-INCLUDE "data/growth_rates.asm"
+; INCLUDE "data/growth_rates.asm"

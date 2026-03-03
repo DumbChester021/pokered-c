@@ -17,7 +17,11 @@ rom_obj := \
 	gfx/sprites.o \
 	gfx/tilesets.o \
 	obj/data/base_stats.o \
-	obj/data/mew_base_stats.o
+	obj/data/mew_base_stats.o \
+	obj/data/moves.o \
+	obj/data/type_matchups.o \
+	obj/data/item_prices.o \
+	obj/data/growth_rates.o
 
 pokered_obj        := $(rom_obj:.o=_red.o)
 pokeblue_obj       := $(rom_obj:.o=_blue.o)

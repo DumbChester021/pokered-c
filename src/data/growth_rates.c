@@ -47,7 +47,7 @@ typedef struct {
     (e) \
 }
 
-const GrowthRate growth_rates[] = {
+const GrowthRate GrowthRateTable[] = {
     GROWTH_RATE(1, 1,   0,   0,   0), // "Medium Fast"
     GROWTH_RATE(3, 4,  10,   0,  30), // "Slightly Fast"
     GROWTH_RATE(3, 4,  20,   0,  70), // "Slightly Slow"
