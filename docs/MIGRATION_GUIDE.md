@@ -21,7 +21,9 @@
 
 ## Project Goal
 
-**Make the Pokémon Red/Blue codebase maintainable and extensible by migrating it from Game Boy assembly to a C-based Expansion Engine**. We are building a foundational framework where complex logic and new expansions (e.g. physical/special split, new types) can be written rapidly in C, compiling naturally into the ROM.
+**Make the Pokémon Red/Blue codebase maintainable and extensible by migrating core engine logic from Game Boy assembly to a C-based Expansion Engine**. We are building a foundational framework where complex logic and new expansions (e.g., physical/special split, new types, new moves) can be written rapidly in C, compiling naturally into the ROM.
+
+> **Core Philosophy - "Expandability over Completionism":** We will **only migrate ASM to C if it needs to be expanded or modified**. Components that do not benefit from future expansions (e.g., the audio engine, graphics V-blank rendering, overworld collisions) will remain untouched in ASM. We only migrate what we actively want to expand.
 
 > **Note on Byte-Matching:** In the earliest phases of this project, we enforced a strict 1:1 SHA hash byte-matching requirement with the original 1998 ROM (`make compare`). Due to the inherent differences in how SDCC and RGBDS emit and organize functional assembly frames, **this requirement has been officially deprecated.** The `pokered-c` repository now prioritizes clean, extensible C logic over binary perfection, similar to the `pokeemerald` expansion model.
 
@@ -93,9 +95,21 @@ The script `tools/sdcc2rgbasm.py` acts as the vital glue. Its responsibilities i
 
 ## What Needs To Be Done
 
-### Phase 4: Engine Subsystems (Current Focus)
-With the toolchain unblocked and utility math/hardware access functioning natively, we are now migrating standalone engine subsystems to pure C. 
-- `engine/play_time.asm` migrated to `src/engine/play_time.c` utilizing pure memory-mapped WRAM definitions.
+### Phase 4: Strategic Engine Additions (Current Focus)
+Following our strategic philosophy, we are targeting core game mechanics that require extensibility. We are now migrating these standalone engine subsystems to pure C:
+- **Battle Damage Calculation** (`engine/battle/core.asm`) - To support Physical/Special split and new type modifiers.
+- **Type Effectiveness** - To easily add the Fairy type and balance new match-ups.
+- **Move Effects** - To write custom logic for new moves (e.g., entry hazards).
+- **Trainer AI** - To allow AI to understand new mechanics and moves.
+- **Experience & Evolutions** - To add new evolution methods (e.g., friendship, held items).
+
+### Skip For Now (Static Components)
+These systems work perfectly and won't benefit from being written in C. Translating them would be a massive time sink for zero functional gain:
+- **Audio Engine** (`audio/`) - Music formats are static.
+- **Graphics / VBlank rendering** (`engine/gfx/`) - Heavily hardware-bound and fast in ASM.
+- **Overworld Movement & Collisions** (`engine/overworld/`) - No major mechanic changes expected.
+- **Link Cable logic** (`engine/link/`) - Untouched hardware communications.
+- **Text Engine** (`home/text.asm`) - Existing system works perfectly for generic dialog.
 
 ### Phase 5: Engine Expansions (Future)
 Target Features:

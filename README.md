@@ -4,6 +4,8 @@ This is a fork of [pret/pokered](https://github.com/pret/pokered), repurposed as
 
 By integrating SDCC (Small Device C Compiler) with a dedicated Python transpiler (`tools/sdcc2rgbasm.py`), we have enabled developers to write game logic natively in C. The resulting code is seamlessly linked alongside the classic Game Boy assembler routines.
 
+**Core Philosophy - "Expandability over Completionism":** We have adopted a purely strategic approach to this migration: **Migrate only what needs to be expanded or modified.** If a component does not benefit from being written in C for future expansions (e.g., audio, graphics tile rendering), it will remain in ASM to save time and prevent regressions.
+
 **Note on Hashes:** Because C-compiled functions generate varying assembler instructions and segments compared to the original Game Boy cartridge, **this project does NOT prioritize a byte-identical `make compare` ROM.** This is an expansion engine designed for clean logic abstraction and maintainability (similar to `pokeemerald` by RHH).
 
 It builds the following functional ROMs:
