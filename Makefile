@@ -69,7 +69,8 @@ RGBGFXFLAGS  ?= -Weverything
 	tidy \
 	compare \
 	tools \
-	usage
+	usage \
+	generate
 
 all: $(roms)
 red:        pokered.gbc
@@ -110,6 +111,20 @@ tools:
 
 usage: $(roms)
 	@$(PYTHON) tools/mapusage.py $(roms:.gbc=.map)
+
+# C → ASM code generation (see tools/c2asm.py)
+C2ASM := $(PYTHON) tools/c2asm.py
+
+# Generated ASM data files (add new entries as modules are migrated)
+data/types/type_matchups.asm: src/data/type_matchups.c src/include/types.h tools/c2asm.py
+	$(C2ASM) $< > $@
+
+data/moves/moves.asm: src/data/moves.c src/include/moves.h src/include/types.h tools/c2asm.py
+	$(C2ASM) $< > $@
+
+generate: data/types/type_matchups.asm data/moves/moves.asm
+	@echo "Generated ASM data files up to date."
+
 
 
 RGBASMFLAGS += -Q8 -P includes.asm
