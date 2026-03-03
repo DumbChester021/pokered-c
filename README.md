@@ -14,7 +14,7 @@ It builds the following functional ROMs:
 - pokeblue_debug.gbc
 
 To set up the repository, see [**INSTALL.md**](INSTALL.md).
-For more details on the C conversion architecture and expansion mechanics, see [**docs/MIGRATION_GUIDE.md**](docs/MIGRATION_GUIDE.md).
+For more details on the C conversion architecture, expansion mechanics, and critical constraints (Bank Safety and Struct Alignment), see [**docs/MIGRATION_GUIDE.md**](docs/MIGRATION_GUIDE.md).
 
 
 ## See also

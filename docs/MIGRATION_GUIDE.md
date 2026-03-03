@@ -140,6 +140,15 @@ When SDCC compiles a `.c` file, the transpiler emits `SECTION "C Code ...", ROMX
 2. For each reference, check if it uses `BANK()` / `FarCopyData` / `callfar` (safe) or direct `ld hl, Label` / `call Label` (unsafe).
 3. If ANY reference is unsafe, either: (a) leave the data/code in ASM, or (b) refactor the caller to use a bankswitch.
 
+## ⚠️ C-to-ASM Migration Gotchas (Critical Lessons)
+
+The recent reverts of `math.c`, `growth_rates.c`, `battle_core.c`, and `play_time.c` taught us valuable lessons about the strict requirements of interfacing C with legacy Game Boy assembly:
+
+1. **Struct Byte Alignment:** Game Boy data tables are tightly packed. If a C struct accidentally introduces padding or defines extra fields (e.g., the `MoveData` struct taking 7 bytes instead of the expected 6 bytes), reading the array will become misaligned and instantly crash the game. Always verify the byte-size of migrated data tables.
+2. **Calling Conventions & Register State:** Legacy ASM routines expect arguments in specific registers (`a`, `hl`, `b`, `c`) and rely on other registers remaining untouched. By default, SDCC functions ignore these rules, smashing registers and using the stack. To correctly interface C with ASM callers (e.g., `FlagAction`), you must write `__naked` ASM wrapper functions that manually translate the register state to the stack and preserve context.
+3. **Interrupts and Timing (VBlank):** Code that executes during hardware interrupts, such as `play_time` (which runs during VBlank), operates under incredibly strict cycle limits. Migrating these to C introduces overhead that blows past the cycle budget, causing graphical glitches or crashing. Leave timing-critical interrupt handlers in pure ASM.
+4. **Transpiler Regex Aggressiveness:** The intermediate transpiler (`sdcc2rgbasm.py`) manipulates the assembly output text. We encountered bugs where it over-aggressively replaced instructions (e.g., corrupting indirect `jp [hl]` jumps or array reads). When creating matching rules in the transpiler, regular expressions must be highly specific.
+
 ## What You Should NOT Do
 
 1. **Do NOT worry about `make compare` failures.** It will throw a warning about hashes drifting. This is expected.
