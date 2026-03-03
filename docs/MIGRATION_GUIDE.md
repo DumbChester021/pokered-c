@@ -97,7 +97,7 @@ The script `tools/sdcc2rgbasm.py` acts as the vital glue. Its responsibilities i
 
 ### Phase 4: Strategic Engine Additions (Current Focus)
 Following our strategic philosophy, we are targeting core game mechanics that require extensibility. We are now migrating these standalone engine subsystems to pure C:
-- **Battle Damage Calculation** (`engine/battle/core.asm`) - To support Physical/Special split and new type modifiers.
+- **Battle Damage Calculation** (`engine/battle/core.asm`) ✅ - To support Physical/Special split and new type modifiers.
 - **Type Effectiveness** - To easily add the Fairy type and balance new match-ups.
 - **Move Effects** - To write custom logic for new moves (e.g., entry hazards).
 - **Trainer AI** - To allow AI to understand new mechanics and moves.

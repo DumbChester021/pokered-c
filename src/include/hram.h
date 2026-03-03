@@ -23,4 +23,8 @@ extern volatile uint8_t hQuotient[4]; // Big endian
 extern volatile uint8_t hRemainder;
 extern volatile uint8_t hDivideBuffer[5]; // Big endian
 
+// Battle state
+extern volatile uint8_t hWhoseTurn;
+extern volatile uint8_t wMoveMissed;
+
 #endif // POKERED_HRAM_H

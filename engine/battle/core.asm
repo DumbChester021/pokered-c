@@ -4296,179 +4296,180 @@ GetEnemyMonStat:
 	pop de
 	ret
 
-CalculateDamage:
+;CalculateDamage:
+; COMMENTED OUT - Migrated to C (src/engine/battle_core.c)
 ; input:
 ;   b: attack
 ;   c: opponent defense
 ;   d: base power
 ;   e: level
-
-	ldh a, [hWhoseTurn] ; whose turn?
-	and a
-	ld a, [wPlayerMoveEffect]
-	jr z, .effect
-	ld a, [wEnemyMoveEffect]
-.effect
-
-; EXPLODE_EFFECT halves defense.
-	cp EXPLODE_EFFECT
-	jr nz, .ok
-	srl c
-	jr nz, .ok
-	inc c ; ...with a minimum value of 1 (used as a divisor later on)
-.ok
-
-; Multi-hit attacks may or may not have 0 bp.
-	cp TWO_TO_FIVE_ATTACKS_EFFECT
-	jr z, .skipbp
-	cp EFFECT_1E
-	jr z, .skipbp
-
-; Calculate OHKO damage based on remaining HP.
-	cp OHKO_EFFECT
-	jp z, JumpToOHKOMoveEffect
-
-; Don't calculate damage for moves that don't do any.
-	ld a, d ; base power
-	and a
-	ret z
-.skipbp
-
-	xor a
-	ld hl, hDividend
-	ld [hli], a
-	ld [hli], a
-	ld [hl], a
-
-; Multiply level by 2
-	ld a, e ; level
-	add a
-	jr nc, .nc
-	push af
-	ld a, 1
-	ld [hl], a
-	pop af
-.nc
-	inc hl
-	ld [hli], a
-
-; Divide by 5
-	ld a, 5
-	ld [hld], a
-	push bc
-	ld b, 4
-	call Divide
-	pop bc
-
-; Add 2
-	inc [hl]
-	inc [hl]
-
-	inc hl ; multiplier
-
-; Multiply by attack base power
-	ld [hl], d
-	call Multiply
-
-; Multiply by attack stat
-	ld [hl], b
-	call Multiply
-
-; Divide by defender's defense stat
-	ld [hl], c
-	ld b, 4
-	call Divide
-
-; Divide by 50
-	ld [hl], 50
-	ld b, 4
-	call Divide
-
-; Update wCurDamage.
-; Capped at MAX_NEUTRAL_DAMAGE - MIN_NEUTRAL_DAMAGE: 999 - 2 = 997.
-	ld hl, wDamage
-	ld b, [hl]
-	ldh a, [hQuotient + 3]
-	add b
-	ldh [hQuotient + 3], a
-	jr nc, .dont_cap_1
-
-	ldh a, [hQuotient + 2]
-	inc a
-	ldh [hQuotient + 2], a
-	and a
-	jr z, .cap
-
-.dont_cap_1
-	ldh a, [hQuotient]
-	ld b, a
-	ldh a, [hQuotient + 1]
-	or a
-	jr nz, .cap
-
-	ldh a, [hQuotient + 2]
-	cp HIGH(MAX_NEUTRAL_DAMAGE - MIN_NEUTRAL_DAMAGE + 1)
-	jr c, .dont_cap_2
-
-	cp HIGH(MAX_NEUTRAL_DAMAGE - MIN_NEUTRAL_DAMAGE + 1) + 1
-	jr nc, .cap
-
-	ldh a, [hQuotient + 3]
-	cp LOW(MAX_NEUTRAL_DAMAGE - MIN_NEUTRAL_DAMAGE + 1)
-	jr nc, .cap
-
-.dont_cap_2
-	inc hl
-
-	ldh a, [hQuotient + 3]
-	ld b, [hl]
-	add b
-	ld [hld], a
-
-	ldh a, [hQuotient + 2]
-	ld b, [hl]
-	adc b
-	ld [hl], a
-	jr c, .cap
-
-	ld a, [hl]
-	cp HIGH(MAX_NEUTRAL_DAMAGE - MIN_NEUTRAL_DAMAGE + 1)
-	jr c, .dont_cap_3
-
-	cp HIGH(MAX_NEUTRAL_DAMAGE - MIN_NEUTRAL_DAMAGE + 1) + 1
-	jr nc, .cap
-
-	inc hl
-	ld a, [hld]
-	cp LOW(MAX_NEUTRAL_DAMAGE - MIN_NEUTRAL_DAMAGE + 1)
-	jr c, .dont_cap_3
-
-.cap
-	ld a, HIGH(MAX_NEUTRAL_DAMAGE - MIN_NEUTRAL_DAMAGE)
-	ld [hli], a
-	ld a, LOW(MAX_NEUTRAL_DAMAGE - MIN_NEUTRAL_DAMAGE)
-	ld [hld], a
-
-.dont_cap_3
-; Add back MIN_NEUTRAL_DAMAGE (capping at 999).
-	inc hl
-	ld a, [hl]
-	add MIN_NEUTRAL_DAMAGE
-	ld [hld], a
-	jr nc, .dont_floor
-	inc [hl]
-.dont_floor
-
-; Returns nz and nc.
-	ld a, 1
-	and a
-	ret
-
-JumpToOHKOMoveEffect:
-	call JumpMoveEffect
-	ld a, [wMoveMissed]
-	dec a
-	ret
+;
+;	ldh a, [hWhoseTurn] ; whose turn?
+;	and a
+;	ld a, [wPlayerMoveEffect]
+;	jr z, .effect
+;	ld a, [wEnemyMoveEffect]
+;.effect
+;
+;; EXPLODE_EFFECT halves defense.
+;	cp EXPLODE_EFFECT
+;	jr nz, .ok
+;	srl c
+;	jr nz, .ok
+;	inc c ; ...with a minimum value of 1 (used as a divisor later on)
+;.ok
+;
+;; Multi-hit attacks may or may not have 0 bp.
+;	cp TWO_TO_FIVE_ATTACKS_EFFECT
+;	jr z, .skipbp
+;	cp EFFECT_1E
+;	jr z, .skipbp
+;
+;; Calculate OHKO damage based on remaining HP.
+;	cp OHKO_EFFECT
+;	jp z, JumpToOHKOMoveEffect
+;
+;; Don't calculate damage for moves that don't do any.
+;	ld a, d ; base power
+;	and a
+;	ret z
+;.skipbp
+;
+;	xor a
+;	ld hl, hDividend
+;	ld [hli], a
+;	ld [hli], a
+;	ld [hl], a
+;
+;; Multiply level by 2
+;	ld a, e ; level
+;	add a
+;	jr nc, .nc
+;	push af
+;	ld a, 1
+;	ld [hl], a
+;	pop af
+;.nc
+;	inc hl
+;	ld [hli], a
+;
+;; Divide by 5
+;	ld a, 5
+;	ld [hld], a
+;	push bc
+;	ld b, 4
+;	call Divide
+;	pop bc
+;
+;; Add 2
+;	inc [hl]
+;	inc [hl]
+;
+;	inc hl ; multiplier
+;
+;; Multiply by attack base power
+;	ld [hl], d
+;	call Multiply
+;
+;; Multiply by attack stat
+;	ld [hl], b
+;	call Multiply
+;
+;; Divide by defender's defense stat
+;	ld [hl], c
+;	ld b, 4
+;	call Divide
+;
+;; Divide by 50
+;	ld [hl], 50
+;	ld b, 4
+;	call Divide
+;
+;; Update wCurDamage.
+;; Capped at MAX_NEUTRAL_DAMAGE - MIN_NEUTRAL_DAMAGE: 999 - 2 = 997.
+;	ld hl, wDamage
+;	ld b, [hl]
+;	ldh a, [hQuotient + 3]
+;	add b
+;	ldh [hQuotient + 3], a
+;	jr nc, .dont_cap_1
+;
+;	ldh a, [hQuotient + 2]
+;	inc a
+;	ldh [hQuotient + 2], a
+;	and a
+;	jr z, .cap
+;
+;.dont_cap_1
+;	ldh a, [hQuotient]
+;	ld b, a
+;	ldh a, [hQuotient + 1]
+;	or a
+;	jr nz, .cap
+;
+;	ldh a, [hQuotient + 2]
+;	cp HIGH(MAX_NEUTRAL_DAMAGE - MIN_NEUTRAL_DAMAGE + 1)
+;	jr c, .dont_cap_2
+;
+;	cp HIGH(MAX_NEUTRAL_DAMAGE - MIN_NEUTRAL_DAMAGE + 1) + 1
+;	jr nc, .cap
+;
+;	ldh a, [hQuotient + 3]
+;	cp LOW(MAX_NEUTRAL_DAMAGE - MIN_NEUTRAL_DAMAGE + 1)
+;	jr nc, .cap
+;
+;.dont_cap_2
+;	inc hl
+;
+;	ldh a, [hQuotient + 3]
+;	ld b, [hl]
+;	add b
+;	ld [hld], a
+;
+;	ldh a, [hQuotient + 2]
+;	ld b, [hl]
+;	adc b
+;	ld [hl], a
+;	jr c, .cap
+;
+;	ld a, [hl]
+;	cp HIGH(MAX_NEUTRAL_DAMAGE - MIN_NEUTRAL_DAMAGE + 1)
+;	jr c, .dont_cap_3
+;
+;	cp HIGH(MAX_NEUTRAL_DAMAGE - MIN_NEUTRAL_DAMAGE + 1) + 1
+;	jr nc, .cap
+;
+;	inc hl
+;	ld a, [hld]
+;	cp LOW(MAX_NEUTRAL_DAMAGE - MIN_NEUTRAL_DAMAGE + 1)
+;	jr c, .dont_cap_3
+;
+;.cap
+;	ld a, HIGH(MAX_NEUTRAL_DAMAGE - MIN_NEUTRAL_DAMAGE)
+;	ld [hli], a
+;	ld a, LOW(MAX_NEUTRAL_DAMAGE - MIN_NEUTRAL_DAMAGE)
+;	ld [hld], a
+;
+;.dont_cap_3
+;; Add back MIN_NEUTRAL_DAMAGE (capping at 999).
+;	inc hl
+;	ld a, [hl]
+;	add MIN_NEUTRAL_DAMAGE
+;	ld [hld], a
+;	jr nc, .dont_floor
+;	inc [hl]
+;.dont_floor
+;
+;; Returns nz and nc.
+;	ld a, 1
+;	and a
+;	ret
+;
+;JumpToOHKOMoveEffect:
+;	call JumpMoveEffect
+;	ld a, [wMoveMissed]
+;	dec a
+;	ret
 
 INCLUDE "data/battle/unused_critical_hit_moves.asm"
 

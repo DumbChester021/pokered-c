@@ -1,3 +1,4 @@
+EXPORT JumpMoveEffect
 JumpMoveEffect:
 	call _JumpMoveEffect
 	ld b, $1

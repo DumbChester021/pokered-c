@@ -1,6 +1,6 @@
 ;--------------------------------------------------------
 ; File Created by SDCC : free open source ANSI-C Compiler
-; Version 4.2.0 13081 [Linux]
+; Version 4.2.0 13081 (Linux)
 ;--------------------------------------------------------
 	
 ;--------------------------------------------------------
@@ -30,7 +30,7 @@ SECTION "C Data obj/engine/math.asm.tmp 2", WRAM0
 ; code
 ;--------------------------------------------------------
 SECTION "C Code obj/engine/math.asm.tmp 10", ROMX
-;src/engine/math.c:4: void Random_[void] {
+;src/engine/math.c:4: void Random_(void) {
 ;	---------------------------------
 ; Function Random_
 ; ---------------------------------
@@ -50,7 +50,7 @@ Random_::
 	ld	[hl], a
 ;src/engine/math.c:8: }
 	ret
-;src/engine/math.c:10: void Multiply[void] {
+;src/engine/math.c:10: void Multiply(void) {
 ;	---------------------------------
 ; Function Multiply
 ; ---------------------------------
@@ -71,7 +71,7 @@ _Multiply::
 ;src/engine/math.c:19: hMultiplyBuffer[3] = 0;
 	ld	hl, hMultiplyBuffer + 3
 	ld	[hl], $00
-;src/engine/math.c:21: while [1] {
+;src/engine/math.c:21: while (1) {
 	ld hl, sp+2
 	ld	[hl], $08
 .L00106:
@@ -100,7 +100,7 @@ _Multiply::
 	add	hl, bc
 	ld	c, l
 	ld	b, h
-;src/engine/math.c:30: hMultiplyBuffer[3] = [uint8t]sum;
+;src/engine/math.c:30: hMultiplyBuffer[3] = (uint8t)sum;
 	ld	de, #hMultiplyBuffer+3
 	ld	a, c
 	ld	[de], a
@@ -126,7 +126,7 @@ _Multiply::
 	add	hl, de
 	ld	c, l
 	ld	b, h
-;src/engine/math.c:33: hMultiplyBuffer[2] = [uint8t]sum;
+;src/engine/math.c:33: hMultiplyBuffer[2] = (uint8t)sum;
 	ld	de, #hMultiplyBuffer+2
 	ld	a, c
 	ld	[de], a
@@ -152,7 +152,7 @@ _Multiply::
 	add	hl, de
 	ld	c, l
 	ld	b, h
-;src/engine/math.c:36: hMultiplyBuffer[1] = [uint8t]sum;
+;src/engine/math.c:36: hMultiplyBuffer[1] = (uint8t)sum;
 	ld	de, #hMultiplyBuffer+1
 	ld	a, c
 	ld	[de], a
@@ -177,7 +177,7 @@ _Multiply::
 ;	spillPairReg hl
 	add	hl, de
 	ld	c, l
-;src/engine/math.c:39: hMultiplyBuffer[0] = [uint8t]sum;
+;src/engine/math.c:39: hMultiplyBuffer[0] = (uint8t)sum;
 	ld	hl, #hMultiplyBuffer
 	ld	[hl], c
 .L00102:
@@ -192,7 +192,7 @@ _Multiply::
 	ld	b, $00
 	add	a, a
 	rl	b
-;src/engine/math.c:48: hMultiplicand[2] = [uint8t]shift;
+;src/engine/math.c:48: hMultiplicand[2] = (uint8t)shift;
 	ld	[hMultiplicand + 2],a
 ;src/engine/math.c:50: shift = (hMultiplicand[1] << 1) | (shift >> 8);
 	ld	a, [hMultiplicand + 1 + 0]
@@ -209,7 +209,7 @@ _Multiply::
 	ld	a, b
 	or	a, h
 	ld	b, a
-;src/engine/math.c:51: hMultiplicand[1] = [uint8t]shift;
+;src/engine/math.c:51: hMultiplicand[1] = (uint8t)shift;
 	ld	a, c
 	ld	[hMultiplicand + 1],a
 ;src/engine/math.c:53: shift = (hMultiplicand[0] << 1) | (shift >> 8);
@@ -227,7 +227,7 @@ _Multiply::
 	ld	a, h
 	or	a, b
 	ld	b, a
-;src/engine/math.c:54: hMultiplicand[0] = [uint8t]shift;
+;src/engine/math.c:54: hMultiplicand[0] = (uint8t)shift;
 	ld	a, c
 	ld	[hMultiplicand],a
 ;src/engine/math.c:56: shift = (hProduct[0] << 1) | (shift >> 8);
@@ -244,7 +244,7 @@ _Multiply::
 	ld	c, a
 	ld	a, b
 	or	a, h
-;src/engine/math.c:57: hProduct[0] = [uint8t]shift;
+;src/engine/math.c:57: hProduct[0] = (uint8t)shift;
 	ld	hl, #hProduct
 	ld	[hl], c
 	jp	.L00106
@@ -264,13 +264,13 @@ _Multiply::
 ;src/engine/math.c:64: }
 	add	sp, 3
 	ret
-;src/engine/math.c:66: void Divide[void] {
+;src/engine/math.c:66: void Divide(void) {
 ;	---------------------------------
 ; Function Divide
 ; ---------------------------------
 _Divide::
 	add	sp, -22
-;src/engine/math.c:69: uint32t dividend = ([uint32t]hDividend[0] << 24) | 
+;src/engine/math.c:69: uint32t dividend = ((uint32t)hDividend[0] << 24) | 
 	ld	a, [hDividend + 0]
 	ld	d, a
 	ld	bc, $0000
