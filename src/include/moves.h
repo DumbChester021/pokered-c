@@ -268,11 +268,10 @@ typedef struct {
     uint8_t effect;
     uint8_t power;
     uint8_t type;
-    uint8_t category; /* 0=Physical, 1=Special, 2=Status */
     uint8_t accuracy;   /* percentage (0–100, stored as-is * 256/100 is NOT done) */
     uint8_t pp;
 } MoveData;
 
-#define MOVE_LENGTH 7
+#define MOVE_LENGTH 6
 
 #endif /* POKERED_MOVES_H */
