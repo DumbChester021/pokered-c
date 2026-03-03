@@ -138,15 +138,19 @@ def parse_c_array(c_filepath, defines):
     for entry_match in entry_re.finditer(array_body):
         fields_str = entry_match.group(1)
         fields = []
-        for field in fields_str.split(','):
+        # Split carefully, respecting quoted strings
+        for field in re.split(r',(?=(?:[^"]*"[^"]*")*[^"]*$)', fields_str):
             field = field.strip()
             if not field:
                 continue
+            # Quoted string literal
+            if field.startswith('"') and field.endswith('"'):
+                fields.append((field, field.strip('"')))
             # Try to resolve as a define name
-            if field in defines:
+            elif field in defines:
                 fields.append((field, defines[field]))
             else:
-                # Try as literal int
+                # Try as literal int (including negatives)
                 try:
                     val = int(field, 0)
                     fields.append((str(val), val))
@@ -174,6 +178,106 @@ TYPE_EFFECTIVENESS_NAMES = {
 def generate_asm(directives, entries, defines):
     """Generate RGBDS-compatible assembly from parsed C data."""
     lines = []
+    mode = directives.get('asm_mode', None)
+
+    # ── bcd3 mode (item prices) ──────────────────────────────────────
+    if mode == 'bcd3':
+        label = directives.get('asm_label', 'Data')
+        lines.append(f"{label}")  # label already has :: suffix
+
+        if 'asm_table_width' in directives:
+            lines.append(f"\ttable_width {directives['asm_table_width']}")
+
+        # Find max price string width for alignment
+        max_price_width = 0
+        for entry in entries:
+            price_str = str(entry[0][1])
+            max_price_width = max(max_price_width, len(price_str))
+
+        # First assertion position (NUM_ITEMS)
+        assert1 = directives.get('asm_assert', None)
+        assert2 = directives.get('asm_assert2', None)
+        assert1_pos = None
+        # Parse the C file to find the mid-table assertion comment
+        with open(sys.argv[1]) as f:
+            c_content = f.read()
+        mid_assert_match = re.search(r'/\*\s*---\s*assert_table_length\s+NUM_ITEMS\s*---\s*\*/', c_content)
+
+        # Count entries before/after mid-assertion
+        if mid_assert_match:
+            before_text = c_content[:mid_assert_match.start()]
+            assert1_pos = before_text.count('{') - 1  # subtract the array opening brace
+
+        for i, entry in enumerate(entries):
+            price = entry[0][1]  # numeric value
+            name = entry[1][1]   # string name (for comment)
+            # Strip quotes from name if present
+            if isinstance(name, str):
+                name = name.strip('"')
+            price_str = str(price)
+            lines.append(f"\tbcd3 {price_str:<{max_price_width}s} ; {name}")
+
+            # Insert mid-table assertion
+            if assert1 and assert1_pos is not None and i == assert1_pos - 1:
+                lines.append(f"\t{assert1}")
+
+        if assert2:
+            lines.append(f"\t{assert2}")
+
+        return '\n'.join(lines) + '\n'
+
+    # ── growth_rate mode ─────────────────────────────────────────────
+    if mode == 'growth_rate':
+        # Emit MACRO definition
+        lines.append("MACRO growth_rate")
+        lines.append("; [1]/[2]*n**3 + [3]*n**2 + [4]*n - [5]")
+        lines.append("\tdn \\1, \\2")
+        lines.append("\tif \\3 < 0")
+        lines.append("\t\tdb -\\3 | $80 ; signed magnitude")
+        lines.append("\telse")
+        lines.append("\t\tdb \\3")
+        lines.append("\tendc")
+        lines.append("\tdb \\4, \\5")
+        lines.append("ENDM")
+        lines.append("")
+
+        label = directives.get('asm_label', 'Data')
+        lines.append(f"{label}:")
+
+        if 'asm_label_comment' in directives:
+            lines.append(directives['asm_label_comment'])
+
+        if 'asm_table_width' in directives:
+            lines.append(f"\ttable_width {directives['asm_table_width']}")
+
+        # Compute max widths for alignment (fields a-e are numeric)
+        # Original format: right-aligned numbers with trailing comment
+        for entry in entries:
+            # entry fields: a, b, c, d, e, name(string)
+            nums = []
+            name = ""
+            for field_name, field_val in entry:
+                if isinstance(field_val, str):
+                    name = field_val.strip('"')
+                else:
+                    nums.append(field_val)
+
+            # Format: growth_rate a, b, ccc, ddd, eee ; Name
+            # Fields c, d, e are right-aligned to width 3
+            parts = []
+            parts.append(str(nums[0]))
+            parts.append(f" {nums[1]}")
+            parts.append(f" {nums[2]:>3d}")
+            parts.append(f" {nums[3]:>3d}")
+            parts.append(f" {nums[4]:>3d}")
+            lines.append(f"\tgrowth_rate {parts[0]},{parts[1]},{parts[2]},{parts[3]},{parts[4]} ; {name}")
+
+        if 'asm_assert' in directives:
+            lines.append(f"\t{directives['asm_assert']}")
+
+        return '\n'.join(lines) + '\n'
+
+    # ── Standard modes (preamble/label/macro/db) ─────────────────────
 
     # Preamble lines (e.g. MACRO definition)
     if 'asm_preamble' in directives:

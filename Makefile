@@ -122,7 +122,13 @@ data/types/type_matchups.asm: src/data/type_matchups.c src/include/types.h tools
 data/moves/moves.asm: src/data/moves.c src/include/moves.h src/include/types.h tools/c2asm.py
 	$(C2ASM) $< > $@
 
-generate: data/types/type_matchups.asm data/moves/moves.asm
+data/growth_rates.asm: src/data/growth_rates.c tools/c2asm.py
+	$(C2ASM) $< > $@
+
+data/items/prices.asm: src/data/item_prices.c src/include/items.h tools/c2asm.py
+	$(C2ASM) $< > $@
+
+generate: data/types/type_matchups.asm data/moves/moves.asm data/growth_rates.asm data/items/prices.asm
 	@echo "Generated ASM data files up to date."
 
 

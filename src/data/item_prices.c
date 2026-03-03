@@ -1,0 +1,120 @@
+/*
+ * item_prices.c — Item price table
+ * Source of truth for data/items/prices.asm
+ *
+ * Run: python3 tools/c2asm.py src/data/item_prices.c > data/items/prices.asm
+ *
+ * Prices are stored as decimal integers here.
+ * The generator converts them to bcd3 macro calls.
+ */
+
+#include "../include/items.h"
+
+/* @asm_label ItemPrices:: */
+/* @asm_table_width 3 */
+/* @asm_mode bcd3 */
+/* @asm_assert assert_table_length NUM_ITEMS */
+/* @asm_assert2 assert_table_length NUM_ITEMS + NUM_FLOORS */
+
+const ItemPrice item_prices[] = {
+    /*  price, name (comment only) */
+    {     0, "MASTER_BALL" },
+    {  1200, "ULTRA_BALL" },
+    {   600, "GREAT_BALL" },
+    {   200, "POKE_BALL" },
+    {     0, "TOWN_MAP" },
+    {     0, "BICYCLE" },
+    {     0, "SURFBOARD" },
+    {  1000, "SAFARI_BALL" },
+    {     0, "POKEDEX" },
+    {     0, "MOON_STONE" },
+    {   100, "ANTIDOTE" },
+    {   250, "BURN_HEAL" },
+    {   250, "ICE_HEAL" },
+    {   200, "AWAKENING" },
+    {   200, "PARLYZ_HEAL" },
+    {  3000, "FULL_RESTORE" },
+    {  2500, "MAX_POTION" },
+    {  1500, "HYPER_POTION" },
+    {   700, "SUPER_POTION" },
+    {   300, "POTION" },
+    {     0, "BOULDERBADGE" },
+    {     0, "CASCADEBADGE" },
+    {     0, "THUNDERBADGE" },
+    {     0, "RAINBOWBADGE" },
+    {     0, "SOULBADGE" },
+    {     0, "MARSHBADGE" },
+    {     0, "VOLCANOBADGE" },
+    {     0, "EARTHBADGE" },
+    {   550, "ESCAPE_ROPE" },
+    {   350, "REPEL" },
+    {     0, "OLD_AMBER" },
+    {  2100, "FIRE_STONE" },
+    {  2100, "THUNDER_STONE" },
+    {  2100, "WATER_STONE" },
+    {  9800, "HP_UP" },
+    {  9800, "PROTEIN" },
+    {  9800, "IRON" },
+    {  9800, "CARBOS" },
+    {  9800, "CALCIUM" },
+    {  4800, "RARE_CANDY" },
+    {     0, "DOME_FOSSIL" },
+    {     0, "HELIX_FOSSIL" },
+    {     0, "SECRET_KEY" },
+    {     0, "ITEM_2C" },
+    {     0, "BIKE_VOUCHER" },
+    {   950, "X_ACCURACY" },
+    {  2100, "LEAF_STONE" },
+    {     0, "CARD_KEY" },
+    { 10000, "NUGGET" },
+    {  9800, "ITEM_32" },
+    {  1000, "POKE_DOLL" },
+    {   600, "FULL_HEAL" },
+    {  1500, "REVIVE" },
+    {  4000, "MAX_REVIVE" },
+    {   700, "GUARD_SPEC" },
+    {   500, "SUPER_REPEL" },
+    {   700, "MAX_REPEL" },
+    {   650, "DIRE_HIT" },
+    {    10, "COIN" },
+    {   200, "FRESH_WATER" },
+    {   300, "SODA_POP" },
+    {   350, "LEMONADE" },
+    {     0, "S_S_TICKET" },
+    {     0, "GOLD_TEETH" },
+    {   500, "X_ATTACK" },
+    {   550, "X_DEFEND" },
+    {   350, "X_SPEED" },
+    {   350, "X_SPECIAL" },
+    {     0, "COIN_CASE" },
+    {     0, "OAKS_PARCEL" },
+    {     0, "ITEMFINDER" },
+    {     0, "SILPH_SCOPE" },
+    {     0, "POKE_FLUTE" },
+    {     0, "LIFT_KEY" },
+    {     0, "EXP_ALL" },
+    {     0, "OLD_ROD" },
+    {     0, "GOOD_ROD" },
+    {     0, "SUPER_ROD" },
+    {     0, "PP_UP" },
+    {     0, "ETHER" },
+    {     0, "MAX_ETHER" },
+    {     0, "ELIXER" },
+    {     0, "MAX_ELIXER" },
+    /* --- assert_table_length NUM_ITEMS --- */
+    {     0, "FLOOR_B2F" },
+    {     0, "FLOOR_B1F" },
+    {     0, "FLOOR_1F" },
+    {     0, "FLOOR_2F" },
+    {     0, "FLOOR_3F" },
+    {     0, "FLOOR_4F" },
+    {     0, "FLOOR_5F" },
+    {     0, "FLOOR_6F" },
+    {     0, "FLOOR_7F" },
+    {     0, "FLOOR_8F" },
+    {     0, "FLOOR_9F" },
+    {     0, "FLOOR_10F" },
+    {     0, "FLOOR_11F" },
+    {     0, "FLOOR_B4F" },
+    /* --- assert_table_length NUM_ITEMS + NUM_FLOORS --- */
+};

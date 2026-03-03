@@ -82,12 +82,14 @@ This is why we use a **code-generation approach** for early phases: write data i
 | Makefile integration | `Makefile` (generate target) | ✅ Done |
 | ROM space reporter | `tools/mapusage.py` | ✅ Done (previous session) |
 
-### Phase 2: Data Tables (Partial) ✅
+### Phase 2: Data Tables ✅
 
 | Table | C Source | Generated ASM | Entries | Verified |
 |-------|----------|---------------|---------|----------|
 | Type effectiveness | `src/data/type_matchups.c` | `data/types/type_matchups.asm` | 82 matchups | ✅ SHA1 match |
 | Move data | `src/data/moves.c` | `data/moves/moves.asm` | 165 moves | ✅ SHA1 match |
+| Growth rates | `src/data/growth_rates.c` | `data/growth_rates.asm` | 6 entries | ✅ SHA1 match |
+| Item prices | `src/data/item_prices.c` | `data/items/prices.asm` | 97 items + floors | ✅ SHA1 match |
 
 **Verification results (all pass):**
 - `pokered.gbc` — `ea9bcae617fdf159b045185467ae58b2e4a48b9a`
@@ -101,9 +103,7 @@ This is why we use a **code-generation approach** for early phases: write data i
 ### Phase 2 (remaining data tables)
 
 | Table | File | Difficulty | Blocker |
-|-------|------|------------|---------|
-| **Growth rates** | `data/growth_rates.asm` | Medium | Uses `dn` (4-bit pack) + conditional assembly for negative numbers via signed magnitude. Need to extend `c2asm.py` with a `growth_rate` macro mode. Only 6 entries. |
-| **Item prices** | `data/items/prices.asm` | Medium | Values are BCD-encoded via `bcd3` macro (3 bytes per price). Need BCD conversion in the generator. 83 items + 14 floors. |
+|-------|------|------------|----------|
 | **Base stats** | `data/pokemon/base_stats/*.asm` | Hard | 151 individual files. Each has `INCBIN` for sprite dimensions, `dw` for pic pointers, `tmhm` bitfield macro. These can't be expressed in pure C — need ASM pass-through support in the generator. |
 
 ### Phase 3: Utility Functions (future)
@@ -200,8 +200,10 @@ Reads a C source file containing a `const` array of structs, parses `@asm_*` com
 | `@asm_macro` | Use named macro instead of `db` | `move` |
 | `@asm_table_width` | Emit `table_width X` | `MOVE_LENGTH` |
 | `@asm_assert` | Emit assertion after data | `assert_table_length NUM_ATTACKS` |
+| `@asm_assert2` | Second assertion (e.g. after floor entries) | `assert_table_length NUM_ITEMS + NUM_FLOORS` |
 | `@asm_terminator` | Emit terminator after data | `db -1 ; end` |
 | `@asm_preamble` | Raw lines before the label (multi-line) | `MACRO move` ... `ENDM` |
+| `@asm_mode` | Specialized output mode | `bcd3`, `growth_rate` |
 
 ### Adding a new data table
 
@@ -278,11 +280,11 @@ If `make compare` fails, your change altered the ROM binary. Debug by comparing 
 
 ## Known Challenges
 
-### Growth Rates Macro
-The `growth_rate` macro uses `dn \1, \2` (packs two 4-bit values into one byte) and conditional assembly (`if \3 < 0` → signed magnitude `| $80`). The generator needs a specialized mode for this.
+### ~~Growth Rates Macro~~ ✅ SOLVED
+The `growth_rate` mode in `c2asm.py` handles `dn` packing and signed magnitude encoding automatically.
 
-### BCD Encoding
-Item prices use `bcd3` which stores decimal numbers as 3 BCD-encoded bytes (e.g., 1200 → `$01, $20, $00`). The generator needs a BCD conversion function.
+### ~~BCD Encoding~~ ✅ SOLVED
+The `bcd3` mode in `c2asm.py` emits `bcd3 VALUE ; COMMENT` lines directly. The `bcd3` MACRO (defined in `macros/data.asm`) handles the actual BCD encoding at assembly time.
 
 ### Base Stats INCBIN
 Each base stat file contains `INCBIN "gfx/pokemon/front/name.pic", 0, 1` for sprite dimensions and `dw NamePicFront, NamePicBack` for pic pointers. These are ASM-specific constructs that can't be expressed in C. The generator would need "passthrough" support to emit literal ASM lines.
@@ -292,4 +294,4 @@ Switching from RGBDS to SDCC linker is a one-way gate. All remaining ASM must ad
 
 ---
 
-*Last updated: 2026-03-03. Current commit: `a542278ec`*
+*Last updated: 2026-03-03.*
