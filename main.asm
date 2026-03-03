@@ -110,7 +110,7 @@ INCLUDE "engine/menus/pc.asm"
 
 SECTION "Play Time", ROMX
 
-INCLUDE "engine/play_time.asm"
+; INCLUDE "engine/play_time.asm"
 
 
 SECTION "Doors and Ledges", ROMX

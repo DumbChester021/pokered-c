@@ -22,7 +22,8 @@ rom_obj := \
 	obj/data/type_matchups.o \
 	obj/data/item_prices.o \
 	obj/data/growth_rates.o \
-	obj/engine/math.o
+	obj/engine/math.o \
+	obj/engine/play_time.o
 
 pokered_obj        := $(rom_obj:.o=_red.o)
 pokeblue_obj       := $(rom_obj:.o=_blue.o)

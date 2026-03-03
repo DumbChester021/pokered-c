@@ -93,8 +93,11 @@ The script `tools/sdcc2rgbasm.py` acts as the vital glue. Its responsibilities i
 
 ## What Needs To Be Done
 
-### Phase 4: Engine Expansions (Current Focus)
-With the toolchain unblocked and utility math/hardware access functioning natively, we can now build major features natively in C in `src/engine/`.
+### Phase 4: Engine Subsystems (Current Focus)
+With the toolchain unblocked and utility math/hardware access functioning natively, we are now migrating standalone engine subsystems to pure C. 
+- `engine/play_time.asm` migrated to `src/engine/play_time.c` utilizing pure memory-mapped WRAM definitions.
+
+### Phase 5: Engine Expansions (Future)
 Target Features:
 - Physical / Special split mechanic.
 - New moves / logic adjustments.
