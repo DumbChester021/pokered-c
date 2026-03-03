@@ -100,10 +100,13 @@ def process_file(input_path):
         
         # SDCC uses (hl) (bc) (de) etc. RGBDS expects [hl] [bc] [de]
         # Also handles (hl+), (hl-), etc -> [hli], [hld]
-        line = re.sub(r'\(([hH][lL]\+)\)', r'[hli]', line)
-        line = re.sub(r'\(([hH][lL]\-)\)', r'[hld]', line)
-        # Handle simple register pointers: (hl) -> [hl]
-        line = re.sub(r'\(([A-Za-z0-9_]+)\)', r'[\1]', line)
+        # We only want to replace parentheses in actual code lines, not comments.
+        # Check if the line does not start with a semicolon.
+        if not stripped.startswith(';'):
+            line = re.sub(r'\(([hH][lL]\+)\)', r'[hli]', line)
+            line = re.sub(r'\(([hH][lL]\-)\)', r'[hld]', line)
+            # Handle simple register pointers: (hl) -> [hl]
+            line = re.sub(r'\(([A-Za-z0-9_]+)\)', r'[\1]', line)
         
         # SDCC immediate memory references: (#label) -> [label] and (#label + offset)
         # It also does `(#(label + N))` or `(#(label + N) + offset)`
@@ -131,6 +134,9 @@ def process_file(input_path):
         # SDCC function calls: call _func
         # RGBDS: call func
         line = re.sub(r'(_)([a-zA-Z_][a-zA-Z0-9_]*)', r'\2', line)
+        
+        # SDCC `jp (hl)` becomes `jp [hl]` from previous regex, but RGBDS expects `jp hl`!
+        line = re.sub(r'\s*jp\s+\[hl\]', r' jp hl', line)
 
         out_lines.append(line)
 
