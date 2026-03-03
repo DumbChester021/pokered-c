@@ -11,5 +11,4 @@
 MewPicFront:: INCBIN "gfx/pokemon/front/mew.pic"
 MewPicBack::  INCBIN "gfx/pokemon/back/mewb.pic"
 
-MewBaseStats::
-INCLUDE "obj/data/mew_base_stats.asm"
+; MewBaseStats is intentionally linked dynamically via C object build rules.

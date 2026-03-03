@@ -10,10 +10,10 @@
 
 #include "../include/types.h"
 
-/* @asm_label TypeEffects */
-/* @asm_comment  attacker,     defender,     *= */
-/* @asm_format db {attacker}, {defender}, {effectiveness} */
-/* @asm_terminator db -1 ; end */
+
+
+
+
 
 typedef struct {
     unsigned char attacker;
@@ -105,6 +105,7 @@ const TypeMatchup type_matchups[] = {
     { GRASS,        DRAGON,       NOT_VERY_EFFECTIVE },
     { ICE,          DRAGON,       SUPER_EFFECTIVE },
     { DRAGON,       DRAGON,       SUPER_EFFECTIVE },
+    { (unsigned char)-1, (unsigned char)0, (unsigned char)0 }, // Terminator
 };
 
-#define NUM_TYPE_MATCHUPS (sizeof(type_matchups) / sizeof(type_matchups[0]))
+#define NUM_TYPE_MATCHUPS ((sizeof(type_matchups) / sizeof(type_matchups[0])) - 1)

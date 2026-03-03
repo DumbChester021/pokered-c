@@ -1,0 +1,105 @@
+#!/usr/bin/env python3
+"""
+sdcc2rgbasm.py
+
+Translates SDCC (ASZ80) assembly output into RGBDS-compatible syntax.
+This allows C functions compiled by SDCC to be linked by RGBDS (`rgblink`).
+
+Usage:
+    python3 sdcc2rgbasm.py <input.asm> > <output.asm>
+"""
+
+import sys
+import re
+
+def process_file(input_path):
+    with open(input_path, 'r') as f:
+        lines = f.readlines()
+
+    out_lines = []
+    
+    # Track the current section to know when we are in _CODE or _DATA
+    current_area = None
+
+    section_counter = 0
+
+    for line in lines:
+        stripped = line.strip()
+        
+        # Skip SDCC module directives
+        if stripped.startswith('.module') or stripped.startswith('.optsdcc') or stripped.startswith('.globl'):
+            continue
+            
+        # Section changes
+        if stripped.startswith('.area'):
+            parts = stripped.split()
+            area_name = parts[1]
+            section_counter += 1
+            if area_name == '_CODE':
+                out_lines.append('SECTION "C Code %s %d", ROMX\n' % (input_path, section_counter))
+            elif area_name == '_DATA' or area_name == '_INITIALIZED':
+                out_lines.append('SECTION "C Data %s %d", WRAM0\n' % (input_path, section_counter))
+            elif area_name == '_BSEG' or area_name == '_DABS':
+                pass # Ignore these for now
+            current_area = area_name
+            continue
+            
+        # Label declarations
+        # SDCC: _function:: or _function:
+        # RGBDS: function::
+        label_match = re.match(r'^_([a-zA-Z0-9_]+)(:|\:\:)', line)
+        if label_match:
+            name = label_match.group(1)
+            colons = label_match.group(2)
+            
+            # Map specific struct names to match game's expected labels
+            if name == "base_stats":
+                name = "BaseStats"
+                colons = "::"
+            elif name == "mew_base_stats":
+                name = "MewBaseStats"
+                colons = "::"
+                
+            out_lines.append(f'{name}{colons}\n')
+            continue
+            
+        # Local labels
+        # SDCC: 00101$:
+        # RGBDS: .L00101:
+        local_label_match = re.match(r'^([0-9]+)\$?:', line)
+        if local_label_match:
+            out_lines.append(f'.L{local_label_match.group(1)}:\n')
+            continue
+
+        # Data definitions
+        # SDCC: .db #0x01
+        # RGBDS: db $01
+        line = re.sub(r'\.db\s+#0x([0-9a-fA-F]+)', r'db $\1', line)
+        # SDCC: .dw #0x0102
+        # RGBDS: dw $0102
+        line = re.sub(r'\.dw\s+#0x([0-9a-fA-F]+)', r'dw $\1', line)
+        line = re.sub(r'\.dw\s+_([a-zA-Z0-9_]+)', r'dw \1', line) # Symbol ref
+        
+        # Instructions
+        # SDCC uses instructions like: ld a, #0x00
+        # RGBDS needs: ld a, $00
+        line = re.sub(r'#0x([0-9a-fA-F]+)', r'$\1', line)
+        
+        # SDCC local jumps: jr 00101$
+        # RGBDS: jr .L00101
+        line = re.sub(r'([0-9]+)\$', r'.L\1', line)
+        
+        # SDCC function calls: call _func
+        # RGBDS: call func
+        line = re.sub(r'(_)([a-zA-Z_][a-zA-Z0-9_]*)', r'\2', line)
+
+        out_lines.append(line)
+
+    for line in out_lines:
+        sys.stdout.write(line)
+
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print("Usage: {} <input.asm>".format(sys.argv[0]))
+        sys.exit(1)
+    process_file(sys.argv[1])

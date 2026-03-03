@@ -1,0 +1,3819 @@
+;--------------------------------------------------------
+; File Created by SDCC : free open source ANSI-C Compiler
+; Version 4.2.0 #13081 (Linux)
+;--------------------------------------------------------
+	.module base_stats
+	.optsdcc -msm83
+	
+;--------------------------------------------------------
+; Public variables in this module
+;--------------------------------------------------------
+	.globl _mew_base_stats
+	.globl _mewtwo_base_stats
+	.globl _dragonite_base_stats
+	.globl _dragonair_base_stats
+	.globl _dratini_base_stats
+	.globl _moltres_base_stats
+	.globl _zapdos_base_stats
+	.globl _articuno_base_stats
+	.globl _snorlax_base_stats
+	.globl _aerodactyl_base_stats
+	.globl _kabutops_base_stats
+	.globl _kabuto_base_stats
+	.globl _omastar_base_stats
+	.globl _omanyte_base_stats
+	.globl _porygon_base_stats
+	.globl _flareon_base_stats
+	.globl _jolteon_base_stats
+	.globl _vaporeon_base_stats
+	.globl _eevee_base_stats
+	.globl _ditto_base_stats
+	.globl _lapras_base_stats
+	.globl _gyarados_base_stats
+	.globl _magikarp_base_stats
+	.globl _tauros_base_stats
+	.globl _pinsir_base_stats
+	.globl _magmar_base_stats
+	.globl _electabuzz_base_stats
+	.globl _jynx_base_stats
+	.globl _scyther_base_stats
+	.globl _mrmime_base_stats
+	.globl _starmie_base_stats
+	.globl _staryu_base_stats
+	.globl _seaking_base_stats
+	.globl _goldeen_base_stats
+	.globl _seadra_base_stats
+	.globl _horsea_base_stats
+	.globl _kangaskhan_base_stats
+	.globl _tangela_base_stats
+	.globl _chansey_base_stats
+	.globl _rhydon_base_stats
+	.globl _rhyhorn_base_stats
+	.globl _weezing_base_stats
+	.globl _koffing_base_stats
+	.globl _lickitung_base_stats
+	.globl _hitmonchan_base_stats
+	.globl _hitmonlee_base_stats
+	.globl _marowak_base_stats
+	.globl _cubone_base_stats
+	.globl _exeggutor_base_stats
+	.globl _exeggcute_base_stats
+	.globl _electrode_base_stats
+	.globl _voltorb_base_stats
+	.globl _kingler_base_stats
+	.globl _krabby_base_stats
+	.globl _hypno_base_stats
+	.globl _drowzee_base_stats
+	.globl _onix_base_stats
+	.globl _gengar_base_stats
+	.globl _haunter_base_stats
+	.globl _gastly_base_stats
+	.globl _cloyster_base_stats
+	.globl _shellder_base_stats
+	.globl _muk_base_stats
+	.globl _grimer_base_stats
+	.globl _dewgong_base_stats
+	.globl _seel_base_stats
+	.globl _dodrio_base_stats
+	.globl _doduo_base_stats
+	.globl _farfetchd_base_stats
+	.globl _magneton_base_stats
+	.globl _magnemite_base_stats
+	.globl _slowbro_base_stats
+	.globl _slowpoke_base_stats
+	.globl _rapidash_base_stats
+	.globl _ponyta_base_stats
+	.globl _golem_base_stats
+	.globl _graveler_base_stats
+	.globl _geodude_base_stats
+	.globl _tentacruel_base_stats
+	.globl _tentacool_base_stats
+	.globl _victreebel_base_stats
+	.globl _weepinbell_base_stats
+	.globl _bellsprout_base_stats
+	.globl _machamp_base_stats
+	.globl _machoke_base_stats
+	.globl _machop_base_stats
+	.globl _alakazam_base_stats
+	.globl _kadabra_base_stats
+	.globl _abra_base_stats
+	.globl _poliwrath_base_stats
+	.globl _poliwhirl_base_stats
+	.globl _poliwag_base_stats
+	.globl _arcanine_base_stats
+	.globl _growlithe_base_stats
+	.globl _primeape_base_stats
+	.globl _mankey_base_stats
+	.globl _golduck_base_stats
+	.globl _psyduck_base_stats
+	.globl _persian_base_stats
+	.globl _meowth_base_stats
+	.globl _dugtrio_base_stats
+	.globl _diglett_base_stats
+	.globl _venomoth_base_stats
+	.globl _venonat_base_stats
+	.globl _parasect_base_stats
+	.globl _paras_base_stats
+	.globl _vileplume_base_stats
+	.globl _gloom_base_stats
+	.globl _oddish_base_stats
+	.globl _golbat_base_stats
+	.globl _zubat_base_stats
+	.globl _wigglytuff_base_stats
+	.globl _jigglypuff_base_stats
+	.globl _ninetales_base_stats
+	.globl _vulpix_base_stats
+	.globl _clefable_base_stats
+	.globl _clefairy_base_stats
+	.globl _nidoking_base_stats
+	.globl _nidorino_base_stats
+	.globl _nidoranm_base_stats
+	.globl _nidoqueen_base_stats
+	.globl _nidorina_base_stats
+	.globl _nidoranf_base_stats
+	.globl _sandslash_base_stats
+	.globl _sandshrew_base_stats
+	.globl _raichu_base_stats
+	.globl _pikachu_base_stats
+	.globl _arbok_base_stats
+	.globl _ekans_base_stats
+	.globl _fearow_base_stats
+	.globl _spearow_base_stats
+	.globl _raticate_base_stats
+	.globl _rattata_base_stats
+	.globl _pidgeot_base_stats
+	.globl _pidgeotto_base_stats
+	.globl _pidgey_base_stats
+	.globl _beedrill_base_stats
+	.globl _kakuna_base_stats
+	.globl _weedle_base_stats
+	.globl _butterfree_base_stats
+	.globl _metapod_base_stats
+	.globl _caterpie_base_stats
+	.globl _blastoise_base_stats
+	.globl _wartortle_base_stats
+	.globl _squirtle_base_stats
+	.globl _charizard_base_stats
+	.globl _charmeleon_base_stats
+	.globl _charmander_base_stats
+	.globl _venusaur_base_stats
+	.globl _ivysaur_base_stats
+	.globl _bulbasaur_base_stats
+;--------------------------------------------------------
+; special function registers
+;--------------------------------------------------------
+;--------------------------------------------------------
+; ram data
+;--------------------------------------------------------
+	.area _DATA
+;--------------------------------------------------------
+; ram data
+;--------------------------------------------------------
+	.area _INITIALIZED
+;--------------------------------------------------------
+; absolute external ram data
+;--------------------------------------------------------
+	.area _DABS (ABS)
+;--------------------------------------------------------
+; global & static initialisations
+;--------------------------------------------------------
+	.area _HOME
+	.area _GSINIT
+	.area _GSFINAL
+	.area _GSINIT
+;--------------------------------------------------------
+; Home
+;--------------------------------------------------------
+	.area _HOME
+	.area _HOME
+;--------------------------------------------------------
+; code
+;--------------------------------------------------------
+	.area _CODE
+	.area _CODE
+_bulbasaur_base_stats:
+	.db #0x01	; 1
+	.db #0x2d	; 45
+	.db #0x31	; 49	'1'
+	.db #0x31	; 49	'1'
+	.db #0x2d	; 45
+	.db #0x41	; 65	'A'
+	.db #0x16	; 22
+	.db #0x03	; 3
+	.db #0x2d	; 45
+	.db #0x40	; 64
+	.db #0x21	; 33
+	.db #0x2d	; 45
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0xa4	; 164
+	.db #0x03	; 3
+	.db #0x38	; 56	'8'
+	.db #0xc0	; 192
+	.db #0x03	; 3
+	.db #0x08	; 8
+	.db #0x06	; 6
+	.db #0x00	; 0
+_ivysaur_base_stats:
+	.db #0x02	; 2
+	.db #0x3c	; 60
+	.db #0x3e	; 62
+	.db #0x3f	; 63
+	.db #0x3c	; 60
+	.db #0x50	; 80	'P'
+	.db #0x16	; 22
+	.db #0x03	; 3
+	.db #0x2d	; 45
+	.db #0x8d	; 141
+	.db #0x21	; 33
+	.db #0x2d	; 45
+	.db #0x49	; 73	'I'
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0xa4	; 164
+	.db #0x03	; 3
+	.db #0x38	; 56	'8'
+	.db #0xc0	; 192
+	.db #0x03	; 3
+	.db #0x08	; 8
+	.db #0x06	; 6
+	.db #0x00	; 0
+_venusaur_base_stats:
+	.db #0x03	; 3
+	.db #0x50	; 80	'P'
+	.db #0x52	; 82	'R'
+	.db #0x53	; 83	'S'
+	.db #0x50	; 80	'P'
+	.db #0x64	; 100	'd'
+	.db #0x16	; 22
+	.db #0x03	; 3
+	.db #0x2d	; 45
+	.db #0xd0	; 208
+	.db #0x21	; 33
+	.db #0x2d	; 45
+	.db #0x49	; 73	'I'
+	.db #0x16	; 22
+	.db #0x03	; 3
+	.db #0xa4	; 164
+	.db #0x43	; 67	'C'
+	.db #0x38	; 56	'8'
+	.db #0xc0	; 192
+	.db #0x03	; 3
+	.db #0x08	; 8
+	.db #0x06	; 6
+	.db #0x00	; 0
+_charmander_base_stats:
+	.db #0x04	; 4
+	.db #0x27	; 39
+	.db #0x34	; 52	'4'
+	.db #0x2b	; 43
+	.db #0x41	; 65	'A'
+	.db #0x32	; 50	'2'
+	.db #0x14	; 20
+	.db #0x14	; 20
+	.db #0x2d	; 45
+	.db #0x41	; 65	'A'
+	.db #0x0a	; 10
+	.db #0x2d	; 45
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0xb5	; 181
+	.db #0x03	; 3
+	.db #0x4f	; 79	'O'
+	.db #0xc8	; 200
+	.db #0xe3	; 227
+	.db #0x08	; 8
+	.db #0x26	; 38
+	.db #0x00	; 0
+_charmeleon_base_stats:
+	.db #0x05	; 5
+	.db #0x3a	; 58
+	.db #0x40	; 64
+	.db #0x3a	; 58
+	.db #0x50	; 80	'P'
+	.db #0x41	; 65	'A'
+	.db #0x14	; 20
+	.db #0x14	; 20
+	.db #0x2d	; 45
+	.db #0x8e	; 142
+	.db #0x0a	; 10
+	.db #0x2d	; 45
+	.db #0x34	; 52	'4'
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0xb5	; 181
+	.db #0x03	; 3
+	.db #0x4f	; 79	'O'
+	.db #0xc8	; 200
+	.db #0xe3	; 227
+	.db #0x08	; 8
+	.db #0x26	; 38
+	.db #0x00	; 0
+_charizard_base_stats:
+	.db #0x06	; 6
+	.db #0x4e	; 78	'N'
+	.db #0x54	; 84	'T'
+	.db #0x4e	; 78	'N'
+	.db #0x64	; 100	'd'
+	.db #0x55	; 85	'U'
+	.db #0x14	; 20
+	.db #0x02	; 2
+	.db #0x2d	; 45
+	.db #0xd1	; 209
+	.db #0x0a	; 10
+	.db #0x2d	; 45
+	.db #0x34	; 52	'4'
+	.db #0x2b	; 43
+	.db #0x03	; 3
+	.db #0xb5	; 181
+	.db #0x43	; 67	'C'
+	.db #0x4f	; 79	'O'
+	.db #0xce	; 206
+	.db #0xe3	; 227
+	.db #0x08	; 8
+	.db #0x26	; 38
+	.db #0x00	; 0
+_squirtle_base_stats:
+	.db #0x07	; 7
+	.db #0x2c	; 44
+	.db #0x30	; 48	'0'
+	.db #0x41	; 65	'A'
+	.db #0x2b	; 43
+	.db #0x32	; 50	'2'
+	.db #0x15	; 21
+	.db #0x15	; 21
+	.db #0x2d	; 45
+	.db #0x42	; 66	'B'
+	.db #0x21	; 33
+	.db #0x27	; 39
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0xb1	; 177
+	.db #0x3f	; 63
+	.db #0x0f	; 15
+	.db #0xc8	; 200
+	.db #0x83	; 131
+	.db #0x08	; 8
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+_wartortle_base_stats:
+	.db #0x08	; 8
+	.db #0x3b	; 59
+	.db #0x3f	; 63
+	.db #0x50	; 80	'P'
+	.db #0x3a	; 58
+	.db #0x41	; 65	'A'
+	.db #0x15	; 21
+	.db #0x15	; 21
+	.db #0x2d	; 45
+	.db #0x8f	; 143
+	.db #0x21	; 33
+	.db #0x27	; 39
+	.db #0x91	; 145
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0xb1	; 177
+	.db #0x3f	; 63
+	.db #0x0f	; 15
+	.db #0xc8	; 200
+	.db #0x83	; 131
+	.db #0x08	; 8
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+_blastoise_base_stats:
+	.db #0x09	; 9
+	.db #0x4f	; 79	'O'
+	.db #0x53	; 83	'S'
+	.db #0x64	; 100	'd'
+	.db #0x4e	; 78	'N'
+	.db #0x55	; 85	'U'
+	.db #0x15	; 21
+	.db #0x15	; 21
+	.db #0x2d	; 45
+	.db #0xd2	; 210
+	.db #0x21	; 33
+	.db #0x27	; 39
+	.db #0x91	; 145
+	.db #0x37	; 55	'7'
+	.db #0x03	; 3
+	.db #0xb1	; 177
+	.db #0x7f	; 127
+	.db #0x0f	; 15
+	.db #0xce	; 206
+	.db #0x83	; 131
+	.db #0x08	; 8
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+_caterpie_base_stats:
+	.db #0x0a	; 10
+	.db #0x2d	; 45
+	.db #0x1e	; 30
+	.db #0x23	; 35
+	.db #0x2d	; 45
+	.db #0x14	; 20
+	.db #0x07	; 7
+	.db #0x07	; 7
+	.db #0xff	; 255
+	.db #0x35	; 53	'5'
+	.db #0x21	; 33
+	.db #0x51	; 81	'Q'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+_metapod_base_stats:
+	.db #0x0b	; 11
+	.db #0x32	; 50	'2'
+	.db #0x14	; 20
+	.db #0x37	; 55	'7'
+	.db #0x1e	; 30
+	.db #0x19	; 25
+	.db #0x07	; 7
+	.db #0x07	; 7
+	.db #0x78	; 120	'x'
+	.db #0x48	; 72	'H'
+	.db #0x6a	; 106	'j'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+_butterfree_base_stats:
+	.db #0x0c	; 12
+	.db #0x3c	; 60
+	.db #0x2d	; 45
+	.db #0x32	; 50	'2'
+	.db #0x46	; 70	'F'
+	.db #0x50	; 80	'P'
+	.db #0x07	; 7
+	.db #0x02	; 2
+	.db #0x2d	; 45
+	.db #0xa0	; 160
+	.db #0x5d	; 93
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x2a	; 42
+	.db #0x43	; 67	'C'
+	.db #0x38	; 56	'8'
+	.db #0xf0	; 240
+	.db #0x43	; 67	'C'
+	.db #0x28	; 40
+	.db #0x02	; 2
+	.db #0x00	; 0
+_weedle_base_stats:
+	.db #0x0d	; 13
+	.db #0x28	; 40
+	.db #0x23	; 35
+	.db #0x1e	; 30
+	.db #0x32	; 50	'2'
+	.db #0x14	; 20
+	.db #0x07	; 7
+	.db #0x03	; 3
+	.db #0xff	; 255
+	.db #0x34	; 52	'4'
+	.db #0x28	; 40
+	.db #0x51	; 81	'Q'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+_kakuna_base_stats:
+	.db #0x0e	; 14
+	.db #0x2d	; 45
+	.db #0x19	; 25
+	.db #0x32	; 50	'2'
+	.db #0x23	; 35
+	.db #0x19	; 25
+	.db #0x07	; 7
+	.db #0x03	; 3
+	.db #0x78	; 120	'x'
+	.db #0x47	; 71	'G'
+	.db #0x6a	; 106	'j'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+_beedrill_base_stats:
+	.db #0x0f	; 15
+	.db #0x41	; 65	'A'
+	.db #0x50	; 80	'P'
+	.db #0x28	; 40
+	.db #0x4b	; 75	'K'
+	.db #0x2d	; 45
+	.db #0x07	; 7
+	.db #0x03	; 3
+	.db #0x2d	; 45
+	.db #0x9f	; 159
+	.db #0x1f	; 31
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x24	; 36
+	.db #0x43	; 67	'C'
+	.db #0x18	; 24
+	.db #0xc0	; 192
+	.db #0xc3	; 195
+	.db #0x08	; 8
+	.db #0x06	; 6
+	.db #0x00	; 0
+_pidgey_base_stats:
+	.db #0x10	; 16
+	.db #0x28	; 40
+	.db #0x2d	; 45
+	.db #0x28	; 40
+	.db #0x38	; 56	'8'
+	.db #0x23	; 35
+	.db #0x00	; 0
+	.db #0x02	; 2
+	.db #0xff	; 255
+	.db #0x37	; 55	'7'
+	.db #0x10	; 16
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0x2a	; 42
+	.db #0x03	; 3
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0x43	; 67	'C'
+	.db #0x0c	; 12
+	.db #0x0a	; 10
+	.db #0x00	; 0
+_pidgeotto_base_stats:
+	.db #0x11	; 17
+	.db #0x3f	; 63
+	.db #0x3c	; 60
+	.db #0x37	; 55	'7'
+	.db #0x47	; 71	'G'
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+	.db #0x02	; 2
+	.db #0x78	; 120	'x'
+	.db #0x71	; 113	'q'
+	.db #0x10	; 16
+	.db #0x1c	; 28
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0x2a	; 42
+	.db #0x03	; 3
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0x43	; 67	'C'
+	.db #0x0c	; 12
+	.db #0x0a	; 10
+	.db #0x00	; 0
+_pidgeot_base_stats:
+	.db #0x12	; 18
+	.db #0x53	; 83	'S'
+	.db #0x50	; 80	'P'
+	.db #0x4b	; 75	'K'
+	.db #0x5b	; 91
+	.db #0x46	; 70	'F'
+	.db #0x00	; 0
+	.db #0x02	; 2
+	.db #0x2d	; 45
+	.db #0xac	; 172
+	.db #0x10	; 16
+	.db #0x1c	; 28
+	.db #0x62	; 98	'b'
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0x2a	; 42
+	.db #0x43	; 67	'C'
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0x43	; 67	'C'
+	.db #0x0c	; 12
+	.db #0x0a	; 10
+	.db #0x00	; 0
+_rattata_base_stats:
+	.db #0x13	; 19
+	.db #0x1e	; 30
+	.db #0x38	; 56	'8'
+	.db #0x23	; 35
+	.db #0x48	; 72	'H'
+	.db #0x19	; 25
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xff	; 255
+	.db #0x39	; 57	'9'
+	.db #0x21	; 33
+	.db #0x27	; 39
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa0	; 160
+	.db #0x2f	; 47
+	.db #0x88	; 136
+	.db #0xc9	; 201
+	.db #0xc2	; 194
+	.db #0x08	; 8
+	.db #0x02	; 2
+	.db #0x00	; 0
+_raticate_base_stats:
+	.db #0x14	; 20
+	.db #0x37	; 55	'7'
+	.db #0x51	; 81	'Q'
+	.db #0x3c	; 60
+	.db #0x61	; 97	'a'
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x5a	; 90	'Z'
+	.db #0x74	; 116	't'
+	.db #0x21	; 33
+	.db #0x27	; 39
+	.db #0x62	; 98	'b'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa0	; 160
+	.db #0x7f	; 127
+	.db #0x88	; 136
+	.db #0xc9	; 201
+	.db #0xc2	; 194
+	.db #0x08	; 8
+	.db #0x02	; 2
+	.db #0x00	; 0
+_spearow_base_stats:
+	.db #0x15	; 21
+	.db #0x28	; 40
+	.db #0x3c	; 60
+	.db #0x1e	; 30
+	.db #0x46	; 70	'F'
+	.db #0x1f	; 31
+	.db #0x00	; 0
+	.db #0x02	; 2
+	.db #0xff	; 255
+	.db #0x3a	; 58
+	.db #0x40	; 64
+	.db #0x2d	; 45
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x2a	; 42
+	.db #0x03	; 3
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0x42	; 66	'B'
+	.db #0x0c	; 12
+	.db #0x0a	; 10
+	.db #0x00	; 0
+_fearow_base_stats:
+	.db #0x16	; 22
+	.db #0x41	; 65	'A'
+	.db #0x5a	; 90	'Z'
+	.db #0x41	; 65	'A'
+	.db #0x64	; 100	'd'
+	.db #0x3d	; 61
+	.db #0x00	; 0
+	.db #0x02	; 2
+	.db #0x5a	; 90	'Z'
+	.db #0xa2	; 162
+	.db #0x40	; 64
+	.db #0x2d	; 45
+	.db #0x2b	; 43
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x2a	; 42
+	.db #0x43	; 67	'C'
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0x42	; 66	'B'
+	.db #0x0c	; 12
+	.db #0x0a	; 10
+	.db #0x00	; 0
+_ekans_base_stats:
+	.db #0x17	; 23
+	.db #0x23	; 35
+	.db #0x3c	; 60
+	.db #0x2c	; 44
+	.db #0x37	; 55	'7'
+	.db #0x28	; 40
+	.db #0x03	; 3
+	.db #0x03	; 3
+	.db #0xff	; 255
+	.db #0x3e	; 62
+	.db #0x23	; 35
+	.db #0x2b	; 43
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa0	; 160
+	.db #0x03	; 3
+	.db #0x18	; 24
+	.db #0xce	; 206
+	.db #0x82	; 130
+	.db #0x88	; 136
+	.db #0x22	; 34
+	.db #0x00	; 0
+_arbok_base_stats:
+	.db #0x18	; 24
+	.db #0x3c	; 60
+	.db #0x55	; 85	'U'
+	.db #0x45	; 69	'E'
+	.db #0x50	; 80	'P'
+	.db #0x41	; 65	'A'
+	.db #0x03	; 3
+	.db #0x03	; 3
+	.db #0x5a	; 90	'Z'
+	.db #0x93	; 147
+	.db #0x23	; 35
+	.db #0x2b	; 43
+	.db #0x28	; 40
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa0	; 160
+	.db #0x43	; 67	'C'
+	.db #0x18	; 24
+	.db #0xce	; 206
+	.db #0x82	; 130
+	.db #0x88	; 136
+	.db #0x22	; 34
+	.db #0x00	; 0
+_pikachu_base_stats:
+	.db #0x19	; 25
+	.db #0x23	; 35
+	.db #0x37	; 55	'7'
+	.db #0x1e	; 30
+	.db #0x5a	; 90	'Z'
+	.db #0x32	; 50	'2'
+	.db #0x17	; 23
+	.db #0x17	; 23
+	.db #0xbe	; 190
+	.db #0x52	; 82	'R'
+	.db #0x54	; 84	'T'
+	.db #0x2d	; 45
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xb1	; 177
+	.db #0x83	; 131
+	.db #0x8d	; 141
+	.db #0xc1	; 193
+	.db #0xc3	; 195
+	.db #0x18	; 24
+	.db #0x42	; 66	'B'
+	.db #0x00	; 0
+_raichu_base_stats:
+	.db #0x1a	; 26
+	.db #0x3c	; 60
+	.db #0x5a	; 90	'Z'
+	.db #0x37	; 55	'7'
+	.db #0x64	; 100	'd'
+	.db #0x5a	; 90	'Z'
+	.db #0x17	; 23
+	.db #0x17	; 23
+	.db #0x4b	; 75	'K'
+	.db #0x7a	; 122	'z'
+	.db #0x54	; 84	'T'
+	.db #0x2d	; 45
+	.db #0x56	; 86	'V'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xb1	; 177
+	.db #0xc3	; 195
+	.db #0x8d	; 141
+	.db #0xc1	; 193
+	.db #0xc3	; 195
+	.db #0x18	; 24
+	.db #0x42	; 66	'B'
+	.db #0x00	; 0
+_sandshrew_base_stats:
+	.db #0x1b	; 27
+	.db #0x32	; 50	'2'
+	.db #0x4b	; 75	'K'
+	.db #0x55	; 85	'U'
+	.db #0x28	; 40
+	.db #0x1e	; 30
+	.db #0x04	; 4
+	.db #0x04	; 4
+	.db #0xff	; 255
+	.db #0x5d	; 93
+	.db #0x0a	; 10
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa4	; 164
+	.db #0x03	; 3
+	.db #0x0d	; 13
+	.db #0xce	; 206
+	.db #0xc2	; 194
+	.db #0x88	; 136
+	.db #0x26	; 38
+	.db #0x00	; 0
+_sandslash_base_stats:
+	.db #0x1c	; 28
+	.db #0x4b	; 75	'K'
+	.db #0x64	; 100	'd'
+	.db #0x6e	; 110	'n'
+	.db #0x41	; 65	'A'
+	.db #0x37	; 55	'7'
+	.db #0x04	; 4
+	.db #0x04	; 4
+	.db #0x5a	; 90	'Z'
+	.db #0xa3	; 163
+	.db #0x0a	; 10
+	.db #0x1c	; 28
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa4	; 164
+	.db #0x43	; 67	'C'
+	.db #0x0d	; 13
+	.db #0xce	; 206
+	.db #0xc2	; 194
+	.db #0x88	; 136
+	.db #0x26	; 38
+	.db #0x00	; 0
+_nidoranf_base_stats:
+	.db #0x1d	; 29
+	.db #0x37	; 55	'7'
+	.db #0x2f	; 47
+	.db #0x34	; 52	'4'
+	.db #0x29	; 41
+	.db #0x28	; 40
+	.db #0x03	; 3
+	.db #0x03	; 3
+	.db #0xeb	; 235
+	.db #0x3b	; 59
+	.db #0x2d	; 45
+	.db #0x21	; 33
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0xa0	; 160
+	.db #0x23	; 35
+	.db #0x88	; 136
+	.db #0xc1	; 193
+	.db #0x83	; 131
+	.db #0x08	; 8
+	.db #0x02	; 2
+	.db #0x00	; 0
+_nidorina_base_stats:
+	.db #0x1e	; 30
+	.db #0x46	; 70	'F'
+	.db #0x3e	; 62
+	.db #0x43	; 67	'C'
+	.db #0x38	; 56	'8'
+	.db #0x37	; 55	'7'
+	.db #0x03	; 3
+	.db #0x03	; 3
+	.db #0x78	; 120	'x'
+	.db #0x75	; 117	'u'
+	.db #0x2d	; 45
+	.db #0x21	; 33
+	.db #0x0a	; 10
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0xe0	; 224
+	.db #0x3f	; 63
+	.db #0x88	; 136
+	.db #0xc1	; 193
+	.db #0x83	; 131
+	.db #0x08	; 8
+	.db #0x02	; 2
+	.db #0x00	; 0
+_nidoqueen_base_stats:
+	.db #0x1f	; 31
+	.db #0x5a	; 90	'Z'
+	.db #0x52	; 82	'R'
+	.db #0x57	; 87	'W'
+	.db #0x4c	; 76	'L'
+	.db #0x4b	; 75	'K'
+	.db #0x03	; 3
+	.db #0x04	; 4
+	.db #0x2d	; 45
+	.db #0xc2	; 194
+	.db #0x21	; 33
+	.db #0x0a	; 10
+	.db #0x27	; 39
+	.db #0x22	; 34
+	.db #0x03	; 3
+	.db #0xf1	; 241
+	.db #0xff	; 255
+	.db #0x8f	; 143
+	.db #0xc7	; 199
+	.db #0xa3	; 163
+	.db #0x88	; 136
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+_nidoranm_base_stats:
+	.db #0x20	; 32
+	.db #0x2e	; 46
+	.db #0x39	; 57	'9'
+	.db #0x28	; 40
+	.db #0x32	; 50	'2'
+	.db #0x28	; 40
+	.db #0x03	; 3
+	.db #0x03	; 3
+	.db #0xeb	; 235
+	.db #0x3c	; 60
+	.db #0x2b	; 43
+	.db #0x21	; 33
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0xe0	; 224
+	.db #0x23	; 35
+	.db #0x88	; 136
+	.db #0xc1	; 193
+	.db #0x83	; 131
+	.db #0x08	; 8
+	.db #0x02	; 2
+	.db #0x00	; 0
+_nidorino_base_stats:
+	.db #0x21	; 33
+	.db #0x3d	; 61
+	.db #0x48	; 72	'H'
+	.db #0x39	; 57	'9'
+	.db #0x41	; 65	'A'
+	.db #0x37	; 55	'7'
+	.db #0x03	; 3
+	.db #0x03	; 3
+	.db #0x78	; 120	'x'
+	.db #0x76	; 118	'v'
+	.db #0x2b	; 43
+	.db #0x21	; 33
+	.db #0x1e	; 30
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0xe0	; 224
+	.db #0x3f	; 63
+	.db #0x88	; 136
+	.db #0xc1	; 193
+	.db #0x83	; 131
+	.db #0x08	; 8
+	.db #0x02	; 2
+	.db #0x00	; 0
+_nidoking_base_stats:
+	.db #0x22	; 34
+	.db #0x51	; 81	'Q'
+	.db #0x5c	; 92
+	.db #0x4d	; 77	'M'
+	.db #0x55	; 85	'U'
+	.db #0x4b	; 75	'K'
+	.db #0x03	; 3
+	.db #0x04	; 4
+	.db #0x2d	; 45
+	.db #0xc3	; 195
+	.db #0x21	; 33
+	.db #0x1e	; 30
+	.db #0x28	; 40
+	.db #0x25	; 37
+	.db #0x03	; 3
+	.db #0xf1	; 241
+	.db #0xff	; 255
+	.db #0x8f	; 143
+	.db #0xc7	; 199
+	.db #0xa3	; 163
+	.db #0x88	; 136
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+_clefairy_base_stats:
+	.db #0x23	; 35
+	.db #0x46	; 70	'F'
+	.db #0x2d	; 45
+	.db #0x30	; 48	'0'
+	.db #0x23	; 35
+	.db #0x3c	; 60
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x96	; 150
+	.db #0x44	; 68	'D'
+	.db #0x01	; 1
+	.db #0x2d	; 45
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x04	; 4
+	.db #0xb1	; 177
+	.db #0x3f	; 63
+	.db #0xaf	; 175
+	.db #0xf1	; 241
+	.db #0xa7	; 167
+	.db #0x38	; 56	'8'
+	.db #0x63	; 99	'c'
+	.db #0x00	; 0
+_clefable_base_stats:
+	.db #0x24	; 36
+	.db #0x5f	; 95
+	.db #0x46	; 70	'F'
+	.db #0x49	; 73	'I'
+	.db #0x3c	; 60
+	.db #0x55	; 85	'U'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x19	; 25
+	.db #0x81	; 129
+	.db #0x2f	; 47
+	.db #0x03	; 3
+	.db #0x6b	; 107	'k'
+	.db #0x76	; 118	'v'
+	.db #0x04	; 4
+	.db #0xb1	; 177
+	.db #0x7f	; 127
+	.db #0xaf	; 175
+	.db #0xf1	; 241
+	.db #0xa7	; 167
+	.db #0x38	; 56	'8'
+	.db #0x63	; 99	'c'
+	.db #0x00	; 0
+_vulpix_base_stats:
+	.db #0x25	; 37
+	.db #0x26	; 38
+	.db #0x29	; 41
+	.db #0x28	; 40
+	.db #0x41	; 65	'A'
+	.db #0x41	; 65	'A'
+	.db #0x14	; 20
+	.db #0x14	; 20
+	.db #0xbe	; 190
+	.db #0x3f	; 63
+	.db #0x34	; 52	'4'
+	.db #0x27	; 39
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa0	; 160
+	.db #0x03	; 3
+	.db #0x08	; 8
+	.db #0xc8	; 200
+	.db #0xe3	; 227
+	.db #0x08	; 8
+	.db #0x02	; 2
+	.db #0x00	; 0
+_ninetales_base_stats:
+	.db #0x26	; 38
+	.db #0x49	; 73	'I'
+	.db #0x4c	; 76	'L'
+	.db #0x4b	; 75	'K'
+	.db #0x64	; 100	'd'
+	.db #0x64	; 100	'd'
+	.db #0x14	; 20
+	.db #0x14	; 20
+	.db #0x4b	; 75	'K'
+	.db #0xb2	; 178
+	.db #0x34	; 52	'4'
+	.db #0x27	; 39
+	.db #0x62	; 98	'b'
+	.db #0x2e	; 46
+	.db #0x00	; 0
+	.db #0xa0	; 160
+	.db #0x43	; 67	'C'
+	.db #0x08	; 8
+	.db #0xc8	; 200
+	.db #0xe3	; 227
+	.db #0x08	; 8
+	.db #0x02	; 2
+	.db #0x00	; 0
+_jigglypuff_base_stats:
+	.db #0x27	; 39
+	.db #0x73	; 115	's'
+	.db #0x2d	; 45
+	.db #0x14	; 20
+	.db #0x14	; 20
+	.db #0x19	; 25
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xaa	; 170
+	.db #0x4c	; 76	'L'
+	.db #0x2f	; 47
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x04	; 4
+	.db #0xb1	; 177
+	.db #0x3f	; 63
+	.db #0xaf	; 175
+	.db #0xf1	; 241
+	.db #0xa3	; 163
+	.db #0x38	; 56	'8'
+	.db #0x63	; 99	'c'
+	.db #0x00	; 0
+_wigglytuff_base_stats:
+	.db #0x28	; 40
+	.db #0x8c	; 140
+	.db #0x46	; 70	'F'
+	.db #0x2d	; 45
+	.db #0x2d	; 45
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x32	; 50	'2'
+	.db #0x6d	; 109	'm'
+	.db #0x2f	; 47
+	.db #0x32	; 50	'2'
+	.db #0x6f	; 111	'o'
+	.db #0x03	; 3
+	.db #0x04	; 4
+	.db #0xb1	; 177
+	.db #0x7f	; 127
+	.db #0xaf	; 175
+	.db #0xf1	; 241
+	.db #0xa3	; 163
+	.db #0x38	; 56	'8'
+	.db #0x63	; 99	'c'
+	.db #0x00	; 0
+_zubat_base_stats:
+	.db #0x29	; 41
+	.db #0x28	; 40
+	.db #0x2d	; 45
+	.db #0x23	; 35
+	.db #0x37	; 55	'7'
+	.db #0x28	; 40
+	.db #0x03	; 3
+	.db #0x02	; 2
+	.db #0xff	; 255
+	.db #0x36	; 54	'6'
+	.db #0x8d	; 141
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x2a	; 42
+	.db #0x03	; 3
+	.db #0x18	; 24
+	.db #0xc0	; 192
+	.db #0x42	; 66	'B'
+	.db #0x08	; 8
+	.db #0x02	; 2
+	.db #0x00	; 0
+_golbat_base_stats:
+	.db #0x2a	; 42
+	.db #0x4b	; 75	'K'
+	.db #0x50	; 80	'P'
+	.db #0x46	; 70	'F'
+	.db #0x5a	; 90	'Z'
+	.db #0x4b	; 75	'K'
+	.db #0x03	; 3
+	.db #0x02	; 2
+	.db #0x5a	; 90	'Z'
+	.db #0xab	; 171
+	.db #0x8d	; 141
+	.db #0x67	; 103	'g'
+	.db #0x2c	; 44
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x2a	; 42
+	.db #0x43	; 67	'C'
+	.db #0x18	; 24
+	.db #0xc0	; 192
+	.db #0x42	; 66	'B'
+	.db #0x08	; 8
+	.db #0x02	; 2
+	.db #0x00	; 0
+_oddish_base_stats:
+	.db #0x2b	; 43
+	.db #0x2d	; 45
+	.db #0x32	; 50	'2'
+	.db #0x37	; 55	'7'
+	.db #0x1e	; 30
+	.db #0x4b	; 75	'K'
+	.db #0x16	; 22
+	.db #0x03	; 3
+	.db #0xff	; 255
+	.db #0x4e	; 78	'N'
+	.db #0x47	; 71	'G'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0x24	; 36
+	.db #0x03	; 3
+	.db #0x38	; 56	'8'
+	.db #0xc0	; 192
+	.db #0x03	; 3
+	.db #0x08	; 8
+	.db #0x06	; 6
+	.db #0x00	; 0
+_gloom_base_stats:
+	.db #0x2c	; 44
+	.db #0x3c	; 60
+	.db #0x41	; 65	'A'
+	.db #0x46	; 70	'F'
+	.db #0x28	; 40
+	.db #0x55	; 85	'U'
+	.db #0x16	; 22
+	.db #0x03	; 3
+	.db #0x78	; 120	'x'
+	.db #0x84	; 132
+	.db #0x47	; 71	'G'
+	.db #0x4d	; 77	'M'
+	.db #0x4e	; 78	'N'
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0x24	; 36
+	.db #0x03	; 3
+	.db #0x38	; 56	'8'
+	.db #0xc0	; 192
+	.db #0x03	; 3
+	.db #0x08	; 8
+	.db #0x06	; 6
+	.db #0x00	; 0
+_vileplume_base_stats:
+	.db #0x2d	; 45
+	.db #0x4b	; 75	'K'
+	.db #0x50	; 80	'P'
+	.db #0x55	; 85	'U'
+	.db #0x32	; 50	'2'
+	.db #0x64	; 100	'd'
+	.db #0x16	; 22
+	.db #0x03	; 3
+	.db #0x2d	; 45
+	.db #0xb8	; 184
+	.db #0x4e	; 78	'N'
+	.db #0x4f	; 79	'O'
+	.db #0x33	; 51	'3'
+	.db #0x50	; 80	'P'
+	.db #0x03	; 3
+	.db #0xa4	; 164
+	.db #0x43	; 67	'C'
+	.db #0x38	; 56	'8'
+	.db #0xc0	; 192
+	.db #0x03	; 3
+	.db #0x08	; 8
+	.db #0x06	; 6
+	.db #0x00	; 0
+_paras_base_stats:
+	.db #0x2e	; 46
+	.db #0x23	; 35
+	.db #0x46	; 70	'F'
+	.db #0x37	; 55	'7'
+	.db #0x19	; 25
+	.db #0x37	; 55	'7'
+	.db #0x07	; 7
+	.db #0x16	; 22
+	.db #0xbe	; 190
+	.db #0x46	; 70	'F'
+	.db #0x0a	; 10
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa4	; 164
+	.db #0x03	; 3
+	.db #0x38	; 56	'8'
+	.db #0xc8	; 200
+	.db #0x83	; 131
+	.db #0x08	; 8
+	.db #0x06	; 6
+	.db #0x00	; 0
+_parasect_base_stats:
+	.db #0x2f	; 47
+	.db #0x3c	; 60
+	.db #0x5f	; 95
+	.db #0x50	; 80	'P'
+	.db #0x1e	; 30
+	.db #0x50	; 80	'P'
+	.db #0x07	; 7
+	.db #0x16	; 22
+	.db #0x4b	; 75	'K'
+	.db #0x80	; 128
+	.db #0x0a	; 10
+	.db #0x4e	; 78	'N'
+	.db #0x8d	; 141
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa4	; 164
+	.db #0x43	; 67	'C'
+	.db #0x38	; 56	'8'
+	.db #0xc8	; 200
+	.db #0x83	; 131
+	.db #0x08	; 8
+	.db #0x06	; 6
+	.db #0x00	; 0
+_venonat_base_stats:
+	.db #0x30	; 48	'0'
+	.db #0x3c	; 60
+	.db #0x37	; 55	'7'
+	.db #0x32	; 50	'2'
+	.db #0x2d	; 45
+	.db #0x28	; 40
+	.db #0x07	; 7
+	.db #0x03	; 3
+	.db #0xbe	; 190
+	.db #0x4b	; 75	'K'
+	.db #0x21	; 33
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x20	; 32
+	.db #0x03	; 3
+	.db #0x38	; 56	'8'
+	.db #0xd0	; 208
+	.db #0x03	; 3
+	.db #0x28	; 40
+	.db #0x02	; 2
+	.db #0x00	; 0
+_venomoth_base_stats:
+	.db #0x31	; 49	'1'
+	.db #0x46	; 70	'F'
+	.db #0x41	; 65	'A'
+	.db #0x3c	; 60
+	.db #0x5a	; 90	'Z'
+	.db #0x5a	; 90	'Z'
+	.db #0x07	; 7
+	.db #0x03	; 3
+	.db #0x4b	; 75	'K'
+	.db #0x8a	; 138
+	.db #0x21	; 33
+	.db #0x32	; 50	'2'
+	.db #0x4d	; 77	'M'
+	.db #0x8d	; 141
+	.db #0x00	; 0
+	.db #0x2a	; 42
+	.db #0x43	; 67	'C'
+	.db #0x38	; 56	'8'
+	.db #0xf0	; 240
+	.db #0x43	; 67	'C'
+	.db #0x28	; 40
+	.db #0x02	; 2
+	.db #0x00	; 0
+_diglett_base_stats:
+	.db #0x32	; 50	'2'
+	.db #0x0a	; 10
+	.db #0x37	; 55	'7'
+	.db #0x19	; 25
+	.db #0x5f	; 95
+	.db #0x2d	; 45
+	.db #0x04	; 4
+	.db #0x04	; 4
+	.db #0xff	; 255
+	.db #0x51	; 81	'Q'
+	.db #0x0a	; 10
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa0	; 160
+	.db #0x03	; 3
+	.db #0x08	; 8
+	.db #0xce	; 206
+	.db #0x02	; 2
+	.db #0x88	; 136
+	.db #0x02	; 2
+	.db #0x00	; 0
+_dugtrio_base_stats:
+	.db #0x33	; 51	'3'
+	.db #0x23	; 35
+	.db #0x50	; 80	'P'
+	.db #0x32	; 50	'2'
+	.db #0x78	; 120	'x'
+	.db #0x46	; 70	'F'
+	.db #0x04	; 4
+	.db #0x04	; 4
+	.db #0x32	; 50	'2'
+	.db #0x99	; 153
+	.db #0x0a	; 10
+	.db #0x2d	; 45
+	.db #0x5b	; 91
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa0	; 160
+	.db #0x43	; 67	'C'
+	.db #0x08	; 8
+	.db #0xce	; 206
+	.db #0x02	; 2
+	.db #0x88	; 136
+	.db #0x02	; 2
+	.db #0x00	; 0
+_meowth_base_stats:
+	.db #0x34	; 52	'4'
+	.db #0x28	; 40
+	.db #0x2d	; 45
+	.db #0x23	; 35
+	.db #0x5a	; 90	'Z'
+	.db #0x28	; 40
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xff	; 255
+	.db #0x45	; 69	'E'
+	.db #0x0a	; 10
+	.db #0x2d	; 45
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa0	; 160
+	.db #0x8f	; 143
+	.db #0x88	; 136
+	.db #0xc1	; 193
+	.db #0xc2	; 194
+	.db #0x08	; 8
+	.db #0x02	; 2
+	.db #0x00	; 0
+_persian_base_stats:
+	.db #0x35	; 53	'5'
+	.db #0x41	; 65	'A'
+	.db #0x46	; 70	'F'
+	.db #0x3c	; 60
+	.db #0x73	; 115	's'
+	.db #0x41	; 65	'A'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x5a	; 90	'Z'
+	.db #0x94	; 148
+	.db #0x0a	; 10
+	.db #0x2d	; 45
+	.db #0x2c	; 44
+	.db #0x67	; 103	'g'
+	.db #0x00	; 0
+	.db #0xa0	; 160
+	.db #0xcf	; 207
+	.db #0x88	; 136
+	.db #0xc1	; 193
+	.db #0xc2	; 194
+	.db #0x08	; 8
+	.db #0x02	; 2
+	.db #0x00	; 0
+_psyduck_base_stats:
+	.db #0x36	; 54	'6'
+	.db #0x32	; 50	'2'
+	.db #0x34	; 52	'4'
+	.db #0x30	; 48	'0'
+	.db #0x37	; 55	'7'
+	.db #0x32	; 50	'2'
+	.db #0x15	; 21
+	.db #0x15	; 21
+	.db #0xbe	; 190
+	.db #0x50	; 80	'P'
+	.db #0x0a	; 10
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xb1	; 177
+	.db #0xbf	; 191
+	.db #0x0f	; 15
+	.db #0xc8	; 200
+	.db #0xc2	; 194
+	.db #0x08	; 8
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+_golduck_base_stats:
+	.db #0x37	; 55	'7'
+	.db #0x50	; 80	'P'
+	.db #0x52	; 82	'R'
+	.db #0x4e	; 78	'N'
+	.db #0x55	; 85	'U'
+	.db #0x50	; 80	'P'
+	.db #0x15	; 21
+	.db #0x15	; 21
+	.db #0x4b	; 75	'K'
+	.db #0xae	; 174
+	.db #0x0a	; 10
+	.db #0x27	; 39
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xb1	; 177
+	.db #0xff	; 255
+	.db #0x0f	; 15
+	.db #0xc8	; 200
+	.db #0xc2	; 194
+	.db #0x08	; 8
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+_mankey_base_stats:
+	.db #0x38	; 56	'8'
+	.db #0x28	; 40
+	.db #0x50	; 80	'P'
+	.db #0x23	; 35
+	.db #0x46	; 70	'F'
+	.db #0x23	; 35
+	.db #0x01	; 1
+	.db #0x01	; 1
+	.db #0xbe	; 190
+	.db #0x4a	; 74	'J'
+	.db #0x0a	; 10
+	.db #0x2b	; 43
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xb1	; 177
+	.db #0x83	; 131
+	.db #0x8f	; 143
+	.db #0xc9	; 201
+	.db #0xc6	; 198
+	.db #0x88	; 136
+	.db #0x22	; 34
+	.db #0x00	; 0
+_primeape_base_stats:
+	.db #0x39	; 57	'9'
+	.db #0x41	; 65	'A'
+	.db #0x69	; 105	'i'
+	.db #0x3c	; 60
+	.db #0x5f	; 95
+	.db #0x3c	; 60
+	.db #0x01	; 1
+	.db #0x01	; 1
+	.db #0x4b	; 75	'K'
+	.db #0x95	; 149
+	.db #0x0a	; 10
+	.db #0x2b	; 43
+	.db #0x02	; 2
+	.db #0x9a	; 154
+	.db #0x00	; 0
+	.db #0xb1	; 177
+	.db #0xc3	; 195
+	.db #0x8f	; 143
+	.db #0xc9	; 201
+	.db #0xc6	; 198
+	.db #0x88	; 136
+	.db #0x22	; 34
+	.db #0x00	; 0
+_growlithe_base_stats:
+	.db #0x3a	; 58
+	.db #0x37	; 55	'7'
+	.db #0x46	; 70	'F'
+	.db #0x2d	; 45
+	.db #0x3c	; 60
+	.db #0x32	; 50	'2'
+	.db #0x14	; 20
+	.db #0x14	; 20
+	.db #0xbe	; 190
+	.db #0x5b	; 91
+	.db #0x2c	; 44
+	.db #0x2e	; 46
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x05	; 5
+	.db #0xa0	; 160
+	.db #0x03	; 3
+	.db #0x48	; 72	'H'
+	.db #0xc8	; 200
+	.db #0xe3	; 227
+	.db #0x08	; 8
+	.db #0x02	; 2
+	.db #0x00	; 0
+_arcanine_base_stats:
+	.db #0x3b	; 59
+	.db #0x5a	; 90	'Z'
+	.db #0x6e	; 110	'n'
+	.db #0x50	; 80	'P'
+	.db #0x5f	; 95
+	.db #0x50	; 80	'P'
+	.db #0x14	; 20
+	.db #0x14	; 20
+	.db #0x4b	; 75	'K'
+	.db #0xd5	; 213
+	.db #0x2e	; 46
+	.db #0x34	; 52	'4'
+	.db #0x2b	; 43
+	.db #0x24	; 36
+	.db #0x05	; 5
+	.db #0xa0	; 160
+	.db #0x43	; 67	'C'
+	.db #0x48	; 72	'H'
+	.db #0xe8	; 232
+	.db #0xe3	; 227
+	.db #0x08	; 8
+	.db #0x02	; 2
+	.db #0x00	; 0
+_poliwag_base_stats:
+	.db #0x3c	; 60
+	.db #0x28	; 40
+	.db #0x32	; 50	'2'
+	.db #0x28	; 40
+	.db #0x5a	; 90	'Z'
+	.db #0x28	; 40
+	.db #0x15	; 21
+	.db #0x15	; 21
+	.db #0xff	; 255
+	.db #0x4d	; 77	'M'
+	.db #0x91	; 145
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0xa0	; 160
+	.db #0x3f	; 63
+	.db #0x08	; 8
+	.db #0xd0	; 208
+	.db #0x82	; 130
+	.db #0x28	; 40
+	.db #0x12	; 18
+	.db #0x00	; 0
+_poliwhirl_base_stats:
+	.db #0x3d	; 61
+	.db #0x41	; 65	'A'
+	.db #0x41	; 65	'A'
+	.db #0x41	; 65	'A'
+	.db #0x5a	; 90	'Z'
+	.db #0x32	; 50	'2'
+	.db #0x15	; 21
+	.db #0x15	; 21
+	.db #0x78	; 120	'x'
+	.db #0x83	; 131
+	.db #0x91	; 145
+	.db #0x5f	; 95
+	.db #0x37	; 55	'7'
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0xb1	; 177
+	.db #0x3f	; 63
+	.db #0x0f	; 15
+	.db #0xd6	; 214
+	.db #0x86	; 134
+	.db #0x28	; 40
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+_poliwrath_base_stats:
+	.db #0x3e	; 62
+	.db #0x5a	; 90	'Z'
+	.db #0x55	; 85	'U'
+	.db #0x5f	; 95
+	.db #0x46	; 70	'F'
+	.db #0x46	; 70	'F'
+	.db #0x15	; 21
+	.db #0x01	; 1
+	.db #0x2d	; 45
+	.db #0xb9	; 185
+	.db #0x5f	; 95
+	.db #0x37	; 55	'7'
+	.db #0x03	; 3
+	.db #0x22	; 34
+	.db #0x03	; 3
+	.db #0xb1	; 177
+	.db #0x7f	; 127
+	.db #0x0f	; 15
+	.db #0xd6	; 214
+	.db #0x86	; 134
+	.db #0x28	; 40
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+_abra_base_stats:
+	.db #0x3f	; 63
+	.db #0x19	; 25
+	.db #0x14	; 20
+	.db #0x0f	; 15
+	.db #0x5a	; 90	'Z'
+	.db #0x69	; 105	'i'
+	.db #0x18	; 24
+	.db #0x18	; 24
+	.db #0xc8	; 200
+	.db #0x49	; 73	'I'
+	.db #0x64	; 100	'd'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0xb1	; 177
+	.db #0x03	; 3
+	.db #0x0f	; 15
+	.db #0xf0	; 240
+	.db #0x87	; 135
+	.db #0x38	; 56	'8'
+	.db #0x43	; 67	'C'
+	.db #0x00	; 0
+_kadabra_base_stats:
+	.db #0x40	; 64
+	.db #0x28	; 40
+	.db #0x23	; 35
+	.db #0x1e	; 30
+	.db #0x69	; 105	'i'
+	.db #0x78	; 120	'x'
+	.db #0x18	; 24
+	.db #0x18	; 24
+	.db #0x64	; 100	'd'
+	.db #0x91	; 145
+	.db #0x64	; 100	'd'
+	.db #0x5d	; 93
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0xb1	; 177
+	.db #0x03	; 3
+	.db #0x0f	; 15
+	.db #0xf8	; 248
+	.db #0x87	; 135
+	.db #0x38	; 56	'8'
+	.db #0x43	; 67	'C'
+	.db #0x00	; 0
+_alakazam_base_stats:
+	.db #0x41	; 65	'A'
+	.db #0x37	; 55	'7'
+	.db #0x32	; 50	'2'
+	.db #0x2d	; 45
+	.db #0x78	; 120	'x'
+	.db #0x87	; 135
+	.db #0x18	; 24
+	.db #0x18	; 24
+	.db #0x32	; 50	'2'
+	.db #0xba	; 186
+	.db #0x64	; 100	'd'
+	.db #0x5d	; 93
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0xb1	; 177
+	.db #0x43	; 67	'C'
+	.db #0x0f	; 15
+	.db #0xf8	; 248
+	.db #0x87	; 135
+	.db #0x38	; 56	'8'
+	.db #0x43	; 67	'C'
+	.db #0x00	; 0
+_machop_base_stats:
+	.db #0x42	; 66	'B'
+	.db #0x46	; 70	'F'
+	.db #0x50	; 80	'P'
+	.db #0x32	; 50	'2'
+	.db #0x23	; 35
+	.db #0x23	; 35
+	.db #0x01	; 1
+	.db #0x01	; 1
+	.db #0xb4	; 180
+	.db #0x58	; 88	'X'
+	.db #0x02	; 2
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0xb1	; 177
+	.db #0x03	; 3
+	.db #0x0f	; 15
+	.db #0xce	; 206
+	.db #0xa6	; 166
+	.db #0x88	; 136
+	.db #0x22	; 34
+	.db #0x00	; 0
+_machoke_base_stats:
+	.db #0x43	; 67	'C'
+	.db #0x50	; 80	'P'
+	.db #0x64	; 100	'd'
+	.db #0x46	; 70	'F'
+	.db #0x2d	; 45
+	.db #0x32	; 50	'2'
+	.db #0x01	; 1
+	.db #0x01	; 1
+	.db #0x5a	; 90	'Z'
+	.db #0x92	; 146
+	.db #0x02	; 2
+	.db #0x43	; 67	'C'
+	.db #0x2b	; 43
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0xb1	; 177
+	.db #0x03	; 3
+	.db #0x0f	; 15
+	.db #0xce	; 206
+	.db #0xa6	; 166
+	.db #0x88	; 136
+	.db #0x22	; 34
+	.db #0x00	; 0
+_machamp_base_stats:
+	.db #0x44	; 68	'D'
+	.db #0x5a	; 90	'Z'
+	.db #0x82	; 130
+	.db #0x50	; 80	'P'
+	.db #0x37	; 55	'7'
+	.db #0x41	; 65	'A'
+	.db #0x01	; 1
+	.db #0x01	; 1
+	.db #0x2d	; 45
+	.db #0xc1	; 193
+	.db #0x02	; 2
+	.db #0x43	; 67	'C'
+	.db #0x2b	; 43
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0xb1	; 177
+	.db #0x43	; 67	'C'
+	.db #0x0f	; 15
+	.db #0xce	; 206
+	.db #0xa6	; 166
+	.db #0x88	; 136
+	.db #0x22	; 34
+	.db #0x00	; 0
+_bellsprout_base_stats:
+	.db #0x45	; 69	'E'
+	.db #0x32	; 50	'2'
+	.db #0x4b	; 75	'K'
+	.db #0x23	; 35
+	.db #0x28	; 40
+	.db #0x46	; 70	'F'
+	.db #0x16	; 22
+	.db #0x03	; 3
+	.db #0xff	; 255
+	.db #0x54	; 84	'T'
+	.db #0x16	; 22
+	.db #0x4a	; 74	'J'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0x24	; 36
+	.db #0x03	; 3
+	.db #0x38	; 56	'8'
+	.db #0xc0	; 192
+	.db #0x03	; 3
+	.db #0x08	; 8
+	.db #0x06	; 6
+	.db #0x00	; 0
+_weepinbell_base_stats:
+	.db #0x46	; 70	'F'
+	.db #0x41	; 65	'A'
+	.db #0x5a	; 90	'Z'
+	.db #0x32	; 50	'2'
+	.db #0x37	; 55	'7'
+	.db #0x55	; 85	'U'
+	.db #0x16	; 22
+	.db #0x03	; 3
+	.db #0x78	; 120	'x'
+	.db #0x97	; 151
+	.db #0x16	; 22
+	.db #0x4a	; 74	'J'
+	.db #0x23	; 35
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0x24	; 36
+	.db #0x03	; 3
+	.db #0x38	; 56	'8'
+	.db #0xc0	; 192
+	.db #0x03	; 3
+	.db #0x08	; 8
+	.db #0x06	; 6
+	.db #0x00	; 0
+_victreebel_base_stats:
+	.db #0x47	; 71	'G'
+	.db #0x50	; 80	'P'
+	.db #0x69	; 105	'i'
+	.db #0x41	; 65	'A'
+	.db #0x46	; 70	'F'
+	.db #0x64	; 100	'd'
+	.db #0x16	; 22
+	.db #0x03	; 3
+	.db #0x2d	; 45
+	.db #0xbf	; 191
+	.db #0x4f	; 79	'O'
+	.db #0x4e	; 78	'N'
+	.db #0x33	; 51	'3'
+	.db #0x4b	; 75	'K'
+	.db #0x03	; 3
+	.db #0xa4	; 164
+	.db #0x43	; 67	'C'
+	.db #0x38	; 56	'8'
+	.db #0xc0	; 192
+	.db #0x03	; 3
+	.db #0x08	; 8
+	.db #0x06	; 6
+	.db #0x00	; 0
+_tentacool_base_stats:
+	.db #0x48	; 72	'H'
+	.db #0x28	; 40
+	.db #0x28	; 40
+	.db #0x23	; 35
+	.db #0x46	; 70	'F'
+	.db #0x64	; 100	'd'
+	.db #0x15	; 21
+	.db #0x03	; 3
+	.db #0xbe	; 190
+	.db #0x69	; 105	'i'
+	.db #0x33	; 51	'3'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x05	; 5
+	.db #0x24	; 36
+	.db #0x3f	; 63
+	.db #0x18	; 24
+	.db #0xc0	; 192
+	.db #0x83	; 131
+	.db #0x08	; 8
+	.db #0x16	; 22
+	.db #0x00	; 0
+_tentacruel_base_stats:
+	.db #0x49	; 73	'I'
+	.db #0x50	; 80	'P'
+	.db #0x46	; 70	'F'
+	.db #0x41	; 65	'A'
+	.db #0x64	; 100	'd'
+	.db #0x78	; 120	'x'
+	.db #0x15	; 21
+	.db #0x03	; 3
+	.db #0x3c	; 60
+	.db #0xcd	; 205
+	.db #0x33	; 51	'3'
+	.db #0x30	; 48	'0'
+	.db #0x23	; 35
+	.db #0x00	; 0
+	.db #0x05	; 5
+	.db #0x24	; 36
+	.db #0x7f	; 127
+	.db #0x18	; 24
+	.db #0xc0	; 192
+	.db #0x83	; 131
+	.db #0x08	; 8
+	.db #0x16	; 22
+	.db #0x00	; 0
+_geodude_base_stats:
+	.db #0x4a	; 74	'J'
+	.db #0x28	; 40
+	.db #0x50	; 80	'P'
+	.db #0x64	; 100	'd'
+	.db #0x14	; 20
+	.db #0x1e	; 30
+	.db #0x05	; 5
+	.db #0x04	; 4
+	.db #0xff	; 255
+	.db #0x56	; 86	'V'
+	.db #0x21	; 33
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0xa1	; 161
+	.db #0x03	; 3
+	.db #0x0f	; 15
+	.db #0xce	; 206
+	.db #0x2e	; 46
+	.db #0xc8	; 200
+	.db #0x22	; 34
+	.db #0x00	; 0
+_graveler_base_stats:
+	.db #0x4b	; 75	'K'
+	.db #0x37	; 55	'7'
+	.db #0x5f	; 95
+	.db #0x73	; 115	's'
+	.db #0x23	; 35
+	.db #0x2d	; 45
+	.db #0x05	; 5
+	.db #0x04	; 4
+	.db #0x78	; 120	'x'
+	.db #0x86	; 134
+	.db #0x21	; 33
+	.db #0x6f	; 111	'o'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0xa1	; 161
+	.db #0x03	; 3
+	.db #0x0f	; 15
+	.db #0xce	; 206
+	.db #0x2e	; 46
+	.db #0xc8	; 200
+	.db #0x22	; 34
+	.db #0x00	; 0
+_golem_base_stats:
+	.db #0x4c	; 76	'L'
+	.db #0x50	; 80	'P'
+	.db #0x6e	; 110	'n'
+	.db #0x82	; 130
+	.db #0x2d	; 45
+	.db #0x37	; 55	'7'
+	.db #0x05	; 5
+	.db #0x04	; 4
+	.db #0x2d	; 45
+	.db #0xb1	; 177
+	.db #0x21	; 33
+	.db #0x6f	; 111	'o'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0xb1	; 177
+	.db #0x43	; 67	'C'
+	.db #0x0f	; 15
+	.db #0xce	; 206
+	.db #0x2e	; 46
+	.db #0xc8	; 200
+	.db #0x22	; 34
+	.db #0x00	; 0
+_ponyta_base_stats:
+	.db #0x4d	; 77	'M'
+	.db #0x32	; 50	'2'
+	.db #0x55	; 85	'U'
+	.db #0x37	; 55	'7'
+	.db #0x5a	; 90	'Z'
+	.db #0x41	; 65	'A'
+	.db #0x14	; 20
+	.db #0x14	; 20
+	.db #0xbe	; 190
+	.db #0x98	; 152
+	.db #0x34	; 52	'4'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xe0	; 224
+	.db #0x03	; 3
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0xe3	; 227
+	.db #0x08	; 8
+	.db #0x02	; 2
+	.db #0x00	; 0
+_rapidash_base_stats:
+	.db #0x4e	; 78	'N'
+	.db #0x41	; 65	'A'
+	.db #0x64	; 100	'd'
+	.db #0x46	; 70	'F'
+	.db #0x69	; 105	'i'
+	.db #0x50	; 80	'P'
+	.db #0x14	; 20
+	.db #0x14	; 20
+	.db #0x3c	; 60
+	.db #0xc0	; 192
+	.db #0x34	; 52	'4'
+	.db #0x27	; 39
+	.db #0x17	; 23
+	.db #0x2d	; 45
+	.db #0x00	; 0
+	.db #0xe0	; 224
+	.db #0x43	; 67	'C'
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0xe3	; 227
+	.db #0x08	; 8
+	.db #0x02	; 2
+	.db #0x00	; 0
+_slowpoke_base_stats:
+	.db #0x4f	; 79	'O'
+	.db #0x5a	; 90	'Z'
+	.db #0x41	; 65	'A'
+	.db #0x41	; 65	'A'
+	.db #0x0f	; 15
+	.db #0x28	; 40
+	.db #0x15	; 21
+	.db #0x18	; 24
+	.db #0xbe	; 190
+	.db #0x63	; 99	'c'
+	.db #0x5d	; 93
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa0	; 160
+	.db #0xbf	; 191
+	.db #0x08	; 8
+	.db #0xfe	; 254
+	.db #0xe3	; 227
+	.db #0x38	; 56	'8'
+	.db #0x73	; 115	's'
+	.db #0x00	; 0
+_slowbro_base_stats:
+	.db #0x50	; 80	'P'
+	.db #0x5f	; 95
+	.db #0x4b	; 75	'K'
+	.db #0x6e	; 110	'n'
+	.db #0x1e	; 30
+	.db #0x50	; 80	'P'
+	.db #0x15	; 21
+	.db #0x18	; 24
+	.db #0x4b	; 75	'K'
+	.db #0xa4	; 164
+	.db #0x5d	; 93
+	.db #0x32	; 50	'2'
+	.db #0x1d	; 29
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xb1	; 177
+	.db #0xff	; 255
+	.db #0x0f	; 15
+	.db #0xfe	; 254
+	.db #0xe3	; 227
+	.db #0x38	; 56	'8'
+	.db #0x73	; 115	's'
+	.db #0x00	; 0
+_magnemite_base_stats:
+	.db #0x51	; 81	'Q'
+	.db #0x19	; 25
+	.db #0x23	; 35
+	.db #0x46	; 70	'F'
+	.db #0x2d	; 45
+	.db #0x5f	; 95
+	.db #0x17	; 23
+	.db #0x17	; 23
+	.db #0xbe	; 190
+	.db #0x59	; 89	'Y'
+	.db #0x21	; 33
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x20	; 32
+	.db #0x03	; 3
+	.db #0x88	; 136
+	.db #0xe1	; 225
+	.db #0x43	; 67	'C'
+	.db #0x18	; 24
+	.db #0x42	; 66	'B'
+	.db #0x00	; 0
+_magneton_base_stats:
+	.db #0x52	; 82	'R'
+	.db #0x32	; 50	'2'
+	.db #0x3c	; 60
+	.db #0x5f	; 95
+	.db #0x46	; 70	'F'
+	.db #0x78	; 120	'x'
+	.db #0x17	; 23
+	.db #0x17	; 23
+	.db #0x3c	; 60
+	.db #0xa1	; 161
+	.db #0x21	; 33
+	.db #0x31	; 49	'1'
+	.db #0x54	; 84	'T'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x20	; 32
+	.db #0x43	; 67	'C'
+	.db #0x88	; 136
+	.db #0xe1	; 225
+	.db #0x43	; 67	'C'
+	.db #0x18	; 24
+	.db #0x42	; 66	'B'
+	.db #0x00	; 0
+_farfetchd_base_stats:
+	.db #0x53	; 83	'S'
+	.db #0x34	; 52	'4'
+	.db #0x41	; 65	'A'
+	.db #0x37	; 55	'7'
+	.db #0x3c	; 60
+	.db #0x3a	; 58
+	.db #0x00	; 0
+	.db #0x02	; 2
+	.db #0x2d	; 45
+	.db #0x5e	; 94
+	.db #0x40	; 64
+	.db #0x1c	; 28
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xae	; 174
+	.db #0x03	; 3
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0xc3	; 195
+	.db #0x08	; 8
+	.db #0x0e	; 14
+	.db #0x00	; 0
+_doduo_base_stats:
+	.db #0x54	; 84	'T'
+	.db #0x23	; 35
+	.db #0x55	; 85	'U'
+	.db #0x2d	; 45
+	.db #0x4b	; 75	'K'
+	.db #0x23	; 35
+	.db #0x00	; 0
+	.db #0x02	; 2
+	.db #0xbe	; 190
+	.db #0x60	; 96
+	.db #0x40	; 64
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa8	; 168
+	.db #0x03	; 3
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0x83	; 131
+	.db #0x0c	; 12
+	.db #0x0b	; 11
+	.db #0x00	; 0
+_dodrio_base_stats:
+	.db #0x55	; 85	'U'
+	.db #0x3c	; 60
+	.db #0x6e	; 110	'n'
+	.db #0x46	; 70	'F'
+	.db #0x64	; 100	'd'
+	.db #0x3c	; 60
+	.db #0x00	; 0
+	.db #0x02	; 2
+	.db #0x2d	; 45
+	.db #0x9e	; 158
+	.db #0x40	; 64
+	.db #0x2d	; 45
+	.db #0x1f	; 31
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa8	; 168
+	.db #0x43	; 67	'C'
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0x83	; 131
+	.db #0x0c	; 12
+	.db #0x0b	; 11
+	.db #0x00	; 0
+_seel_base_stats:
+	.db #0x56	; 86	'V'
+	.db #0x41	; 65	'A'
+	.db #0x2d	; 45
+	.db #0x37	; 55	'7'
+	.db #0x2d	; 45
+	.db #0x46	; 70	'F'
+	.db #0x15	; 21
+	.db #0x15	; 21
+	.db #0xbe	; 190
+	.db #0x64	; 100	'd'
+	.db #0x1d	; 29
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xe0	; 224
+	.db #0xbf	; 191
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0x82	; 130
+	.db #0x08	; 8
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+_dewgong_base_stats:
+	.db #0x57	; 87	'W'
+	.db #0x5a	; 90	'Z'
+	.db #0x46	; 70	'F'
+	.db #0x50	; 80	'P'
+	.db #0x46	; 70	'F'
+	.db #0x5f	; 95
+	.db #0x15	; 21
+	.db #0x19	; 25
+	.db #0x4b	; 75	'K'
+	.db #0xb0	; 176
+	.db #0x1d	; 29
+	.db #0x2d	; 45
+	.db #0x3e	; 62
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xe0	; 224
+	.db #0xff	; 255
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0x82	; 130
+	.db #0x08	; 8
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+_grimer_base_stats:
+	.db #0x58	; 88	'X'
+	.db #0x50	; 80	'P'
+	.db #0x50	; 80	'P'
+	.db #0x32	; 50	'2'
+	.db #0x19	; 25
+	.db #0x28	; 40
+	.db #0x03	; 3
+	.db #0x03	; 3
+	.db #0xbe	; 190
+	.db #0x5a	; 90	'Z'
+	.db #0x01	; 1
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa0	; 160
+	.db #0x00	; 0
+	.db #0x98	; 152
+	.db #0xc1	; 193
+	.db #0x2a	; 42
+	.db #0x48	; 72	'H'
+	.db #0x02	; 2
+	.db #0x00	; 0
+_muk_base_stats:
+	.db #0x59	; 89	'Y'
+	.db #0x69	; 105	'i'
+	.db #0x69	; 105	'i'
+	.db #0x4b	; 75	'K'
+	.db #0x32	; 50	'2'
+	.db #0x41	; 65	'A'
+	.db #0x03	; 3
+	.db #0x03	; 3
+	.db #0x4b	; 75	'K'
+	.db #0x9d	; 157
+	.db #0x01	; 1
+	.db #0x32	; 50	'2'
+	.db #0x8b	; 139
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa0	; 160
+	.db #0x40	; 64
+	.db #0x98	; 152
+	.db #0xc1	; 193
+	.db #0x2a	; 42
+	.db #0x48	; 72	'H'
+	.db #0x02	; 2
+	.db #0x00	; 0
+_shellder_base_stats:
+	.db #0x5a	; 90	'Z'
+	.db #0x1e	; 30
+	.db #0x41	; 65	'A'
+	.db #0x64	; 100	'd'
+	.db #0x28	; 40
+	.db #0x2d	; 45
+	.db #0x15	; 21
+	.db #0x15	; 21
+	.db #0xbe	; 190
+	.db #0x61	; 97	'a'
+	.db #0x21	; 33
+	.db #0x6e	; 110	'n'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x05	; 5
+	.db #0x20	; 32
+	.db #0x3f	; 63
+	.db #0x08	; 8
+	.db #0xe0	; 224
+	.db #0x4b	; 75	'K'
+	.db #0x48	; 72	'H'
+	.db #0x13	; 19
+	.db #0x00	; 0
+_cloyster_base_stats:
+	.db #0x5b	; 91
+	.db #0x32	; 50	'2'
+	.db #0x5f	; 95
+	.db #0xb4	; 180
+	.db #0x46	; 70	'F'
+	.db #0x55	; 85	'U'
+	.db #0x15	; 21
+	.db #0x19	; 25
+	.db #0x3c	; 60
+	.db #0xcb	; 203
+	.db #0x6e	; 110	'n'
+	.db #0x30	; 48	'0'
+	.db #0x80	; 128
+	.db #0x3e	; 62
+	.db #0x05	; 5
+	.db #0x20	; 32
+	.db #0x7f	; 127
+	.db #0x08	; 8
+	.db #0xe0	; 224
+	.db #0x4b	; 75	'K'
+	.db #0x48	; 72	'H'
+	.db #0x13	; 19
+	.db #0x00	; 0
+_gastly_base_stats:
+	.db #0x5c	; 92
+	.db #0x1e	; 30
+	.db #0x23	; 35
+	.db #0x1e	; 30
+	.db #0x50	; 80	'P'
+	.db #0x64	; 100	'd'
+	.db #0x08	; 8
+	.db #0x03	; 3
+	.db #0xbe	; 190
+	.db #0x5f	; 95
+	.db #0x7a	; 122	'z'
+	.db #0x6d	; 109	'm'
+	.db #0x65	; 101	'e'
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0x20	; 32
+	.db #0x00	; 0
+	.db #0x98	; 152
+	.db #0xd1	; 209
+	.db #0x0a	; 10
+	.db #0x6a	; 106	'j'
+	.db #0x02	; 2
+	.db #0x00	; 0
+_haunter_base_stats:
+	.db #0x5d	; 93
+	.db #0x2d	; 45
+	.db #0x32	; 50	'2'
+	.db #0x2d	; 45
+	.db #0x5f	; 95
+	.db #0x73	; 115	's'
+	.db #0x08	; 8
+	.db #0x03	; 3
+	.db #0x5a	; 90	'Z'
+	.db #0x7e	; 126
+	.db #0x7a	; 122	'z'
+	.db #0x6d	; 109	'm'
+	.db #0x65	; 101	'e'
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0x20	; 32
+	.db #0x00	; 0
+	.db #0x98	; 152
+	.db #0xd1	; 209
+	.db #0x0a	; 10
+	.db #0x6a	; 106	'j'
+	.db #0x02	; 2
+	.db #0x00	; 0
+_gengar_base_stats:
+	.db #0x5e	; 94
+	.db #0x3c	; 60
+	.db #0x41	; 65	'A'
+	.db #0x3c	; 60
+	.db #0x6e	; 110	'n'
+	.db #0x82	; 130
+	.db #0x08	; 8
+	.db #0x03	; 3
+	.db #0x2d	; 45
+	.db #0xbe	; 190
+	.db #0x7a	; 122	'z'
+	.db #0x6d	; 109	'm'
+	.db #0x65	; 101	'e'
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0xb1	; 177
+	.db #0x43	; 67	'C'
+	.db #0x9f	; 159
+	.db #0xd1	; 209
+	.db #0x8e	; 142
+	.db #0x6a	; 106	'j'
+	.db #0x22	; 34
+	.db #0x00	; 0
+_onix_base_stats:
+	.db #0x5f	; 95
+	.db #0x23	; 35
+	.db #0x2d	; 45
+	.db #0xa0	; 160
+	.db #0x46	; 70	'F'
+	.db #0x1e	; 30
+	.db #0x05	; 5
+	.db #0x04	; 4
+	.db #0x2d	; 45
+	.db #0x6c	; 108	'l'
+	.db #0x21	; 33
+	.db #0x67	; 103	'g'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa0	; 160
+	.db #0x03	; 3
+	.db #0x08	; 8
+	.db #0xce	; 206
+	.db #0x8a	; 138
+	.db #0xc8	; 200
+	.db #0x22	; 34
+	.db #0x00	; 0
+_drowzee_base_stats:
+	.db #0x60	; 96
+	.db #0x3c	; 60
+	.db #0x30	; 48	'0'
+	.db #0x2d	; 45
+	.db #0x2a	; 42
+	.db #0x5a	; 90	'Z'
+	.db #0x18	; 24
+	.db #0x18	; 24
+	.db #0xbe	; 190
+	.db #0x66	; 102	'f'
+	.db #0x01	; 1
+	.db #0x5f	; 95
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xb1	; 177
+	.db #0x03	; 3
+	.db #0x0f	; 15
+	.db #0xf0	; 240
+	.db #0x87	; 135
+	.db #0x3a	; 58
+	.db #0x43	; 67	'C'
+	.db #0x00	; 0
+_hypno_base_stats:
+	.db #0x61	; 97	'a'
+	.db #0x55	; 85	'U'
+	.db #0x49	; 73	'I'
+	.db #0x46	; 70	'F'
+	.db #0x43	; 67	'C'
+	.db #0x73	; 115	's'
+	.db #0x18	; 24
+	.db #0x18	; 24
+	.db #0x4b	; 75	'K'
+	.db #0xa5	; 165
+	.db #0x01	; 1
+	.db #0x5f	; 95
+	.db #0x32	; 50	'2'
+	.db #0x5d	; 93
+	.db #0x00	; 0
+	.db #0xb1	; 177
+	.db #0x43	; 67	'C'
+	.db #0x0f	; 15
+	.db #0xf0	; 240
+	.db #0x87	; 135
+	.db #0x3a	; 58
+	.db #0x43	; 67	'C'
+	.db #0x00	; 0
+_krabby_base_stats:
+	.db #0x62	; 98	'b'
+	.db #0x1e	; 30
+	.db #0x69	; 105	'i'
+	.db #0x5a	; 90	'Z'
+	.db #0x32	; 50	'2'
+	.db #0x19	; 25
+	.db #0x15	; 21
+	.db #0x15	; 21
+	.db #0xe1	; 225
+	.db #0x73	; 115	's'
+	.db #0x91	; 145
+	.db #0x2b	; 43
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa4	; 164
+	.db #0x3f	; 63
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0x02	; 2
+	.db #0x08	; 8
+	.db #0x36	; 54	'6'
+	.db #0x00	; 0
+_kingler_base_stats:
+	.db #0x63	; 99	'c'
+	.db #0x37	; 55	'7'
+	.db #0x82	; 130
+	.db #0x73	; 115	's'
+	.db #0x4b	; 75	'K'
+	.db #0x32	; 50	'2'
+	.db #0x15	; 21
+	.db #0x15	; 21
+	.db #0x3c	; 60
+	.db #0xce	; 206
+	.db #0x91	; 145
+	.db #0x2b	; 43
+	.db #0x0b	; 11
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa4	; 164
+	.db #0x7f	; 127
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0x02	; 2
+	.db #0x08	; 8
+	.db #0x36	; 54	'6'
+	.db #0x00	; 0
+_voltorb_base_stats:
+	.db #0x64	; 100	'd'
+	.db #0x28	; 40
+	.db #0x1e	; 30
+	.db #0x32	; 50	'2'
+	.db #0x64	; 100	'd'
+	.db #0x37	; 55	'7'
+	.db #0x17	; 23
+	.db #0x17	; 23
+	.db #0xbe	; 190
+	.db #0x67	; 103	'g'
+	.db #0x21	; 33
+	.db #0x67	; 103	'g'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x20	; 32
+	.db #0x01	; 1
+	.db #0x88	; 136
+	.db #0xe1	; 225
+	.db #0x4b	; 75	'K'
+	.db #0x58	; 88	'X'
+	.db #0x42	; 66	'B'
+	.db #0x00	; 0
+_electrode_base_stats:
+	.db #0x65	; 101	'e'
+	.db #0x3c	; 60
+	.db #0x32	; 50	'2'
+	.db #0x46	; 70	'F'
+	.db #0x8c	; 140
+	.db #0x50	; 80	'P'
+	.db #0x17	; 23
+	.db #0x17	; 23
+	.db #0x3c	; 60
+	.db #0x96	; 150
+	.db #0x21	; 33
+	.db #0x67	; 103	'g'
+	.db #0x31	; 49	'1'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x20	; 32
+	.db #0x41	; 65	'A'
+	.db #0x88	; 136
+	.db #0xe1	; 225
+	.db #0xcb	; 203
+	.db #0x58	; 88	'X'
+	.db #0x42	; 66	'B'
+	.db #0x00	; 0
+_exeggcute_base_stats:
+	.db #0x66	; 102	'f'
+	.db #0x3c	; 60
+	.db #0x28	; 40
+	.db #0x50	; 80	'P'
+	.db #0x28	; 40
+	.db #0x3c	; 60
+	.db #0x16	; 22
+	.db #0x18	; 24
+	.db #0x5a	; 90	'Z'
+	.db #0x62	; 98	'b'
+	.db #0x8c	; 140
+	.db #0x5f	; 95
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x05	; 5
+	.db #0x20	; 32
+	.db #0x03	; 3
+	.db #0x08	; 8
+	.db #0xf0	; 240
+	.db #0x1b	; 27
+	.db #0x68	; 104	'h'
+	.db #0x02	; 2
+	.db #0x00	; 0
+_exeggutor_base_stats:
+	.db #0x67	; 103	'g'
+	.db #0x5f	; 95
+	.db #0x5f	; 95
+	.db #0x55	; 85	'U'
+	.db #0x37	; 55	'7'
+	.db #0x7d	; 125
+	.db #0x16	; 22
+	.db #0x18	; 24
+	.db #0x2d	; 45
+	.db #0xd4	; 212
+	.db #0x8c	; 140
+	.db #0x5f	; 95
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x05	; 5
+	.db #0x20	; 32
+	.db #0x43	; 67	'C'
+	.db #0x38	; 56	'8'
+	.db #0xf0	; 240
+	.db #0x1b	; 27
+	.db #0x68	; 104	'h'
+	.db #0x22	; 34
+	.db #0x00	; 0
+_cubone_base_stats:
+	.db #0x68	; 104	'h'
+	.db #0x32	; 50	'2'
+	.db #0x32	; 50	'2'
+	.db #0x5f	; 95
+	.db #0x23	; 35
+	.db #0x28	; 40
+	.db #0x04	; 4
+	.db #0x04	; 4
+	.db #0xbe	; 190
+	.db #0x57	; 87	'W'
+	.db #0x7d	; 125
+	.db #0x2d	; 45
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xb1	; 177
+	.db #0x3f	; 63
+	.db #0x0f	; 15
+	.db #0xce	; 206
+	.db #0xa2	; 162
+	.db #0x08	; 8
+	.db #0x22	; 34
+	.db #0x00	; 0
+_marowak_base_stats:
+	.db #0x69	; 105	'i'
+	.db #0x3c	; 60
+	.db #0x50	; 80	'P'
+	.db #0x6e	; 110	'n'
+	.db #0x2d	; 45
+	.db #0x32	; 50	'2'
+	.db #0x04	; 4
+	.db #0x04	; 4
+	.db #0x4b	; 75	'K'
+	.db #0x7c	; 124
+	.db #0x7d	; 125
+	.db #0x2d	; 45
+	.db #0x2b	; 43
+	.db #0x74	; 116	't'
+	.db #0x00	; 0
+	.db #0xb1	; 177
+	.db #0x7f	; 127
+	.db #0x0f	; 15
+	.db #0xce	; 206
+	.db #0xa2	; 162
+	.db #0x08	; 8
+	.db #0x22	; 34
+	.db #0x00	; 0
+_hitmonlee_base_stats:
+	.db #0x6a	; 106	'j'
+	.db #0x32	; 50	'2'
+	.db #0x78	; 120	'x'
+	.db #0x35	; 53	'5'
+	.db #0x57	; 87	'W'
+	.db #0x23	; 35
+	.db #0x01	; 1
+	.db #0x01	; 1
+	.db #0x2d	; 45
+	.db #0x8b	; 139
+	.db #0x18	; 24
+	.db #0x60	; 96
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xb1	; 177
+	.db #0x03	; 3
+	.db #0x0f	; 15
+	.db #0xc0	; 192
+	.db #0xc6	; 198
+	.db #0x08	; 8
+	.db #0x22	; 34
+	.db #0x00	; 0
+_hitmonchan_base_stats:
+	.db #0x6b	; 107	'k'
+	.db #0x32	; 50	'2'
+	.db #0x69	; 105	'i'
+	.db #0x4f	; 79	'O'
+	.db #0x4c	; 76	'L'
+	.db #0x23	; 35
+	.db #0x01	; 1
+	.db #0x01	; 1
+	.db #0x2d	; 45
+	.db #0x8c	; 140
+	.db #0x04	; 4
+	.db #0x61	; 97	'a'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xb1	; 177
+	.db #0x03	; 3
+	.db #0x0f	; 15
+	.db #0xc0	; 192
+	.db #0xc6	; 198
+	.db #0x08	; 8
+	.db #0x22	; 34
+	.db #0x00	; 0
+_lickitung_base_stats:
+	.db #0x6c	; 108	'l'
+	.db #0x5a	; 90	'Z'
+	.db #0x37	; 55	'7'
+	.db #0x4b	; 75	'K'
+	.db #0x1e	; 30
+	.db #0x3c	; 60
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x2d	; 45
+	.db #0x7f	; 127
+	.db #0x23	; 35
+	.db #0x30	; 48	'0'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xb5	; 181
+	.db #0x7f	; 127
+	.db #0x8f	; 143
+	.db #0xc7	; 199
+	.db #0xa2	; 162
+	.db #0x08	; 8
+	.db #0x36	; 54	'6'
+	.db #0x00	; 0
+_koffing_base_stats:
+	.db #0x6d	; 109	'm'
+	.db #0x28	; 40
+	.db #0x41	; 65	'A'
+	.db #0x5f	; 95
+	.db #0x23	; 35
+	.db #0x3c	; 60
+	.db #0x03	; 3
+	.db #0x03	; 3
+	.db #0xbe	; 190
+	.db #0x72	; 114	'r'
+	.db #0x21	; 33
+	.db #0x7b	; 123
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x20	; 32
+	.db #0x00	; 0
+	.db #0x88	; 136
+	.db #0xc1	; 193
+	.db #0x2a	; 42
+	.db #0x48	; 72	'H'
+	.db #0x02	; 2
+	.db #0x00	; 0
+_weezing_base_stats:
+	.db #0x6e	; 110	'n'
+	.db #0x41	; 65	'A'
+	.db #0x5a	; 90	'Z'
+	.db #0x78	; 120	'x'
+	.db #0x3c	; 60
+	.db #0x55	; 85	'U'
+	.db #0x03	; 3
+	.db #0x03	; 3
+	.db #0x3c	; 60
+	.db #0xad	; 173
+	.db #0x21	; 33
+	.db #0x7b	; 123
+	.db #0x7c	; 124
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x20	; 32
+	.db #0x40	; 64
+	.db #0x88	; 136
+	.db #0xc1	; 193
+	.db #0x2a	; 42
+	.db #0x48	; 72	'H'
+	.db #0x02	; 2
+	.db #0x00	; 0
+_rhyhorn_base_stats:
+	.db #0x6f	; 111	'o'
+	.db #0x50	; 80	'P'
+	.db #0x55	; 85	'U'
+	.db #0x5f	; 95
+	.db #0x19	; 25
+	.db #0x1e	; 30
+	.db #0x04	; 4
+	.db #0x05	; 5
+	.db #0x78	; 120	'x'
+	.db #0x87	; 135
+	.db #0x1e	; 30
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x05	; 5
+	.db #0xe0	; 224
+	.db #0x03	; 3
+	.db #0x88	; 136
+	.db #0xcf	; 207
+	.db #0xa2	; 162
+	.db #0x88	; 136
+	.db #0x22	; 34
+	.db #0x00	; 0
+_rhydon_base_stats:
+	.db #0x70	; 112	'p'
+	.db #0x69	; 105	'i'
+	.db #0x82	; 130
+	.db #0x78	; 120	'x'
+	.db #0x28	; 40
+	.db #0x2d	; 45
+	.db #0x04	; 4
+	.db #0x05	; 5
+	.db #0x3c	; 60
+	.db #0xcc	; 204
+	.db #0x1e	; 30
+	.db #0x17	; 23
+	.db #0x27	; 39
+	.db #0x1f	; 31
+	.db #0x05	; 5
+	.db #0xf1	; 241
+	.db #0xff	; 255
+	.db #0x8f	; 143
+	.db #0xcf	; 207
+	.db #0xa2	; 162
+	.db #0x88	; 136
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+_chansey_base_stats:
+	.db #0x71	; 113	'q'
+	.db #0xfa	; 250
+	.db #0x05	; 5
+	.db #0x05	; 5
+	.db #0x32	; 50	'2'
+	.db #0x69	; 105	'i'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x1e	; 30
+	.db #0xff	; 255
+	.db #0x01	; 1
+	.db #0x03	; 3
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x04	; 4
+	.db #0xb1	; 177
+	.db #0x7f	; 127
+	.db #0xaf	; 175
+	.db #0xf1	; 241
+	.db #0xb7	; 183
+	.db #0x39	; 57	'9'
+	.db #0x63	; 99	'c'
+	.db #0x00	; 0
+_tangela_base_stats:
+	.db #0x72	; 114	'r'
+	.db #0x41	; 65	'A'
+	.db #0x37	; 55	'7'
+	.db #0x73	; 115	's'
+	.db #0x3c	; 60
+	.db #0x64	; 100	'd'
+	.db #0x16	; 22
+	.db #0x16	; 22
+	.db #0x2d	; 45
+	.db #0xa6	; 166
+	.db #0x84	; 132
+	.db #0x14	; 20
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa4	; 164
+	.db #0x43	; 67	'C'
+	.db #0x38	; 56	'8'
+	.db #0xc0	; 192
+	.db #0x82	; 130
+	.db #0x08	; 8
+	.db #0x06	; 6
+	.db #0x00	; 0
+_kangaskhan_base_stats:
+	.db #0x73	; 115	's'
+	.db #0x69	; 105	'i'
+	.db #0x5f	; 95
+	.db #0x50	; 80	'P'
+	.db #0x5a	; 90	'Z'
+	.db #0x28	; 40
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x2d	; 45
+	.db #0xaf	; 175
+	.db #0x04	; 4
+	.db #0x63	; 99	'c'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xb1	; 177
+	.db #0x7f	; 127
+	.db #0x8f	; 143
+	.db #0xc7	; 199
+	.db #0xa2	; 162
+	.db #0x88	; 136
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+_horsea_base_stats:
+	.db #0x74	; 116	't'
+	.db #0x1e	; 30
+	.db #0x28	; 40
+	.db #0x46	; 70	'F'
+	.db #0x3c	; 60
+	.db #0x46	; 70	'F'
+	.db #0x15	; 21
+	.db #0x15	; 21
+	.db #0xe1	; 225
+	.db #0x53	; 83	'S'
+	.db #0x91	; 145
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x20	; 32
+	.db #0x3f	; 63
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0xc2	; 194
+	.db #0x08	; 8
+	.db #0x12	; 18
+	.db #0x00	; 0
+_seadra_base_stats:
+	.db #0x75	; 117	'u'
+	.db #0x37	; 55	'7'
+	.db #0x41	; 65	'A'
+	.db #0x5f	; 95
+	.db #0x55	; 85	'U'
+	.db #0x5f	; 95
+	.db #0x15	; 21
+	.db #0x15	; 21
+	.db #0x4b	; 75	'K'
+	.db #0x9b	; 155
+	.db #0x91	; 145
+	.db #0x6c	; 108	'l'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x20	; 32
+	.db #0x7f	; 127
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0xc2	; 194
+	.db #0x08	; 8
+	.db #0x12	; 18
+	.db #0x00	; 0
+_goldeen_base_stats:
+	.db #0x76	; 118	'v'
+	.db #0x2d	; 45
+	.db #0x43	; 67	'C'
+	.db #0x3c	; 60
+	.db #0x3f	; 63
+	.db #0x32	; 50	'2'
+	.db #0x15	; 21
+	.db #0x15	; 21
+	.db #0xe1	; 225
+	.db #0x6f	; 111	'o'
+	.db #0x40	; 64
+	.db #0x27	; 39
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x60	; 96
+	.db #0x3f	; 63
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0xc2	; 194
+	.db #0x08	; 8
+	.db #0x12	; 18
+	.db #0x00	; 0
+_seaking_base_stats:
+	.db #0x77	; 119	'w'
+	.db #0x50	; 80	'P'
+	.db #0x5c	; 92
+	.db #0x41	; 65	'A'
+	.db #0x44	; 68	'D'
+	.db #0x50	; 80	'P'
+	.db #0x15	; 21
+	.db #0x15	; 21
+	.db #0x3c	; 60
+	.db #0xaa	; 170
+	.db #0x40	; 64
+	.db #0x27	; 39
+	.db #0x30	; 48	'0'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x60	; 96
+	.db #0x7f	; 127
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0xc2	; 194
+	.db #0x08	; 8
+	.db #0x12	; 18
+	.db #0x00	; 0
+_staryu_base_stats:
+	.db #0x78	; 120	'x'
+	.db #0x1e	; 30
+	.db #0x2d	; 45
+	.db #0x37	; 55	'7'
+	.db #0x55	; 85	'U'
+	.db #0x46	; 70	'F'
+	.db #0x15	; 21
+	.db #0x15	; 21
+	.db #0xe1	; 225
+	.db #0x6a	; 106	'j'
+	.db #0x21	; 33
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x05	; 5
+	.db #0x20	; 32
+	.db #0x3f	; 63
+	.db #0x88	; 136
+	.db #0xf1	; 241
+	.db #0xc3	; 195
+	.db #0x38	; 56	'8'
+	.db #0x53	; 83	'S'
+	.db #0x00	; 0
+_starmie_base_stats:
+	.db #0x79	; 121	'y'
+	.db #0x3c	; 60
+	.db #0x4b	; 75	'K'
+	.db #0x55	; 85	'U'
+	.db #0x73	; 115	's'
+	.db #0x64	; 100	'd'
+	.db #0x15	; 21
+	.db #0x18	; 24
+	.db #0x3c	; 60
+	.db #0xcf	; 207
+	.db #0x21	; 33
+	.db #0x37	; 55	'7'
+	.db #0x6a	; 106	'j'
+	.db #0x00	; 0
+	.db #0x05	; 5
+	.db #0x20	; 32
+	.db #0x7f	; 127
+	.db #0x88	; 136
+	.db #0xf1	; 241
+	.db #0xc3	; 195
+	.db #0x38	; 56	'8'
+	.db #0x53	; 83	'S'
+	.db #0x00	; 0
+_mrmime_base_stats:
+	.db #0x7a	; 122	'z'
+	.db #0x28	; 40
+	.db #0x2d	; 45
+	.db #0x41	; 65	'A'
+	.db #0x5a	; 90	'Z'
+	.db #0x64	; 100	'd'
+	.db #0x18	; 24
+	.db #0x18	; 24
+	.db #0x2d	; 45
+	.db #0x88	; 136
+	.db #0x5d	; 93
+	.db #0x70	; 112	'p'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xb1	; 177
+	.db #0x43	; 67	'C'
+	.db #0xaf	; 175
+	.db #0xf1	; 241
+	.db #0x87	; 135
+	.db #0x38	; 56	'8'
+	.db #0x42	; 66	'B'
+	.db #0x00	; 0
+_scyther_base_stats:
+	.db #0x7b	; 123
+	.db #0x46	; 70	'F'
+	.db #0x6e	; 110	'n'
+	.db #0x50	; 80	'P'
+	.db #0x69	; 105	'i'
+	.db #0x37	; 55	'7'
+	.db #0x07	; 7
+	.db #0x02	; 2
+	.db #0x2d	; 45
+	.db #0xbb	; 187
+	.db #0x62	; 98	'b'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x24	; 36
+	.db #0x43	; 67	'C'
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0xc2	; 194
+	.db #0x08	; 8
+	.db #0x06	; 6
+	.db #0x00	; 0
+_jynx_base_stats:
+	.db #0x7c	; 124
+	.db #0x41	; 65	'A'
+	.db #0x32	; 50	'2'
+	.db #0x23	; 35
+	.db #0x5f	; 95
+	.db #0x5f	; 95
+	.db #0x19	; 25
+	.db #0x18	; 24
+	.db #0x2d	; 45
+	.db #0x89	; 137
+	.db #0x01	; 1
+	.db #0x8e	; 142
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xb1	; 177
+	.db #0x7f	; 127
+	.db #0x0f	; 15
+	.db #0xf0	; 240
+	.db #0x87	; 135
+	.db #0x28	; 40
+	.db #0x02	; 2
+	.db #0x00	; 0
+_electabuzz_base_stats:
+	.db #0x7d	; 125
+	.db #0x41	; 65	'A'
+	.db #0x53	; 83	'S'
+	.db #0x39	; 57	'9'
+	.db #0x69	; 105	'i'
+	.db #0x55	; 85	'U'
+	.db #0x17	; 23
+	.db #0x17	; 23
+	.db #0x2d	; 45
+	.db #0x9c	; 156
+	.db #0x62	; 98	'b'
+	.db #0x2b	; 43
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xb1	; 177
+	.db #0x43	; 67	'C'
+	.db #0x8f	; 143
+	.db #0xf1	; 241
+	.db #0xc7	; 199
+	.db #0x38	; 56	'8'
+	.db #0x62	; 98	'b'
+	.db #0x00	; 0
+_magmar_base_stats:
+	.db #0x7e	; 126
+	.db #0x41	; 65	'A'
+	.db #0x5f	; 95
+	.db #0x39	; 57	'9'
+	.db #0x5d	; 93
+	.db #0x55	; 85	'U'
+	.db #0x14	; 20
+	.db #0x14	; 20
+	.db #0x2d	; 45
+	.db #0xa7	; 167
+	.db #0x34	; 52	'4'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xb1	; 177
+	.db #0x43	; 67	'C'
+	.db #0x0f	; 15
+	.db #0xf0	; 240
+	.db #0xa6	; 166
+	.db #0x28	; 40
+	.db #0x22	; 34
+	.db #0x00	; 0
+_pinsir_base_stats:
+	.db #0x7f	; 127
+	.db #0x41	; 65	'A'
+	.db #0x7d	; 125
+	.db #0x64	; 100	'd'
+	.db #0x55	; 85	'U'
+	.db #0x37	; 55	'7'
+	.db #0x07	; 7
+	.db #0x07	; 7
+	.db #0x2d	; 45
+	.db #0xc8	; 200
+	.db #0x0b	; 11
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x05	; 5
+	.db #0xa4	; 164
+	.db #0x43	; 67	'C'
+	.db #0x0d	; 13
+	.db #0xc0	; 192
+	.db #0x02	; 2
+	.db #0x08	; 8
+	.db #0x26	; 38
+	.db #0x00	; 0
+_tauros_base_stats:
+	.db #0x80	; 128
+	.db #0x4b	; 75	'K'
+	.db #0x64	; 100	'd'
+	.db #0x5f	; 95
+	.db #0x6e	; 110	'n'
+	.db #0x46	; 70	'F'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x2d	; 45
+	.db #0xd3	; 211
+	.db #0x21	; 33
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x05	; 5
+	.db #0xe0	; 224
+	.db #0x73	; 115	's'
+	.db #0x88	; 136
+	.db #0xc7	; 199
+	.db #0xa2	; 162
+	.db #0x08	; 8
+	.db #0x22	; 34
+	.db #0x00	; 0
+_magikarp_base_stats:
+	.db #0x81	; 129
+	.db #0x14	; 20
+	.db #0x0a	; 10
+	.db #0x37	; 55	'7'
+	.db #0x50	; 80	'P'
+	.db #0x14	; 20
+	.db #0x15	; 21
+	.db #0x15	; 21
+	.db #0xff	; 255
+	.db #0x14	; 20
+	.db #0x96	; 150
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x05	; 5
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+_gyarados_base_stats:
+	.db #0x82	; 130
+	.db #0x5f	; 95
+	.db #0x7d	; 125
+	.db #0x4f	; 79	'O'
+	.db #0x51	; 81	'Q'
+	.db #0x64	; 100	'd'
+	.db #0x15	; 21
+	.db #0x02	; 2
+	.db #0x2d	; 45
+	.db #0xd6	; 214
+	.db #0x2c	; 44
+	.db #0x52	; 82	'R'
+	.db #0x2b	; 43
+	.db #0x38	; 56	'8'
+	.db #0x05	; 5
+	.db #0xa0	; 160
+	.db #0x7f	; 127
+	.db #0xc8	; 200
+	.db #0xc1	; 193
+	.db #0xa3	; 163
+	.db #0x08	; 8
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+_lapras_base_stats:
+	.db #0x83	; 131
+	.db #0x82	; 130
+	.db #0x55	; 85	'U'
+	.db #0x50	; 80	'P'
+	.db #0x3c	; 60
+	.db #0x5f	; 95
+	.db #0x15	; 21
+	.db #0x19	; 25
+	.db #0x2d	; 45
+	.db #0xdb	; 219
+	.db #0x37	; 55	'7'
+	.db #0x2d	; 45
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x05	; 5
+	.db #0xe0	; 224
+	.db #0x7f	; 127
+	.db #0xe8	; 232
+	.db #0xd1	; 209
+	.db #0x83	; 131
+	.db #0x28	; 40
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+_ditto_base_stats:
+	.db #0x84	; 132
+	.db #0x30	; 48	'0'
+	.db #0x30	; 48	'0'
+	.db #0x30	; 48	'0'
+	.db #0x30	; 48	'0'
+	.db #0x30	; 48	'0'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x23	; 35
+	.db #0x3d	; 61
+	.db #0x90	; 144
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+_eevee_base_stats:
+	.db #0x85	; 133
+	.db #0x37	; 55	'7'
+	.db #0x37	; 55	'7'
+	.db #0x32	; 50	'2'
+	.db #0x37	; 55	'7'
+	.db #0x41	; 65	'A'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x2d	; 45
+	.db #0x5c	; 92
+	.db #0x21	; 33
+	.db #0x1c	; 28
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa0	; 160
+	.db #0x03	; 3
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0xc3	; 195
+	.db #0x08	; 8
+	.db #0x02	; 2
+	.db #0x00	; 0
+_vaporeon_base_stats:
+	.db #0x86	; 134
+	.db #0x82	; 130
+	.db #0x41	; 65	'A'
+	.db #0x3c	; 60
+	.db #0x41	; 65	'A'
+	.db #0x6e	; 110	'n'
+	.db #0x15	; 21
+	.db #0x15	; 21
+	.db #0x2d	; 45
+	.db #0xc4	; 196
+	.db #0x21	; 33
+	.db #0x1c	; 28
+	.db #0x62	; 98	'b'
+	.db #0x37	; 55	'7'
+	.db #0x00	; 0
+	.db #0xa0	; 160
+	.db #0x7f	; 127
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0xc3	; 195
+	.db #0x08	; 8
+	.db #0x12	; 18
+	.db #0x00	; 0
+_jolteon_base_stats:
+	.db #0x87	; 135
+	.db #0x41	; 65	'A'
+	.db #0x41	; 65	'A'
+	.db #0x3c	; 60
+	.db #0x82	; 130
+	.db #0x6e	; 110	'n'
+	.db #0x17	; 23
+	.db #0x17	; 23
+	.db #0x2d	; 45
+	.db #0xc5	; 197
+	.db #0x21	; 33
+	.db #0x1c	; 28
+	.db #0x62	; 98	'b'
+	.db #0x54	; 84	'T'
+	.db #0x00	; 0
+	.db #0xa0	; 160
+	.db #0x43	; 67	'C'
+	.db #0x88	; 136
+	.db #0xc1	; 193
+	.db #0xc3	; 195
+	.db #0x18	; 24
+	.db #0x42	; 66	'B'
+	.db #0x00	; 0
+_flareon_base_stats:
+	.db #0x88	; 136
+	.db #0x41	; 65	'A'
+	.db #0x82	; 130
+	.db #0x3c	; 60
+	.db #0x41	; 65	'A'
+	.db #0x6e	; 110	'n'
+	.db #0x14	; 20
+	.db #0x14	; 20
+	.db #0x2d	; 45
+	.db #0xc6	; 198
+	.db #0x21	; 33
+	.db #0x1c	; 28
+	.db #0x62	; 98	'b'
+	.db #0x34	; 52	'4'
+	.db #0x00	; 0
+	.db #0xa0	; 160
+	.db #0x43	; 67	'C'
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0xe3	; 227
+	.db #0x08	; 8
+	.db #0x02	; 2
+	.db #0x00	; 0
+_porygon_base_stats:
+	.db #0x89	; 137
+	.db #0x41	; 65	'A'
+	.db #0x3c	; 60
+	.db #0x46	; 70	'F'
+	.db #0x28	; 40
+	.db #0x4b	; 75	'K'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x2d	; 45
+	.db #0x82	; 130
+	.db #0x21	; 33
+	.db #0x9f	; 159
+	.db #0xa0	; 160
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x20	; 32
+	.db #0x73	; 115	's'
+	.db #0x88	; 136
+	.db #0xf1	; 241
+	.db #0xc3	; 195
+	.db #0x38	; 56	'8'
+	.db #0x43	; 67	'C'
+	.db #0x00	; 0
+_omanyte_base_stats:
+	.db #0x8a	; 138
+	.db #0x23	; 35
+	.db #0x28	; 40
+	.db #0x64	; 100	'd'
+	.db #0x23	; 35
+	.db #0x5a	; 90	'Z'
+	.db #0x05	; 5
+	.db #0x15	; 21
+	.db #0x2d	; 45
+	.db #0x78	; 120	'x'
+	.db #0x37	; 55	'7'
+	.db #0x6e	; 110	'n'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa0	; 160
+	.db #0x3f	; 63
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0x03	; 3
+	.db #0x08	; 8
+	.db #0x12	; 18
+	.db #0x00	; 0
+_omastar_base_stats:
+	.db #0x8b	; 139
+	.db #0x46	; 70	'F'
+	.db #0x3c	; 60
+	.db #0x7d	; 125
+	.db #0x37	; 55	'7'
+	.db #0x73	; 115	's'
+	.db #0x05	; 5
+	.db #0x15	; 21
+	.db #0x2d	; 45
+	.db #0xc7	; 199
+	.db #0x37	; 55	'7'
+	.db #0x6e	; 110	'n'
+	.db #0x1e	; 30
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xe0	; 224
+	.db #0x7f	; 127
+	.db #0x0d	; 13
+	.db #0xc0	; 192
+	.db #0x83	; 131
+	.db #0x08	; 8
+	.db #0x12	; 18
+	.db #0x00	; 0
+_kabuto_base_stats:
+	.db #0x8c	; 140
+	.db #0x1e	; 30
+	.db #0x50	; 80	'P'
+	.db #0x5a	; 90	'Z'
+	.db #0x37	; 55	'7'
+	.db #0x2d	; 45
+	.db #0x05	; 5
+	.db #0x15	; 21
+	.db #0x2d	; 45
+	.db #0x77	; 119	'w'
+	.db #0x0a	; 10
+	.db #0x6a	; 106	'j'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xa0	; 160
+	.db #0x3f	; 63
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0x03	; 3
+	.db #0x08	; 8
+	.db #0x12	; 18
+	.db #0x00	; 0
+_kabutops_base_stats:
+	.db #0x8d	; 141
+	.db #0x3c	; 60
+	.db #0x73	; 115	's'
+	.db #0x69	; 105	'i'
+	.db #0x50	; 80	'P'
+	.db #0x46	; 70	'F'
+	.db #0x05	; 5
+	.db #0x15	; 21
+	.db #0x2d	; 45
+	.db #0xc9	; 201
+	.db #0x0a	; 10
+	.db #0x6a	; 106	'j'
+	.db #0x47	; 71	'G'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0xb6	; 182
+	.db #0x7f	; 127
+	.db #0x0d	; 13
+	.db #0xc0	; 192
+	.db #0x83	; 131
+	.db #0x08	; 8
+	.db #0x12	; 18
+	.db #0x00	; 0
+_aerodactyl_base_stats:
+	.db #0x8e	; 142
+	.db #0x50	; 80	'P'
+	.db #0x69	; 105	'i'
+	.db #0x41	; 65	'A'
+	.db #0x82	; 130
+	.db #0x3c	; 60
+	.db #0x05	; 5
+	.db #0x02	; 2
+	.db #0x2d	; 45
+	.db #0xca	; 202
+	.db #0x11	; 17
+	.db #0x61	; 97	'a'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x05	; 5
+	.db #0x2a	; 42
+	.db #0x43	; 67	'C'
+	.db #0x48	; 72	'H'
+	.db #0xc0	; 192
+	.db #0x63	; 99	'c'
+	.db #0x0c	; 12
+	.db #0x0a	; 10
+	.db #0x00	; 0
+_snorlax_base_stats:
+	.db #0x8f	; 143
+	.db #0xa0	; 160
+	.db #0x6e	; 110	'n'
+	.db #0x41	; 65	'A'
+	.db #0x1e	; 30
+	.db #0x41	; 65	'A'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x19	; 25
+	.db #0x9a	; 154
+	.db #0x1d	; 29
+	.db #0x85	; 133
+	.db #0x9c	; 156
+	.db #0x00	; 0
+	.db #0x05	; 5
+	.db #0xb1	; 177
+	.db #0xff	; 255
+	.db #0xaf	; 175
+	.db #0xd7	; 215
+	.db #0xaf	; 175
+	.db #0xa8	; 168
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+_articuno_base_stats:
+	.db #0x90	; 144
+	.db #0x5a	; 90	'Z'
+	.db #0x55	; 85	'U'
+	.db #0x64	; 100	'd'
+	.db #0x55	; 85	'U'
+	.db #0x7d	; 125
+	.db #0x19	; 25
+	.db #0x02	; 2
+	.db #0x03	; 3
+	.db #0xd7	; 215
+	.db #0x40	; 64
+	.db #0x3a	; 58
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x05	; 5
+	.db #0x2a	; 42
+	.db #0x7f	; 127
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0x43	; 67	'C'
+	.db #0x0c	; 12
+	.db #0x0a	; 10
+	.db #0x00	; 0
+_zapdos_base_stats:
+	.db #0x91	; 145
+	.db #0x5a	; 90	'Z'
+	.db #0x5a	; 90	'Z'
+	.db #0x55	; 85	'U'
+	.db #0x64	; 100	'd'
+	.db #0x7d	; 125
+	.db #0x17	; 23
+	.db #0x02	; 2
+	.db #0x03	; 3
+	.db #0xd8	; 216
+	.db #0x54	; 84	'T'
+	.db #0x41	; 65	'A'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x05	; 5
+	.db #0x2a	; 42
+	.db #0x43	; 67	'C'
+	.db #0x88	; 136
+	.db #0xc1	; 193
+	.db #0x43	; 67	'C'
+	.db #0x1c	; 28
+	.db #0x4a	; 74	'J'
+	.db #0x00	; 0
+_moltres_base_stats:
+	.db #0x92	; 146
+	.db #0x5a	; 90	'Z'
+	.db #0x64	; 100	'd'
+	.db #0x5a	; 90	'Z'
+	.db #0x5a	; 90	'Z'
+	.db #0x7d	; 125
+	.db #0x14	; 20
+	.db #0x02	; 2
+	.db #0x03	; 3
+	.db #0xd9	; 217
+	.db #0x40	; 64
+	.db #0x53	; 83	'S'
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x05	; 5
+	.db #0x2a	; 42
+	.db #0x43	; 67	'C'
+	.db #0x08	; 8
+	.db #0xc0	; 192
+	.db #0x63	; 99	'c'
+	.db #0x0c	; 12
+	.db #0x0a	; 10
+	.db #0x00	; 0
+_dratini_base_stats:
+	.db #0x93	; 147
+	.db #0x29	; 41
+	.db #0x40	; 64
+	.db #0x2d	; 45
+	.db #0x32	; 50	'2'
+	.db #0x32	; 50	'2'
+	.db #0x1a	; 26
+	.db #0x1a	; 26
+	.db #0x2d	; 45
+	.db #0x43	; 67	'C'
+	.db #0x23	; 35
+	.db #0x2b	; 43
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x05	; 5
+	.db #0xa0	; 160
+	.db #0x3f	; 63
+	.db #0xc8	; 200
+	.db #0xc1	; 193
+	.db #0xe3	; 227
+	.db #0x18	; 24
+	.db #0x12	; 18
+	.db #0x00	; 0
+_dragonair_base_stats:
+	.db #0x94	; 148
+	.db #0x3d	; 61
+	.db #0x54	; 84	'T'
+	.db #0x41	; 65	'A'
+	.db #0x46	; 70	'F'
+	.db #0x46	; 70	'F'
+	.db #0x1a	; 26
+	.db #0x1a	; 26
+	.db #0x2d	; 45
+	.db #0x90	; 144
+	.db #0x23	; 35
+	.db #0x2b	; 43
+	.db #0x56	; 86	'V'
+	.db #0x00	; 0
+	.db #0x05	; 5
+	.db #0xe0	; 224
+	.db #0x3f	; 63
+	.db #0xc8	; 200
+	.db #0xc1	; 193
+	.db #0xe3	; 227
+	.db #0x18	; 24
+	.db #0x12	; 18
+	.db #0x00	; 0
+_dragonite_base_stats:
+	.db #0x95	; 149
+	.db #0x5b	; 91
+	.db #0x86	; 134
+	.db #0x5f	; 95
+	.db #0x50	; 80	'P'
+	.db #0x64	; 100	'd'
+	.db #0x1a	; 26
+	.db #0x02	; 2
+	.db #0x2d	; 45
+	.db #0xda	; 218
+	.db #0x23	; 35
+	.db #0x2b	; 43
+	.db #0x56	; 86	'V'
+	.db #0x61	; 97	'a'
+	.db #0x05	; 5
+	.db #0xe2	; 226
+	.db #0x7f	; 127
+	.db #0xc8	; 200
+	.db #0xc1	; 193
+	.db #0xe3	; 227
+	.db #0x18	; 24
+	.db #0x32	; 50	'2'
+	.db #0x00	; 0
+_mewtwo_base_stats:
+	.db #0x96	; 150
+	.db #0x6a	; 106	'j'
+	.db #0x6e	; 110	'n'
+	.db #0x5a	; 90	'Z'
+	.db #0x82	; 130
+	.db #0x9a	; 154
+	.db #0x18	; 24
+	.db #0x18	; 24
+	.db #0x03	; 3
+	.db #0xdc	; 220
+	.db #0x5d	; 93
+	.db #0x32	; 50	'2'
+	.db #0x81	; 129
+	.db #0x5e	; 94
+	.db #0x05	; 5
+	.db #0xb1	; 177
+	.db #0xff	; 255
+	.db #0xaf	; 175
+	.db #0xf1	; 241
+	.db #0xaf	; 175
+	.db #0x38	; 56	'8'
+	.db #0x63	; 99	'c'
+	.db #0x00	; 0
+_mew_base_stats:
+	.db #0x97	; 151
+	.db #0x64	; 100	'd'
+	.db #0x64	; 100	'd'
+	.db #0x64	; 100	'd'
+	.db #0x64	; 100	'd'
+	.db #0x64	; 100	'd'
+	.db #0x18	; 24
+	.db #0x18	; 24
+	.db #0x2d	; 45
+	.db #0x40	; 64
+	.db #0x01	; 1
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x03	; 3
+	.db #0xff	; 255
+	.db #0xff	; 255
+	.db #0xff	; 255
+	.db #0xff	; 255
+	.db #0xff	; 255
+	.db #0xff	; 255
+	.db #0x7f	; 127
+	.db #0xff	; 255
+	.area _INITIALIZER
+	.area _CABS (ABS)

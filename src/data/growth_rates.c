@@ -8,23 +8,50 @@
  * The generator emits growth_rate macro calls.
  */
 
-/* @asm_mode growth_rate */
-/* @asm_label GrowthRateTable */
-/* @asm_label_comment ; entries correspond to GROWTH_* (see constants/pokemon_data_constants.asm) */
-/* @asm_table_width 4 */
-/* @asm_assert assert_table_length NUM_GROWTH_RATES */
 
+
+
+
+
+
+#include <stdint.h>
+
+#define PERCENT * 0xff / 100
+
+// Macro mapped to asm
+// [a]/[b]*n^3 + [c]*n^2 + [d]*n - [e]
+// but SDCC will just output bytes so we need to match the struct size to what growth_rate macro expects exactly.
+/*
+MACRO? growth_rate
+	; [1]/[2]*n**3 + [3]*n**2 + [4]*n - [5]
+	dn \1, \2
+	if \3 < 0
+		db -\3 | $80 ; signed magnitude
+	else
+		db \3
+	endc
+	db \4, \5
+ENDM
+*/
 typedef struct {
-    int a, b, c, d, e;
-    const char *name;
+    uint8_t a_b; // a<<4 | b
+    uint8_t c;   // sign-magnitude
+    uint8_t d;
+    uint8_t e;
 } GrowthRate;
 
+#define GROWTH_RATE(a, b, c, d, e) { \
+    ((a) << 4) | (b), \
+    (c) < 0 ? (-(c) | 0x80) : (c), \
+    (d), \
+    (e) \
+}
+
 const GrowthRate growth_rates[] = {
-    /* a  b    c    d    e     name */
-    { 1, 1,   0,   0,   0, "Medium Fast" },
-    { 3, 4,  10,   0,  30, "Slightly Fast" },
-    { 3, 4,  20,   0,  70, "Slightly Slow" },
-    { 6, 5, -15, 100, 140, "Medium Slow" },
-    { 4, 5,   0,   0,   0, "Fast" },
-    { 5, 4,   0,   0,   0, "Slow" },
+    GROWTH_RATE(1, 1,   0,   0,   0), // "Medium Fast"
+    GROWTH_RATE(3, 4,  10,   0,  30), // "Slightly Fast"
+    GROWTH_RATE(3, 4,  20,   0,  70), // "Slightly Slow"
+    GROWTH_RATE(6, 5, -15, 100, 140), // "Medium Slow"
+    GROWTH_RATE(4, 5,   0,   0,   0), // "Fast"
+    GROWTH_RATE(5, 4,   0,   0,   0), // "Slow"
 };

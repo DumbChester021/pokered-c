@@ -11,21 +11,21 @@
 #include "../include/moves.h"
 #include "../include/types.h"
 
-/* @asm_preamble MACRO move */
-/* @asm_preamble \tdb \1 ; animation (interchangeable with move id) */
-/* @asm_preamble \tdb \2 ; effect */
-/* @asm_preamble \tdb \3 ; power */
-/* @asm_preamble \tdb \4 ; type */
-/* @asm_preamble \tdb \5 percent ; accuracy */
-/* @asm_preamble \tdb \6 ; pp */
-/* @asm_preamble \tASSERT \6 <= 40, "PP must be 40 or less" */
-/* @asm_preamble ENDM */
-/* @asm_preamble */
-/* @asm_label Moves */
-/* @asm_label_comment ; Characteristics of each move. */
-/* @asm_macro move */
-/* @asm_table_width MOVE_LENGTH */
-/* @asm_assert assert_table_length NUM_ATTACKS */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const MoveData moves[] = {
     /*                     animation       effect                       pow  type          acc  pp */
@@ -194,6 +194,7 @@ const MoveData moves[] = {
     { SLASH,        NO_ADDITIONAL_EFFECT,        70, NORMAL,       100, 20 },
     { SUBSTITUTE,   SUBSTITUTE_EFFECT,            0, NORMAL,       100, 10 },
     { STRUGGLE,     RECOIL_EFFECT,               50, NORMAL,       100, 10 },
+    { (unsigned char)-1, 0, 0, 0, 0, 0 }, // terminator
 };
 
-#define NUM_MOVES_ENTRIES (sizeof(moves) / sizeof(moves[0]))
+#define NUM_MOVES_ENTRIES ((sizeof(moves) / sizeof(moves[0])) - 1)

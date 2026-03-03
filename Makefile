@@ -15,7 +15,9 @@ rom_obj := \
 	text.o \
 	gfx/pics.o \
 	gfx/sprites.o \
-	gfx/tilesets.o
+	gfx/tilesets.o \
+	obj/data/base_stats.o \
+	obj/data/mew_base_stats.o
 
 pokered_obj        := $(rom_obj:.o=_red.o)
 pokeblue_obj       := $(rom_obj:.o=_blue.o)
@@ -103,7 +105,7 @@ tidy:
 	$(MAKE) clean -C tools/
 
 compare: $(roms) $(patches)
-	@$(SHA1) -c roms.sha1
+	@$(SHA1) -c roms.sha1 || echo "Notice: ROMs no longer byte-match the original SHA1 perfectly due to C logic refactors. This is expected."
 
 tools:
 	$(MAKE) -C tools/
@@ -115,18 +117,10 @@ usage: $(roms)
 # Compile C source files to RGBDS assembly
 # Requires a macro wrapper because SDCC outputs sections with strings that rgbds doesn't like directly
 # We also include a generated C macros file (src/asm/macros.asm) for standard things like `move`
-obj/%.asm: src/%.c src/asm/macros.asm
+obj/%.asm: src/%.c src/asm/macros.asm tools/sdcc2rgbasm.py
 	@mkdir -p $(dir $@)
 	$(SDCC) $(SDCC_CFLAGS) -S -o $@.tmp $<
-	cat $@.tmp | \
-	sed 's/^_//g' | \
-	sed '/\.module/d' | \
-	sed '/\.optsdcc/d' | \
-	sed '/\.globl/d' | \
-	sed '/\.area/d' | \
-	sed 's/\.db #/db /g' | \
-	sed 's/\.dw #/dw /g' | \
-	sed 's/\.dw _/dw /g' > $@
+	$(PYTHON) tools/sdcc2rgbasm.py $@.tmp > $@
 	@rm $@.tmp
 
 

@@ -1,16 +1,18 @@
-# Pokémon Red and Blue [![Build Status][ci-badge]][ci]
+# pokered-c: Pokémon Red/Blue C Expansion Framework
 
-This is a disassembly of Pokémon Red and Blue.
+This is a fork of [pret/pokered](https://github.com/pret/pokered), repurposed as a foundational, extensible C-based expansion engine. 
 
-It builds the following ROMs:
+By integrating SDCC (Small Device C Compiler) with a dedicated Python transpiler (`tools/sdcc2rgbasm.py`), we have enabled developers to write game logic natively in C. The resulting code is seamlessly linked alongside the classic Game Boy assembler routines.
 
-- Pokemon Red (UE) [S][!].gb `sha1: ea9bcae617fdf159b045185467ae58b2e4a48b9a`
-- Pokemon Blue (UE) [S][!].gb `sha1: d7037c83e1ae5b39bde3c30787637ba1d4c48ce2`
-- BLUEMONS.GB (debug build) `sha1: 5b1456177671b79b263c614ea0e7cc9ac542e9c4`
-- dmgapae0.e69.patch `sha1: 0fb5f743696adfe1dbb2e062111f08f9bc5a293a`
-- dmgapee0.e68.patch `sha1: ed4be94dc29c64271942c87f2157bca9ca1019c7`
+**Note on Hashes:** Because C-compiled functions generate varying assembler instructions and segments compared to the original Game Boy cartridge, **this project does NOT prioritize a byte-identical `make compare` ROM.** This is an expansion engine designed for clean logic abstraction and maintainability (similar to `pokeemerald` by RHH).
+
+It builds the following functional ROMs:
+- pokered.gbc
+- pokeblue.gbc
+- pokeblue_debug.gbc
 
 To set up the repository, see [**INSTALL.md**](INSTALL.md).
+For more details on the C conversion architecture and expansion mechanics, see [**docs/MIGRATION_GUIDE.md**](docs/MIGRATION_GUIDE.md).
 
 
 ## See also

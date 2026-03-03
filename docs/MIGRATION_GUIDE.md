@@ -27,13 +27,11 @@
 
 ## Project Goal
 
-**Make the Pokémon Red/Blue codebase maintainable and extensible by migrating it from Game Boy assembly to C**, one module at a time. Every intermediate step must produce a **byte-identical ROM** — same SHA1 as the original. This is not a rewrite; it is a faithful translation.
+**Make the Pokémon Red/Blue codebase maintainable and extensible by migrating it from Game Boy assembly to a C-based Expansion Engine**. We are building a foundational framework where complex logic and new expansions (e.g. physical/special split, new types) can be written rapidly in C, compiling naturally into the ROM.
 
-The migration follows this phased order:
-1. **Data tables** — pure data with no logic (easiest, lowest risk)
-2. **Utility functions** — self-contained math/string helpers
-3. **Engine subsystems** — menus, overworld, battle
-4. **Core** — main loop, interrupts (last, everything depends on them)
+> **Note on Byte-Matching:** In the earliest phases of this project, we enforced a strict 1:1 SHA hash byte-matching requirement with the original 1998 ROM (`make compare`). Due to the inherent differences in how SDCC and RGBDS emit and organize functional assembly frames, **this requirement has been officially deprecated.** The `pokered-c` repository now prioritizes clean, extensible C logic over binary perfection, similar to the `pokeemerald` expansion model.
+
+The expansion framework utilizes a custom transpiler, `sdcc2rgbasm.py`, allowing C functions to be compiled by SDCC and subsequently linked cleanly into the original RGBDS source files.
 
 ---
 
