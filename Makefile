@@ -32,11 +32,19 @@ else
 SHA1 := sha1sum
 endif
 
+PYTHON ?= python3
+
 RGBDS ?=
 RGBASM  ?= $(RGBDS)rgbasm
 RGBFIX  ?= $(RGBDS)rgbfix
 RGBGFX  ?= $(RGBDS)rgbgfx
 RGBLINK ?= $(RGBDS)rgblink
+
+# Future C migration toolchain (uncomment when ready)
+# GBDK    ?= /opt/gbdk/
+# SDCC    ?= $(GBDK)bin/sdcc
+# SDAS    ?= $(GBDK)bin/sdasgb
+# SDCCFLAGS ?= -msm83 --no-std-crt0
 
 RGBASMFLAGS  ?= -Weverything -Wtruncation=1
 RGBLINKFLAGS ?= -Weverything -Wtruncation=1
@@ -60,7 +68,8 @@ RGBGFXFLAGS  ?= -Weverything
 	clean \
 	tidy \
 	compare \
-	tools
+	tools \
+	usage
 
 all: $(roms)
 red:        pokered.gbc
@@ -98,6 +107,9 @@ compare: $(roms) $(patches)
 
 tools:
 	$(MAKE) -C tools/
+
+usage: $(roms)
+	@$(PYTHON) tools/mapusage.py $(roms:.gbc=.map)
 
 
 RGBASMFLAGS += -Q8 -P includes.asm
@@ -160,6 +172,7 @@ pokeblue_vc.gbc:    RGBFIXFLAGS += -p 0x00 -t "POKEMON BLUE"
 %.gbc: $$(%_obj) layout.link
 	$(RGBLINK) $(RGBLINKFLAGS) -l layout.link -m $*.map -n $*.sym -o $@ $(filter %.o,$^)
 	$(RGBFIX) $(RGBFIXFLAGS) $@
+	@$(PYTHON) tools/mapusage.py $*.map
 
 
 ### Misc file-specific graphics rules
