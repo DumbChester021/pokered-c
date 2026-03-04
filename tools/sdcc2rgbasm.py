@@ -71,7 +71,8 @@ def process_file(input_path):
         # Data definitions
         # SDCC: .db #0x01
         # RGBDS: db $01
-        line = re.sub(r'\.db\s+#0x([0-9a-fA-F]+)', r'db $\1', line)
+        line = re.sub(r'^\s*\.([a-z]+)', r'\1', line) # Strip leading dot from directives
+        line = re.sub(r'db\s+#0x([0-9a-fA-F]+)', r'db $\1', line)
         # SDCC: .dw #0x0102
         # RGBDS: dw $0102
         line = re.sub(r'\.dw\s+#0x([0-9a-fA-F]+)', r'dw $\1', line)
@@ -130,7 +131,14 @@ def process_file(input_path):
         
         # SDCC function calls: call _func
         # RGBDS: call func
-        line = re.sub(r'(_)([a-zA-Z_][a-zA-Z0-9_]*)', r'\2', line)
+        
+        # Handle BANK operator mapping before general symbol scrubbing
+        # Matches: _BANK_Symbol, #_BANK_Symbol, etc.
+        # SDCC: ld a, #_BANK_Symbol -> RGBDS: ld a, BANK(Symbol)
+        line = re.sub(r'#?_BANK_([a-zA-Z0-9_]*)', r'BANK(\1)', line)
+        
+        # General symbol scrubbing (remove leading underscores)
+        line = re.sub(r'(_)([a-zA-Z_][a-zA-Z0-9_]*)', r"\2", line)
         
         # SDCC `jp (hl)` becomes `jp [hl]` from previous regex, but RGBDS expects `jp hl`!
         line = re.sub(r'^\s*jp\s+\[hl\]', '\tjp hl', line)

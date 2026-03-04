@@ -20,7 +20,10 @@ rom_obj := \
 	obj/data/mew_base_stats.o \
 	obj/data/moves.o \
 	obj/data/type_matchups.o \
-	obj/data/item_prices.o
+	obj/data/item_prices.o \
+	obj/engine/far_call.o \
+	obj/engine/test_bridge.o \
+	obj/engine/test_bridge_data.o
 
 pokered_obj        := $(rom_obj:.o=_red.o)
 pokeblue_obj       := $(rom_obj:.o=_blue.o)

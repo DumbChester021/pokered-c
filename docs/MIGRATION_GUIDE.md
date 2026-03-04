@@ -74,13 +74,14 @@ The script `tools/sdcc2rgbasm.py` acts as the vital glue. Its responsibilities i
 
 ## What Has Been Done
 
-### Phase 1: Infrastructure ✅
-- Set up `src/include/global.h` config logic.
-- Implemented `sdcc2rgbasm.py`.
-- Refactored `Makefile` to natively support `obj/%.o` compilation through the C pipeline.
+### Phase 3: Utility Functions (Math & RNG) ⚠️
+- C versions of `Random_`, `_Multiply`, and `_Divide` were implemented but reverted to original ASM.
+- **Status:** Re-implementation pending using the new Bank Bridge (see Phase 4).
 
-### Phase 2: Core Data Translation ✅
-- `BaseStats` and `MewBaseStats` successfully compile from C structs directly into the linked ROM object tables.
+### Phase 4: Bank-Safe Bridge Implementation ✅
+- Implemented `far_call.h` and `far_call.c` to provide a robust C-to-ASM calling bridge.
+- Upgraded `sdcc2rgbasm.py` to support automatic `BANK()` mapping and dotted directive translation.
+- Verified cross-bank calls and data reads via `RunBridgeTests`.
 
 ---
 
@@ -95,13 +96,12 @@ The script `tools/sdcc2rgbasm.py` acts as the vital glue. Its responsibilities i
 
 ## What Needs To Be Done
 
-### Phase 4: Strategic Engine Additions (Current Focus)
-Following our strategic philosophy, we are targeting core game mechanics that require extensibility. **However, all engine logic migrations require solving the Bank Safety problem first (see below).**
-- **Battle Damage Calculation** — REVERTED. C version crashed due to cross-bank data access (`TypeEffects`, `Moves`).
-- **Type Effectiveness** — REVERTED. Same bank mismatch issue.
-- **Move Effects** - To write custom logic for new moves (e.g., entry hazards).
-- **Trainer AI** - To allow AI to understand new mechanics and moves.
-- **Experience & Evolutions** - To add new evolution methods (e.g., friendship, held items).
+### Phase 5: Strategic Engine Additions (Current Focus)
+With the Bank Bridge solved, we can now safely "un-revert" and expand the core engine:
+- **Battle Damage Calculation** - Restore the C version using `BankReadByte` for data access.
+- **Type Effectiveness** - Restore and expand with new types (e.g., Fairy).
+- **Pokémon ID Expansion** - Increase `NUM_POKEMON` and update WRAM bitmasks to support a full 255-mon Dex.
+- **Move Effects** - Implement complex custom logic for new moves.
 
 ### Skip For Now (Static Components)
 These systems work perfectly and won't benefit from being written in C. Translating them would be a massive time sink for zero functional gain:
@@ -129,11 +129,25 @@ When SDCC compiles a `.c` file, the transpiler emits `SECTION "C Code ...", ROMX
 ### Safe to Migrate
 - **Data tables accessed via `BANK()` + `FarCopyData`**: The caller explicitly bankswitches before reading. Examples: `BaseStats` (accessed via `GetMonHeader` which does `ld a, BANK(BaseStats)`), `Moves` (accessed via `BANK(Moves)` + `FarCopyData`).
 - **Functions called via `callfar` / `farcall`**: These macros bankswitch before calling.
+- **C-to-C Calls within the same bank**: If two functions are in the same `.c` file, they are safe to call each other.
 
-### NOT Safe to Migrate (Without Refactoring)
+### NOT Safe to Migrate (Legacy Patterns)
 - **Data tables accessed via direct `ld hl, Label`**: The caller assumes the data is in the same bank. Examples: `GrowthRateTable` (read directly by `CalcExperience`), `TypeEffects` (read directly by `AdjustDamageForMoveType`).
 - **Functions called via plain `call` from the same bank**: The caller assumes same-bank locality.
-- **Any code that accesses another C-compiled label in a different `.c` file**: Two separate C files compile to two separate floating ROMX sections, potentially in different banks.
+
+### The Solution: The "Bank-Safe Bridge"
+To safely call across banks in C, always use the `FarCall` utility instead of direct function calls. For reading data, use the `BankRead` utilities.
+
+#### Usage Example:
+```c
+#include "far_call.h"
+
+// Safe function call across banks
+FarCall(BANK(TargetFunction), TargetFunction);
+
+// Safe data read (e.g., reading from TypeEffects in another bank)
+uint8_t effect = BankReadByte(BANK(TypeEffects), &TypeEffects[index]);
+```
 
 ### Before Migrating, Always Check
 1. `grep` for ALL references to the label being migrated.
