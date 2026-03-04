@@ -101,8 +101,8 @@ The script `tools/sdcc2rgbasm.py` acts as the vital glue. Its responsibilities i
 With the Bank Bridge solved, we can now safely "un-revert" and expand the core engine:
 - **Battle Damage Calculation** - Restore the C version using `BankReadByte` for data access.
 - **Type Effectiveness** - Restore and expand with new types (e.g., Fairy).
-- **Pokémon ID Expansion** - Increase `NUM_POKEMON` and update WRAM bitmasks to support a full 255-mon Dex.
-- **Move Effects** - Implement complex custom logic for new moves.
+- **Pokémon ID Expansion** - Increased roster capacity (up to 255) and technical path for 16-bit expansion established.
+- **Modern Efficiency Phase** ✅ - Research into SRAM banking, Huffman compression, and bit-packing completed.
 
 ### Skip For Now (Static Components)
 These systems work perfectly and won't benefit from being written in C. Translating them would be a massive time sink for zero functional gain:
