@@ -15,7 +15,8 @@
 7. [How The Build System Works](#how-the-build-system-works)
 8. [Adding C Logic](#adding-c-logic)
 9. [ROM Bank Layout](#rom-bank-layout)
-10. [Git Workflow](#git-workflow)
+10. [Architecture Research Report](RESEARCH_REPORT.md)
+11. [Git Workflow](#git-workflow)
 
 ---
 
@@ -154,6 +155,21 @@ uint8_t effect = BankReadByte(BANK(TypeEffects), &TypeEffects[index]);
 2. For each reference, check if it uses `BANK()` / `FarCopyData` / `callfar` (safe) or direct `ld hl, Label` / `call Label` (unsafe).
 3. If ANY reference is unsafe, either: (a) leave the data/code in ASM, or (b) refactor the caller to use a bankswitch.
 
+## ⚠️ Logic-Matching Verification (The Gold Standard)
+
+Migrating legacy assembly to C is prone to subtle bugs, especially regarding **Carry Flags** and **Register Overflows**. To guarantee 100% stability, all core engine migrations should follow the **Dual-Execution Testing** model.
+
+### The Strategy
+1. **Isolated ASM Execution**: Run the original ASM routine with a controlled input and snapshot the mutated WRAM/Registers.
+2. **Identical C Execution**: Reset the state and run the C implementation with the exact same inputs.
+3. **Parity Check**: Compare the resulting states. If they differ by even one bit, the C implementation is incorrect.
+
+### Determinism Trick: `rDIV`
+For routines using the hardware timer `rDIV` (like `Random`), write `$00` to `rDIV` at the start of both tests to reset the counter, ensuring both implementations see the same hardware state.
+
+### Example: `VerifyRandomParity`
+See `src/engine/test_bridge.c` for a live example. It compares a C-reimplemented `Random_` (including carry propagation) against the hand-optimized ASM version to ensure they produce identical random seeds.
+
 ## ⚠️ C-to-ASM Migration Gotchas (Critical Lessons)
 
 The recent reverts of `math.c`, `growth_rates.c`, `battle_core.c`, and `play_time.c` taught us valuable lessons about the strict requirements of interfacing C with legacy Game Boy assembly:
@@ -231,4 +247,6 @@ See `layout.link` for full architectural memory map constraints.
 | `Makefile` | ✅ Yes | Build rules |
 | `docs/MIGRATION_GUIDE.md` | ✅ Yes | This document |
 
-*Last updated: 2026-03-04.*
+- [x] Finalization
+    - [x] Update MIGRATION_GUIDE with "Comparison Testing" standards
+    - [x] Commit and push final documentation and test suite
